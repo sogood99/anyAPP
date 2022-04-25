@@ -1,2 +1,2 @@
-# simple-forum
+# anyApp
 Simple Discussion Forum for Android.
