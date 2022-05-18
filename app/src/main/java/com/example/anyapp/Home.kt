@@ -50,7 +50,7 @@ class Home : AppCompatActivity() {
                 "ABC",
                 "id",
                 "Fuck Republicans and Democrats",
-                "https://i.imgur.com/DvpvklR.png"
+                "https://i.stack.imgur.com/DLadx.png"
             ),
             Tweet(
                 "ABC",
