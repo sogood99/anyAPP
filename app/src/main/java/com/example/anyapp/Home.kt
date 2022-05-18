@@ -19,6 +19,10 @@ class Home : AppCompatActivity() {
                     Log.v("Pity", "Clicked Search")
                     true
                 }
+                R.id.miLogout -> {
+                    Log.v("Pity", "Clicked Logout")
+                    true
+                }
                 else -> true
             }
         }
