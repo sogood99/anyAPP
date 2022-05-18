@@ -44,7 +44,19 @@ class Home : AppCompatActivity() {
                 "ABC",
                 "id",
                 "Fuck Republicans and Democrats",
-                "https://www.google.co.jp/images/branding/googlelogo/1x/googlelogo_light_color_272x92dp.png"
+                "https://i.imgur.com/DvpvklR.png"
+            ),
+            Tweet(
+                "ABC",
+                "id",
+                "Fuck Republicans and Democrats",
+                "https://i.imgur.com/DvpvklR.png"
+            ),
+            Tweet(
+                "ABC",
+                "id",
+                "Fuck Republicans and Democrats",
+                "https://i.imgur.com/DvpvklR.png"
             ),
             Tweet("1223", "nothaId", "Same Bruh", null)
         )

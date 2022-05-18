@@ -27,8 +27,8 @@ class TweetAdapter(
             userID.text = "@" + tweets[position].userID
             textContent.text = tweets[position].textContent
 
-            if (tweets[position].imageContent == null) {
-                Picasso.get().load("https://i.imgur.com/DvpvklR.png").into(imageContent);
+            if (tweets[position].imageContent != null) {
+                Picasso.get().load(tweets[position].imageContent).into(imageContent);
             } else {
                 val parent: ViewGroup? = imageContent.parent as? ViewGroup
                 parent?.let {
