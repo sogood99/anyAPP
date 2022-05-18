@@ -21,11 +21,11 @@
 
             <!-- Media -->
             <ImageView
+                android:id="@+id/imageContent"
                 android:layout_width="match_parent"
                 android:layout_height="194dp"
                 android:contentDescription="Picture"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/ic_launcher_background" />
+                android:scaleType="centerCrop" />
 
             <LinearLayout
                 android:layout_width="match_parent"

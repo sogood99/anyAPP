@@ -40,7 +40,12 @@ class Home : AppCompatActivity() {
 
         // Testing out tweets
         var tweetList = mutableListOf(
-            Tweet("ABC", "id", "Fuck Republicans and Democrats", null),
+            Tweet(
+                "ABC",
+                "id",
+                "Fuck Republicans and Democrats",
+                "https://www.google.co.jp/images/branding/googlelogo/1x/googlelogo_light_color_272x92dp.png"
+            ),
             Tweet("1223", "nothaId", "Same Bruh", null)
         )
         val adapter = TweetAdapter(tweetList)

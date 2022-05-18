@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.anyapp.databinding.ItemTweetBinding
+import com.squareup.picasso.Picasso
 
 class TweetAdapter(
     var tweets: List<Tweet>
@@ -25,6 +26,10 @@ class TweetAdapter(
             username.text = tweets[position].username
             userID.text = "@" + tweets[position].userID
             textContent.text = tweets[position].textContent
+
+            tweets[position].imageContent?.let {
+                Picasso.get().load("https://i.imgur.com/DvpvklR.png").into(imageContent);
+            }
         }
     }
 
