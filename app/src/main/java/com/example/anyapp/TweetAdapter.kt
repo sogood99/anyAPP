@@ -13,12 +13,14 @@ class TweetAdapter(
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TweetViewHolder {
+        // how new item_tweets are created
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = ItemTweetBinding.inflate(layoutInflater, parent, false)
         return TweetViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: TweetViewHolder, position: Int) {
+        // how the tweet.kt data class is synced with item_tweet
         holder.binding.apply {
             tweetTitle.text = tweets[position].title
             tweetDone.isChecked = tweets[position].isChecked
@@ -28,5 +30,4 @@ class TweetAdapter(
     override fun getItemCount(): Int {
         return tweets.size
     }
-
 }

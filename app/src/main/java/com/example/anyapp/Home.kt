@@ -3,10 +3,8 @@ package com.example.anyapp
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.anyapp.databinding.ActivityHomeBinding
-import com.google.android.material.appbar.MaterialToolbar
 
 class Home : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
@@ -14,6 +12,8 @@ class Home : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        // Create binding to activity_home
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
