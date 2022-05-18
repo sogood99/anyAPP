@@ -40,8 +40,13 @@ class Home : AppCompatActivity() {
 
         // Testing out tweets
         var tweetList = mutableListOf(
-            Tweet("ABC", false),
-            Tweet("1223", true)
+            Tweet(
+                "ABC",
+                "id",
+                "Fuck Republicans and Democrats",
+                "https://www.google.co.jp/images/branding/googlelogo/1x/googlelogo_light_color_272x92dp.png"
+            ),
+            Tweet("1223", "nothaId", "Same Bruh", null)
         )
         val adapter = TweetAdapter(tweetList)
         binding.homeTweets.adapter = adapter
@@ -51,7 +56,7 @@ class Home : AppCompatActivity() {
         // For selecting the Home
         binding.homeButton.setOnClickListener { button ->
             val title = "New One Bites the Dusto"
-            val tweet = Tweet(title, false)
+            val tweet = Tweet("1223", "nothaId", "Same Bruh", null)
             tweetList.add(tweet)
             adapter.notifyItemInserted(tweetList.size)
             true
