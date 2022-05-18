@@ -22,8 +22,9 @@ class TweetAdapter(
     override fun onBindViewHolder(holder: TweetViewHolder, position: Int) {
         // how the tweet.kt data class is synced with item_tweet
         holder.binding.apply {
-            tweetTitle.text = tweets[position].title
-            tweetDone.isChecked = tweets[position].isChecked
+            username.text = tweets[position].username
+            userID.text = "@" + tweets[position].userID
+            textContent.text = tweets[position].textContent
         }
     }
 

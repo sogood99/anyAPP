@@ -1,6 +1,9 @@
 package com.example.anyapp
 
 data class Tweet(
-    val title: String,
-    var isChecked: Boolean
+    // check issue for documentation
+    val username: String,
+    val userID: String,
+    val textContent: String,
+    val pictureContent: String?,
 )
