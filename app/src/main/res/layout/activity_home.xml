@@ -46,6 +46,9 @@
         android:id="@+id/botNavBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:itemIconTint="@color/navbar_tab_item"
+        app:labelVisibilityMode="unlabeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/navbar_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
