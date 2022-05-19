@@ -3,6 +3,7 @@ package com.example.anyapp
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.anyapp.databinding.ActivityHomeBinding
 
@@ -35,6 +36,13 @@ class Home : AppCompatActivity() {
         // For selecting the Home
         binding.homeButton.setOnClickListener { button ->
             Log.v("Pity", "Clicked Home Button")
+            true
+        }
+
+        // for creating new tweets
+        binding.newTweetButton.setOnClickListener { button ->
+            binding.newTweetButton.visibility = View.GONE
+            binding.newTweet.visibility = View.VISIBLE
             true
         }
 
