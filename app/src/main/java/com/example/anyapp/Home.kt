@@ -1,10 +1,15 @@
 package com.example.anyapp
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.anyapp.databinding.ActivityHomeBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class Home : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
@@ -38,13 +43,59 @@ class Home : AppCompatActivity() {
             true
         }
 
+        // for creating new tweets
+        binding.newTweetButton.setOnClickListener { button ->
+            binding.newTweetButton.visibility = View.GONE
+            binding.newTweet.visibility = View.VISIBLE
+            true
+        }
+
+        // for choosing new button
+        binding.choosePhotoBtn.setOnClickListener { button ->
+            val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            val choosePicture = Intent(
+                Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            )
+            try {
+                MaterialAlertDialogBuilder(
+                    this,
+                    com.google.android.material.R.style.Theme_Material3_Dark_Dialog
+                )
+                    .setTitle("Image")
+                    .setMessage("Choose Method")
+                    .setNegativeButton("Take Picture") { dialog, which ->
+                        startActivityForResult(takePicture, 1)
+                    }
+                    .setPositiveButton("Choose Gallery") { dialog, which ->
+                        startActivityForResult(choosePicture, 1)
+                    }
+                    .show()
+            } catch (e: ActivityNotFoundException) {
+
+            }
+            true
+        }
+
         // Testing out tweets
         var tweetList = mutableListOf(
             Tweet(
                 "ABC",
                 "id",
                 "Fuck Republicans and Democrats",
-                "https://www.google.co.jp/images/branding/googlelogo/1x/googlelogo_light_color_272x92dp.png"
+                "https://i.imgur.com/DvpvklR.png"
+            ),
+            Tweet(
+                "ABC",
+                "id",
+                "Fuck Republicans and Democrats",
+                "https://i.stack.imgur.com/DLadx.png"
+            ),
+            Tweet(
+                "ABC",
+                "id",
+                "Fuck Republicans and Democrats",
+                "https://i.imgur.com/DvpvklR.png"
             ),
             Tweet("1223", "nothaId", "Same Bruh", null)
         )
