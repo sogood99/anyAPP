@@ -89,7 +89,7 @@
             app:layout_constraintBottom_toTopOf="@id/styleBlock">
 
             <Button
-                android:id="@+id/elevatedButton"
+                android:id="@+id/choosePhotoBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/extreme_light_blue"
