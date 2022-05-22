@@ -1,9 +1,14 @@
 package com.example.anyapp
 
+import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.MediaController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.anyapp.databinding.ItemTweetBinding
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
 import com.squareup.picasso.Picasso
 
 class TweetAdapter(
@@ -36,6 +41,20 @@ class TweetAdapter(
                 }
             }
 
+            if (tweets[position].videoContent != null) {
+                val url = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                val player = ExoPlayer.Builder(videoContent.context).build()
+                videoContent.player = player
+                val mediaItem = MediaItem.fromUri(url);
+                player.setMediaItem(mediaItem);
+                player.prepare();
+                player.play();
+            } else {
+                val parent: ViewGroup? = videoContent as? ViewGroup
+                parent?.let {
+                    parent.removeView(videoContent)
+                }
+            }
         }
     }
 
