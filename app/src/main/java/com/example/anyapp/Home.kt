@@ -83,21 +83,24 @@ class Home : AppCompatActivity() {
                 "ABC",
                 "id",
                 "Fuck Republicans and Democrats",
-                "https://i.imgur.com/DvpvklR.png"
+                "https://i.imgur.com/DvpvklR.png",
+                "a"
             ),
             Tweet(
                 "ABC",
                 "id",
                 "Fuck Republicans and Democrats",
-                "https://i.stack.imgur.com/DLadx.png"
+                "https://i.stack.imgur.com/DLadx.png",
+                "b"
             ),
             Tweet(
                 "ABC",
                 "id",
                 "Fuck Republicans and Democrats",
-                "https://i.imgur.com/DvpvklR.png"
+                "https://i.imgur.com/DvpvklR.png",
+                null
             ),
-            Tweet("1223", "nothaId", "Same Bruh", null)
+            Tweet("1223", "nothaId", "Same Bruh", null, null)
         )
         val adapter = TweetAdapter(tweetList)
         binding.homeTweets.adapter = adapter
@@ -107,7 +110,7 @@ class Home : AppCompatActivity() {
         // For selecting the Home
         binding.homeButton.setOnClickListener { button ->
             val title = "New One Bites the Dusto"
-            val tweet = Tweet("1223", "nothaId", "Same Bruh", null)
+            val tweet = Tweet("1223", "nothaId", "Same Bruh", null, null)
             tweetList.add(tweet)
             adapter.notifyItemInserted(tweetList.size)
             true
