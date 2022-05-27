@@ -47,4 +47,5 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'com.squareup.picasso:picasso:2.8'
     implementation 'com.google.android.exoplayer:exoplayer:2.17.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 }

@@ -2,17 +2,38 @@ package com.example.anyapp
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.ActivityHomeBinding
+import com.example.anyapp.util.Constants.Companion.BASE_URL
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import java.io.File
 
 class Home : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
+    private val retrofit = Retrofit.Builder().baseUrl(BASE_URL).build()
+    private val tweetApi: TweetApi = retrofit.create(TweetApi::class.java)
+
+    private val TAKE_PICTURE_CODE = 1
+    private var takeImageFile: File? = null
+    private val CHOOSE_GALLERY_CODE = 2
+    private var chooseImageFile: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,10 +73,13 @@ class Home : AppCompatActivity() {
 
         // for choosing new button
         binding.choosePhotoBtn.setOnClickListener { button ->
+            // take picture intent
             val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+
+            // choose picture intent
             val choosePicture = Intent(
                 Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             )
             try {
                 MaterialAlertDialogBuilder(
@@ -65,10 +89,24 @@ class Home : AppCompatActivity() {
                     .setTitle("Image")
                     .setMessage("Choose Method")
                     .setNegativeButton("Take Picture") { dialog, which ->
-                        startActivityForResult(takePicture, 1)
+                        val photoFile = File.createTempFile(
+                            "temp_image",
+                            ".jpg",
+                            getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                        )
+                        val photoURI = FileProvider.getUriForFile(
+                            this,
+                            BuildConfig.APPLICATION_ID + ".provider",
+                            photoFile
+                        )
+                        takePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                        takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        takeImageFile = photoFile
+
+                        startActivityForResult(takePicture, TAKE_PICTURE_CODE)
                     }
                     .setPositiveButton("Choose Gallery") { dialog, which ->
-                        startActivityForResult(choosePicture, 1)
+                        startActivityForResult(choosePicture, CHOOSE_GALLERY_CODE)
                     }
                     .show()
             } catch (e: ActivityNotFoundException) {
@@ -83,7 +121,7 @@ class Home : AppCompatActivity() {
                 "ABC",
                 "id",
                 "Fuck Republicans and Democrats",
-                "https://i.imgur.com/DvpvklR.png",
+                BASE_URL + "/images/test.jpg",
                 "a"
             ),
             Tweet(
@@ -114,6 +152,40 @@ class Home : AppCompatActivity() {
             tweetList.add(tweet)
             adapter.notifyItemInserted(tweetList.size)
             true
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            Log.v("Pity", requestCode.toString())
+            if (requestCode == TAKE_PICTURE_CODE) {
+                // send file to backend
+                takeImageFile?.let {
+                    val requestBody =
+                        RequestBody.create(MediaType.parse("multipart/form-data"), takeImageFile)
+                    val fileToUpload =
+                        MultipartBody.Part.createFormData("image", it.name, requestBody)
+                    val filename = RequestBody.create(MediaType.parse("text/plain"), it.name)
+
+                    val call = tweetApi.tweet(filename, fileToUpload)
+
+                    call.enqueue(object : Callback<ResponseBody> {
+                        override fun onResponse(
+                            call: Call<ResponseBody>,
+                            response: Response<ResponseBody>
+                        ) {
+                            Log.v("Pity", response.toString())
+                        }
+
+                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                            Log.v("Pity", t.toString())
+                        }
+                    }
+                    )
+                }
+
+            }
         }
     }
 }
