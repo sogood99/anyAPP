@@ -1,10 +1,7 @@
 package com.example.anyapp
 
-import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.MediaController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.anyapp.databinding.ItemTweetBinding
 import com.google.android.exoplayer2.ExoPlayer
@@ -50,7 +47,7 @@ class TweetAdapter(
                 player.prepare();
                 player.play();
             } else {
-                val parent: ViewGroup? = videoContent as? ViewGroup
+                val parent: ViewGroup? = videoContent.parent as? ViewGroup
                 parent?.let {
                     parent.removeView(videoContent)
                 }
