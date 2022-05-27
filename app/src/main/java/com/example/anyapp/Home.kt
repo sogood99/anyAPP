@@ -31,9 +31,8 @@ class Home : AppCompatActivity() {
     private val tweetApi: TweetApi = retrofit.create(TweetApi::class.java)
 
     private val TAKE_PICTURE_CODE = 1
-    private var takeImageFile: File? = null
     private val CHOOSE_GALLERY_CODE = 2
-    private var chooseImageFile: Uri? = null
+    private var imageFile: File? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,7 +100,7 @@ class Home : AppCompatActivity() {
                         )
                         takePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                         takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                        takeImageFile = photoFile
+                        imageFile = photoFile
 
                         startActivityForResult(takePicture, TAKE_PICTURE_CODE)
                     }
@@ -161,9 +160,9 @@ class Home : AppCompatActivity() {
             Log.v("Pity", requestCode.toString())
             if (requestCode == TAKE_PICTURE_CODE) {
                 // send file to backend
-                takeImageFile?.let {
+                imageFile?.let {
                     val requestBody =
-                        RequestBody.create(MediaType.parse("multipart/form-data"), takeImageFile)
+                        RequestBody.create(MediaType.parse("multipart/form-data"), it)
                     val fileToUpload =
                         MultipartBody.Part.createFormData("image", it.name, requestBody)
                     val filename = RequestBody.create(MediaType.parse("text/plain"), it.name)
@@ -184,6 +183,7 @@ class Home : AppCompatActivity() {
                     }
                     )
                 }
+            } else if (requestCode == CHOOSE_GALLERY_CODE) {
 
             }
         }
