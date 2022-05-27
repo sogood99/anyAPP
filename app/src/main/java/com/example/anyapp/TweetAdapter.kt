@@ -39,7 +39,8 @@ class TweetAdapter(
             }
 
             if (tweets[position].videoContent != null) {
-                val url = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                val url =
+                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
                 val player = ExoPlayer.Builder(videoContent.context).build()
                 videoContent.player = player
                 val mediaItem = MediaItem.fromUri(url);

@@ -2,17 +2,25 @@ package com.example.anyapp
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.anyapp.databinding.ActivityHomeBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.io.File
 
 class Home : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
+    private val TAKE_PICTURE_CODE = 1
+    private var takeImageUri: Uri? = null
+    private val CHOOSE_GALLERY_CODE = 2
+    private var chooseImageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,10 +60,13 @@ class Home : AppCompatActivity() {
 
         // for choosing new button
         binding.choosePhotoBtn.setOnClickListener { button ->
+            // take picture intent
             val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+
+            // choose picture intent
             val choosePicture = Intent(
                 Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             )
             try {
                 MaterialAlertDialogBuilder(
@@ -65,10 +76,24 @@ class Home : AppCompatActivity() {
                     .setTitle("Image")
                     .setMessage("Choose Method")
                     .setNegativeButton("Take Picture") { dialog, which ->
-                        startActivityForResult(takePicture, 1)
+                        val photoFile = File.createTempFile(
+                            "temp_image",
+                            ".jpg",
+                            getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                        )
+                        val photoURI = FileProvider.getUriForFile(
+                            this,
+                            BuildConfig.APPLICATION_ID + ".provider",
+                            photoFile
+                        )
+                        takePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                        takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        takeImageUri = photoURI
+
+                        startActivityForResult(takePicture, TAKE_PICTURE_CODE)
                     }
                     .setPositiveButton("Choose Gallery") { dialog, which ->
-                        startActivityForResult(choosePicture, 1)
+                        startActivityForResult(choosePicture, CHOOSE_GALLERY_CODE)
                     }
                     .show()
             } catch (e: ActivityNotFoundException) {
@@ -114,6 +139,16 @@ class Home : AppCompatActivity() {
             tweetList.add(tweet)
             adapter.notifyItemInserted(tweetList.size)
             true
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            Log.v("Pity", requestCode.toString())
+            if (requestCode == TAKE_PICTURE_CODE) {
+                Log.v("Pity", data.toString())
+            }
         }
     }
 }
