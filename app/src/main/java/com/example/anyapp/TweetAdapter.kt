@@ -30,8 +30,10 @@ class TweetAdapter(
             textContent.text = tweets[position].textContent
 
             if (tweets[position].imageContent != null) {
+                // load image if tweet.imageContent has content
                 Picasso.get().load(tweets[position].imageContent).into(imageContent);
             } else {
+                // otherwise delete it
                 val parent: ViewGroup? = imageContent.parent as? ViewGroup
                 parent?.let {
                     parent.removeView(imageContent)
@@ -39,6 +41,7 @@ class TweetAdapter(
             }
 
             if (tweets[position].videoContent != null) {
+                // same as image
                 val url = tweets[position].videoContent
                 url?.let {
                     val player = ExoPlayer.Builder(videoContent.context).build()
