@@ -2,7 +2,6 @@ package com.example.anyapp
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
@@ -10,10 +9,10 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import androidx.core.content.FileProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.ActivityHomeBinding
 import com.example.anyapp.util.Constants.Companion.BASE_URL
+import com.example.anyapp.util.FeedType
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -31,9 +30,8 @@ class Home : AppCompatActivity() {
     private val tweetApi: TweetApi = retrofit.create(TweetApi::class.java)
 
     private val TAKE_PICTURE_CODE = 1
-    private var takeImageFile: File? = null
     private val CHOOSE_GALLERY_CODE = 2
-    private var chooseImageFile: Uri? = null
+    private var imageFile: File? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +40,13 @@ class Home : AppCompatActivity() {
         // Create binding to activity_home
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // put in feed fragment
+        val feedFragment = FeedFragment.newInstance(FeedType.Popular)
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.feedFrameLayout, feedFragment)
+            commit()
+        }
 
         // For selecting the Menu Items
         binding.homeToolbar.setOnMenuItemClickListener { menuItem ->
@@ -101,7 +106,7 @@ class Home : AppCompatActivity() {
                         )
                         takePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                         takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                        takeImageFile = photoFile
+                        imageFile = photoFile
 
                         startActivityForResult(takePicture, TAKE_PICTURE_CODE)
                     }
@@ -115,42 +120,11 @@ class Home : AppCompatActivity() {
             true
         }
 
-        // Testing out tweets
-        var tweetList = mutableListOf(
-            Tweet(
-                "ABC",
-                "id",
-                "Fuck Republicans and Democrats",
-                BASE_URL + "/images/test.jpg",
-                "a"
-            ),
-            Tweet(
-                "ABC",
-                "id",
-                "Fuck Republicans and Democrats",
-                "https://i.stack.imgur.com/DLadx.png",
-                "b"
-            ),
-            Tweet(
-                "ABC",
-                "id",
-                "Fuck Republicans and Democrats",
-                "https://i.imgur.com/DvpvklR.png",
-                null
-            ),
-            Tweet("1223", "nothaId", "Same Bruh", null, null)
-        )
-        val adapter = TweetAdapter(tweetList)
-        binding.homeTweets.adapter = adapter
-        binding.homeTweets.layoutManager = LinearLayoutManager(this)
-
-
         // For selecting the Home
         binding.homeButton.setOnClickListener { button ->
-            val title = "New One Bites the Dusto"
-            val tweet = Tweet("1223", "nothaId", "Same Bruh", null, null)
-            tweetList.add(tweet)
-            adapter.notifyItemInserted(tweetList.size)
+//            val tweet = Tweet("1223", "nothaId", "Same Bruh", null, null)
+//            tweetList.add(tweet)
+//            adapter.notifyItemInserted(tweetList.size)
             true
         }
     }
@@ -161,9 +135,9 @@ class Home : AppCompatActivity() {
             Log.v("Pity", requestCode.toString())
             if (requestCode == TAKE_PICTURE_CODE) {
                 // send file to backend
-                takeImageFile?.let {
+                imageFile?.let {
                     val requestBody =
-                        RequestBody.create(MediaType.parse("multipart/form-data"), takeImageFile)
+                        RequestBody.create(MediaType.parse("multipart/form-data"), it)
                     val fileToUpload =
                         MultipartBody.Part.createFormData("image", it.name, requestBody)
                     val filename = RequestBody.create(MediaType.parse("text/plain"), it.name)
@@ -184,6 +158,7 @@ class Home : AppCompatActivity() {
                     }
                     )
                 }
+            } else if (requestCode == CHOOSE_GALLERY_CODE) {
 
             }
         }
