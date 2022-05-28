@@ -9,10 +9,10 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import androidx.core.content.FileProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.ActivityHomeBinding
 import com.example.anyapp.util.Constants.Companion.BASE_URL
+import com.example.anyapp.util.FeedType
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -40,6 +40,13 @@ class Home : AppCompatActivity() {
         // Create binding to activity_home
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // put in feed fragment
+        val feedFragment = FeedFragment.newInstance(FeedType.Popular)
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.feedFrameLayout, feedFragment)
+            commit()
+        }
 
         // For selecting the Menu Items
         binding.homeToolbar.setOnMenuItemClickListener { menuItem ->
@@ -113,42 +120,11 @@ class Home : AppCompatActivity() {
             true
         }
 
-        // Testing out tweets
-        var tweetList = mutableListOf(
-            Tweet(
-                "ABC",
-                "id",
-                "Fuck Republicans and Democrats",
-                BASE_URL + "/image/test.jpg",
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
-            ),
-            Tweet(
-                "ABC",
-                "id",
-                "Fuck Republicans and Democrats",
-                "https://i.stack.imgur.com/DLadx.png",
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
-            ),
-            Tweet(
-                "ABC",
-                "id",
-                "Fuck Republicans and Democrats",
-                "https://i.imgur.com/DvpvklR.png",
-                null
-            ),
-            Tweet("1223", "nothaId", "Same Bruh", null, null)
-        )
-        val adapter = TweetAdapter(tweetList)
-        binding.homeTweets.adapter = adapter
-        binding.homeTweets.layoutManager = LinearLayoutManager(this)
-
-
         // For selecting the Home
         binding.homeButton.setOnClickListener { button ->
-            val title = "New One Bites the Dusto"
-            val tweet = Tweet("1223", "nothaId", "Same Bruh", null, null)
-            tweetList.add(tweet)
-            adapter.notifyItemInserted(tweetList.size)
+//            val tweet = Tweet("1223", "nothaId", "Same Bruh", null, null)
+//            tweetList.add(tweet)
+//            adapter.notifyItemInserted(tweetList.size)
             true
         }
     }
