@@ -39,14 +39,15 @@ class TweetAdapter(
             }
 
             if (tweets[position].videoContent != null) {
-                val url =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-                val player = ExoPlayer.Builder(videoContent.context).build()
-                videoContent.player = player
-                val mediaItem = MediaItem.fromUri(url);
-                player.setMediaItem(mediaItem);
-                player.prepare();
-                player.play();
+                val url = tweets[position].videoContent
+                url?.let {
+                    val player = ExoPlayer.Builder(videoContent.context).build()
+                    videoContent.player = player
+                    val mediaItem = MediaItem.fromUri(it)
+                    player.setMediaItem(mediaItem)
+                    player.prepare()
+//                    player.play()
+                }
             } else {
                 val parent: ViewGroup? = videoContent.parent as? ViewGroup
                 parent?.let {

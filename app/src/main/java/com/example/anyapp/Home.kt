@@ -2,7 +2,6 @@ package com.example.anyapp
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
@@ -120,15 +119,15 @@ class Home : AppCompatActivity() {
                 "ABC",
                 "id",
                 "Fuck Republicans and Democrats",
-                BASE_URL + "/images/test.jpg",
-                "a"
+                BASE_URL + "/image/test.jpg",
+                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
             ),
             Tweet(
                 "ABC",
                 "id",
                 "Fuck Republicans and Democrats",
                 "https://i.stack.imgur.com/DLadx.png",
-                "b"
+                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
             ),
             Tweet(
                 "ABC",
