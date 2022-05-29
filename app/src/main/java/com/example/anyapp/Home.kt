@@ -10,7 +10,6 @@ import android.util.Log
 import android.view.View
 import androidx.core.content.FileProvider
 import com.example.anyapp.api.TweetApi
-import com.example.anyapp.api.TweetResponse
 import com.example.anyapp.databinding.ActivityHomeBinding
 import com.example.anyapp.util.Constants.Companion.BASE_URL
 import com.example.anyapp.util.Constants.Companion.USER_TOKEN
@@ -154,16 +153,17 @@ class Home : AppCompatActivity() {
                         fileToUpload
                     )
 
-                    call.enqueue(object : Callback<TweetResponse> {
+                    call.enqueue(object : Callback<Tweet> {
                         override fun onResponse(
-                            call: Call<TweetResponse>,
-                            response: Response<TweetResponse>
+                            call: Call<Tweet>,
+                            response: Response<Tweet>
                         ) {
                             Log.v("Pity", response.toString())
                             Log.v("Pity", response.body().toString())
+                            response.body()?.videoUrl?.let { it1 -> Log.v("Pity", it1) }
                         }
 
-                        override fun onFailure(call: Call<TweetResponse>, t: Throwable) {
+                        override fun onFailure(call: Call<Tweet>, t: Throwable) {
                             Log.v("Pity", t.toString())
                         }
 

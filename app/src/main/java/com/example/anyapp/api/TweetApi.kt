@@ -1,14 +1,10 @@
 package com.example.anyapp.api
 
+import com.example.anyapp.Tweet
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
-
-data class TweetResponse(
-    val id: Int,
-    val user: Int,
-)
 
 interface TweetApi {
     @Multipart
@@ -17,5 +13,8 @@ interface TweetApi {
         @Header("Authorization") token: String,
         @Part("text") text: RequestBody,
         @Part imageFile: MultipartBody.Part,
-    ): Call<TweetResponse>
+    ): Call<Tweet>
+
+    @GET("api/tweet/feed/")
+    fun getFeed(): Call<List<Tweet>>
 }

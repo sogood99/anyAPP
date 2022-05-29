@@ -1,14 +1,21 @@
 package com.example.anyapp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.FragmentFeedBinding
 import com.example.anyapp.util.Constants
 import com.example.anyapp.util.FeedType
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 private const val OPTION_PARAM = "option"
 
@@ -20,7 +27,15 @@ private const val OPTION_PARAM = "option"
 class FeedFragment : Fragment() {
     private var option: FeedType? = null
 
+    // databinding
     private lateinit var binding: FragmentFeedBinding
+
+    // for accessing backend api using retrofit
+    private val retrofit = Retrofit
+        .Builder().addConverterFactory(GsonConverterFactory.create())
+        .baseUrl(Constants.BASE_URL)
+        .build()
+    private val tweetApi: TweetApi = retrofit.create(TweetApi::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,37 +55,23 @@ class FeedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Testing out tweets
-        var tweetList = mutableListOf(
-            Tweet(
-                1,
-                "ABC",
-                "id",
-                "Fuck Republicans and Democrats",
-                Constants.BASE_URL + "/image/test.jpg",
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
-            ),
-            Tweet(
-                2,
-                "ABC",
-                "id",
-                "Fuck Republicans and Democrats",
-                "https://i.stack.imgur.com/DLadx.png",
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
-            ),
-            Tweet(
-                3,
-                "ABC",
-                "id",
-                "Fuck Republicans and Democrats",
-                "https://i.imgur.com/DvpvklR.png",
-                null
-            ),
-            Tweet(4,"1223", "nothaId", "Same Bruh", null, null)
-        )
-        val adapter = TweetAdapter(tweetList)
-        binding.homeTweets.adapter = adapter
-        binding.homeTweets.layoutManager = LinearLayoutManager(this.context)
+        val call = tweetApi.getFeed()
+        call.enqueue(object: Callback<List<Tweet>>{
+            override fun onResponse(call: Call<List<Tweet>>, response: Response<List<Tweet>>) {
+                val tweetList = response.body()
+                tweetList?.let {
+                    val adapter = TweetAdapter(it)
+                    binding.homeTweets.adapter = adapter
+                    binding.homeTweets.layoutManager = LinearLayoutManager(view.context)
+                }
+            }
+
+            override fun onFailure(call: Call<List<Tweet>>, t: Throwable) {
+                Log.v("Pity", t.toString())
+            }
+
+        })
+
     }
 
     companion object {

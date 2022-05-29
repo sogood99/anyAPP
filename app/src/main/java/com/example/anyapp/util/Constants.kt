@@ -19,7 +19,7 @@ data class LoginResponse(
 
 class Constants {
     companion object {
-        var USER_TOKEN = "Token a581f421c98d0a657e7f6580bf4f5708cfb34624"
+        var USER_TOKEN = "Token 4e3fcbc5125e1fc54a2a22cd6004fa88a8d8d4b4"
         const val BASE_URL = "http://10.0.2.2:8000"
     }
 }
