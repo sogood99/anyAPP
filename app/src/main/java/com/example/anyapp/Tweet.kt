@@ -1,10 +1,12 @@
 package com.example.anyapp
 
 data class Tweet(
-    // check issue for documentation
+    val tweetId: Int,
+    val userId: Int,
     val username: String,
-    val userID: String,
-    val textContent: String,
-    val imageContent: String?,
-    val videoContent: String?,
+    val text: String,
+    val imageUrl: String?,
+    val videoUrl: String?,
+    val repliesId: Int,
+    val createDate: String,
 )

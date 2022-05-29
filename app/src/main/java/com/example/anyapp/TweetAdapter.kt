@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.anyapp.databinding.ItemTweetBinding
+import com.example.anyapp.util.Constants.Companion.BASE_URL
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.squareup.picasso.Picasso
@@ -26,12 +27,13 @@ class TweetAdapter(
         // how the tweet.kt data class is synced with item_tweet
         holder.binding.apply {
             username.text = tweets[position].username
-            userID.text = "@" + tweets[position].userID
-            textContent.text = tweets[position].textContent
+            userID.text = "@" + tweets[position].username
+            textContent.text = tweets[position].text
 
-            if (tweets[position].imageContent != null) {
+            if (tweets[position].imageUrl != null) {
                 // load image if tweet.imageContent has content
-                Picasso.get().load(tweets[position].imageContent).into(imageContent);
+                val url = BASE_URL + "/" + tweets[position].imageUrl
+                Picasso.get().load(url).into(imageContent);
             } else {
                 // otherwise delete it
                 val parent: ViewGroup? = imageContent.parent as? ViewGroup
@@ -40,9 +42,9 @@ class TweetAdapter(
                 }
             }
 
-            if (tweets[position].videoContent != null) {
+            if (tweets[position].videoUrl != null) {
                 // same as image
-                val url = tweets[position].videoContent
+                val url = BASE_URL + "/" + tweets[position].videoUrl
                 url?.let {
                     val player = ExoPlayer.Builder(videoContent.context).build()
                     videoContent.player = player
