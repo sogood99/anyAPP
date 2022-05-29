@@ -1,7 +1,6 @@
 package com.example.anyapp
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -40,11 +39,11 @@ class FeedFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.v("Pity", option.toString())
 
         // Testing out tweets
         var tweetList = mutableListOf(
             Tweet(
+                1,
                 "ABC",
                 "id",
                 "Fuck Republicans and Democrats",
@@ -52,6 +51,7 @@ class FeedFragment : Fragment() {
                 "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
             ),
             Tweet(
+                2,
                 "ABC",
                 "id",
                 "Fuck Republicans and Democrats",
@@ -59,13 +59,14 @@ class FeedFragment : Fragment() {
                 "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
             ),
             Tweet(
+                3,
                 "ABC",
                 "id",
                 "Fuck Republicans and Democrats",
                 "https://i.imgur.com/DvpvklR.png",
                 null
             ),
-            Tweet("1223", "nothaId", "Same Bruh", null, null)
+            Tweet(4,"1223", "nothaId", "Same Bruh", null, null)
         )
         val adapter = TweetAdapter(tweetList)
         binding.homeTweets.adapter = adapter

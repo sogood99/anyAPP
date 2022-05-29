@@ -30,9 +30,6 @@
             </intent-filter>
 
         </activity>
-        <activity
-            android:name=".Profile"
-            android:exported="false" />
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
