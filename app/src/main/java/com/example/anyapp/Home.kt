@@ -9,6 +9,9 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import androidx.core.content.FileProvider
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.ActivityHomeBinding
 import com.example.anyapp.util.Constants.Companion.BASE_URL
@@ -46,11 +49,25 @@ class Home : AppCompatActivity() {
         setContentView(binding.root)
 
         // put in feed fragment
-        val feedFragment = FeedFragment.newInstance(FeedType.Popular)
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.feedFrameLayout, feedFragment)
-            commit()
+        val pagerAdapter = BottomNavPagerAdapter(this)
+        binding.fragPager.adapter = pagerAdapter
+
+        binding.botNavBar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.navHome -> {
+                    binding.fragPager.currentItem = 0
+                    true
+                }
+                R.id.navProfile -> {
+                    binding.fragPager.currentItem = 1
+                    true
+                }
+                else -> {
+                    false
+                }
+            }
         }
+
 
         // For selecting the Menu Items
         binding.homeToolbar.setOnMenuItemClickListener { menuItem ->
@@ -171,6 +188,23 @@ class Home : AppCompatActivity() {
                 }
             } else if (requestCode == CHOOSE_GALLERY_CODE) {
 
+            }
+        }
+    }
+
+    private inner class BottomNavPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
+        private val NUM_PAGES = 2
+
+        override fun getItemCount(): Int {
+            return NUM_PAGES
+        }
+
+        override fun createFragment(position: Int): Fragment {
+            Log.v("Pity", position.toString())
+            return if (position == 0) {
+                FeedFragment.newInstance(FeedType.Popular)
+            } else {
+                ProfileFragment.newInstance(0)
             }
         }
     }

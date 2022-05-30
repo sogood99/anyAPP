@@ -47,16 +47,20 @@ class FeedFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentFeedBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        getFeed(view)
+    }
 
+    private fun getFeed(view: View) {
+        // get the data from backend
         val call = tweetApi.getFeed()
-        call.enqueue(object: Callback<List<Tweet>>{
+        call.enqueue(object : Callback<List<Tweet>> {
             override fun onResponse(call: Call<List<Tweet>>, response: Response<List<Tweet>>) {
                 val tweetList = response.body()
                 tweetList?.let {
@@ -69,9 +73,7 @@ class FeedFragment : Fragment() {
             override fun onFailure(call: Call<List<Tweet>>, t: Throwable) {
                 Log.v("Pity", t.toString())
             }
-
         })
-
     }
 
     companion object {
