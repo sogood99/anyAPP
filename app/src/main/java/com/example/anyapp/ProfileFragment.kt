@@ -75,9 +75,9 @@ class ProfileFragment : Fragment() {
                     binding.apply {
                         profileNickname.text = it.profileName
                         profileUsername.text = it.username
-                        if (it.profileInfo == null){
+                        if (it.profileInfo == null) {
                             profileInfo.text = "Still New."
-                        }else{
+                        } else {
                             profileInfo.text = it.profileInfo
                         }
                         profileCreatedDate.text = it.createDate

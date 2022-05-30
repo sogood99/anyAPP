@@ -5,7 +5,6 @@ enum class FeedType {
     Popular, Following, Profile, Notifications
 }
 
-
 class Constants {
     companion object {
         var USER_TOKEN = "Token cb8bfb36c9f35898284afbb2f38636d1035aff4a"

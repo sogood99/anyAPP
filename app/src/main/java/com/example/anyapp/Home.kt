@@ -90,6 +90,52 @@ class Home : AppCompatActivity() {
             true
         }
 
+        setupTweet()
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            if (requestCode == TAKE_PICTURE_CODE) {
+                // send file to backend
+                imageFile?.let {
+                    val requestBody =
+                        RequestBody.create(MediaType.parse("multipart/form-data"), it)
+                    val fileToUpload =
+                        MultipartBody.Part.createFormData("image", it.name, requestBody)
+//                    val filename = RequestBody.create(MediaType.parse("text/plain"), it.name)
+                    val username = RequestBody.create(MediaType.parse("text/plain"), "abc")
+
+                    val call = tweetApi.tweet(
+                        USER_TOKEN,
+                        username,
+                        fileToUpload
+                    )
+
+                    call.enqueue(object : Callback<Tweet> {
+                        override fun onResponse(
+                            call: Call<Tweet>,
+                            response: Response<Tweet>
+                        ) {
+                            Log.v("Pity", response.toString())
+                            Log.v("Pity", response.body().toString())
+                            response.body()?.videoUrl?.let { it1 -> Log.v("Pity", it1) }
+                        }
+
+                        override fun onFailure(call: Call<Tweet>, t: Throwable) {
+                            Log.v("Pity", t.toString())
+                        }
+
+                    })
+                }
+            } else if (requestCode == CHOOSE_GALLERY_CODE) {
+
+            }
+        }
+    }
+
+    private fun setupTweet() {
         // for creating new tweets
         binding.newTweetButton.setOnClickListener { button ->
             binding.newTweetButton.visibility = View.GONE
@@ -139,56 +185,6 @@ class Home : AppCompatActivity() {
 
             }
             true
-        }
-
-        // For selecting the Home
-        binding.homeButton.setOnClickListener { button ->
-//            val tweet = Tweet("1223", "nothaId", "Same Bruh", null, null)
-//            tweetList.add(tweet)
-//            adapter.notifyItemInserted(tweetList.size)
-            true
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK) {
-            Log.v("Pity", requestCode.toString())
-            if (requestCode == TAKE_PICTURE_CODE) {
-                // send file to backend
-                imageFile?.let {
-                    val requestBody =
-                        RequestBody.create(MediaType.parse("multipart/form-data"), it)
-                    val fileToUpload =
-                        MultipartBody.Part.createFormData("image", it.name, requestBody)
-//                    val filename = RequestBody.create(MediaType.parse("text/plain"), it.name)
-                    val username = RequestBody.create(MediaType.parse("text/plain"), "abc")
-
-                    val call = tweetApi.tweet(
-                        USER_TOKEN,
-                        username,
-                        fileToUpload
-                    )
-
-                    call.enqueue(object : Callback<Tweet> {
-                        override fun onResponse(
-                            call: Call<Tweet>,
-                            response: Response<Tweet>
-                        ) {
-                            Log.v("Pity", response.toString())
-                            Log.v("Pity", response.body().toString())
-                            response.body()?.videoUrl?.let { it1 -> Log.v("Pity", it1) }
-                        }
-
-                        override fun onFailure(call: Call<Tweet>, t: Throwable) {
-                            Log.v("Pity", t.toString())
-                        }
-
-                    })
-                }
-            } else if (requestCode == CHOOSE_GALLERY_CODE) {
-
-            }
         }
     }
 
