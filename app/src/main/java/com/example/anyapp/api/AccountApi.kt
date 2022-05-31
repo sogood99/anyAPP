@@ -2,11 +2,9 @@ package com.example.anyapp.api
 
 import com.example.anyapp.util.CreateUserResponse
 import com.example.anyapp.util.LoginResponse
+import com.example.anyapp.util.ProfileResponse
 import retrofit2.Call
-import retrofit2.http.Field
-import retrofit2.http.Header
-import retrofit2.http.POST
-import retrofit2.http.Part
+import retrofit2.http.*
 
 interface AccountApi {
     @POST("api/user/create/")
@@ -22,8 +20,8 @@ interface AccountApi {
         @Part("password") password: String,
     ): Call<LoginResponse>
 
-    @POST("api/user/profile")
+    @GET("api/user/profile/")
     fun getProfile(
         @Header("Authorization") authorization: String,
-    )
+    ): Call<ProfileResponse>
 }

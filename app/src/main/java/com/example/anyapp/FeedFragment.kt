@@ -29,6 +29,7 @@ class FeedFragment : Fragment() {
 
     // databinding
     private lateinit var binding: FragmentFeedBinding
+    private lateinit var adapter: TweetAdapter
 
     // for accessing backend api using retrofit
     private val retrofit = Retrofit
@@ -47,7 +48,7 @@ class FeedFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentFeedBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -55,12 +56,29 @@ class FeedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // initializer adapter
+        adapter = TweetAdapter(listOf())
+
+        // get feed from backend
+        getFeed(view)
+
+        // set onrefreshlistener
+        binding.feedSwipeRefreshLayout.setOnRefreshListener {
+            getFeed(view)
+            binding.feedSwipeRefreshLayout.isRefreshing = false
+        }
+    }
+
+    private fun getFeed(view: View) {
+        // get the data from backend
         val call = tweetApi.getFeed()
-        call.enqueue(object: Callback<List<Tweet>>{
+        call.enqueue(object : Callback<List<Tweet>> {
             override fun onResponse(call: Call<List<Tweet>>, response: Response<List<Tweet>>) {
                 val tweetList = response.body()
                 tweetList?.let {
-                    val adapter = TweetAdapter(it)
+                    adapter.tweets = it
+                    adapter.notifyDataSetChanged()
+
                     binding.homeTweets.adapter = adapter
                     binding.homeTweets.layoutManager = LinearLayoutManager(view.context)
                 }
@@ -69,9 +87,7 @@ class FeedFragment : Fragment() {
             override fun onFailure(call: Call<List<Tweet>>, t: Throwable) {
                 Log.v("Pity", t.toString())
             }
-
         })
-
     }
 
     companion object {

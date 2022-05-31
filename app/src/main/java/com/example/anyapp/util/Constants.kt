@@ -5,21 +5,9 @@ enum class FeedType {
     Popular, Following, Profile, Notifications
 }
 
-// Retro2 Api Response Data Classes
-data class CreateUserResponse(
-    val id: Int,
-    val username: String,
-    val email: String,
-    val token: String,
-)
-
-data class LoginResponse(
-    val token: String,
-)
-
 class Constants {
     companion object {
-        var USER_TOKEN = "Token 4e3fcbc5125e1fc54a2a22cd6004fa88a8d8d4b4"
+        var USER_TOKEN = "Token cb8bfb36c9f35898284afbb2f38636d1035aff4a"
         const val BASE_URL = "http://10.0.2.2:8000"
     }
 }

@@ -35,8 +35,8 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <FrameLayout
-        android:id="@+id/feedFrameLayout"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/fragPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/botCoordLayout"
@@ -52,6 +52,7 @@
         app:layout_constraintBottom_toBottomOf="@id/botCoordLayout">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/sendTweetButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_tweet_icon"
@@ -102,8 +103,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/botCoordLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -2,13 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/home"
+        android:id="@+id/navHome"
         android:enabled="true"
         android:icon="@drawable/ic_home_icon"
         android:title="Home"
         app:showAsAction="always" />
     <item
-        android:id="@+id/user"
+        android:id="@+id/navProfile"
         android:enabled="true"
         android:icon="@drawable/ic_user_icon"
         android:title="User"

@@ -12,7 +12,7 @@ interface TweetApi {
     fun tweet(
         @Header("Authorization") token: String,
         @Part("text") text: RequestBody,
-        @Part imageFile: MultipartBody.Part,
+        @Part imageFile: MultipartBody.Part?,
     ): Call<Tweet>
 
     @GET("api/tweet/feed/")
