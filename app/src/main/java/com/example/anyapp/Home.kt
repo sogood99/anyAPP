@@ -3,7 +3,6 @@ package com.example.anyapp
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
@@ -41,8 +40,6 @@ class Home : AppCompatActivity() {
         .build()
     private val tweetApi: TweetApi = retrofit.create(TweetApi::class.java)
 
-    private val TAKE_PICTURE_CODE = 1
-    private val CHOOSE_GALLERY_CODE = 2
     private var imageFile: File? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -181,7 +178,6 @@ class Home : AppCompatActivity() {
                 RequestBody.create(MediaType.parse("multipart/form-data"), it)
             val fileToUpload =
                 MultipartBody.Part.createFormData("image", it.name, requestBody)
-//                    val filename = RequestBody.create(MediaType.parse("text/plain"), it.name)
             val username = RequestBody.create(MediaType.parse("text/plain"), "abc")
 
             val call = tweetApi.tweet(
