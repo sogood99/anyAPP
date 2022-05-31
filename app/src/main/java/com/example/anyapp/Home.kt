@@ -107,6 +107,7 @@ class Home : AppCompatActivity() {
             sendTweetButton.setOnClickListener {
                 sendTweet()
                 newTweet.visibility = View.GONE // maybe check if send correctly
+                newTweetButton.visibility = View.VISIBLE
             }
 
             // for choosing new button
@@ -177,37 +178,35 @@ class Home : AppCompatActivity() {
 
     private fun sendTweet() {
         // send file to backend
-        imageFile?.let {
-            val requestBody =
-                RequestBody.create(MediaType.parse("multipart/form-data"), it)
-            val fileToUpload =
-                MultipartBody.Part.createFormData("image", it.name, requestBody)
-            val text = RequestBody.create(
-                MediaType.parse("text/plain"),
-                binding.newTweetTextLayout.editText?.text.toString()
-            )
+        val requestBody =
+            imageFile?.let { RequestBody.create(MediaType.parse("multipart/form-data"), it) }
+        val fileToUpload =
+            requestBody?.let { MultipartBody.Part.createFormData("image", imageFile?.name, it) }
+        val text = RequestBody.create(
+            MediaType.parse("text/plain"),
+            binding.newTweetTextLayout.editText?.text.toString()
+        )
 
-            val call = tweetApi.tweet(
-                USER_TOKEN,
-                text,
-                fileToUpload
-            )
+        val call = tweetApi.tweet(
+            USER_TOKEN,
+            text,
+            fileToUpload
+        )
 
-            call.enqueue(object : Callback<Tweet> {
-                override fun onResponse(
-                    call: Call<Tweet>,
-                    response: Response<Tweet>
-                ) {
-                    Log.v("Pity", response.toString())
-                    Log.v("Pity", response.body().toString())
-                    response.body()?.videoUrl?.let { it1 -> Log.v("Pity", it1) }
-                }
+        call.enqueue(object : Callback<Tweet> {
+            override fun onResponse(
+                call: Call<Tweet>,
+                response: Response<Tweet>
+            ) {
+                Log.v("Pity", response.toString())
+                Log.v("Pity", response.body().toString())
+                response.body()?.videoUrl?.let { it1 -> Log.v("Pity", it1) }
+            }
 
-                override fun onFailure(call: Call<Tweet>, t: Throwable) {
-                    Log.v("Pity", t.toString())
-                }
-            })
-        }
+            override fun onFailure(call: Call<Tweet>, t: Throwable) {
+                Log.v("Pity", t.toString())
+            }
+        })
     }
 
     private inner class BottomNavPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {

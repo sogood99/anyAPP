@@ -29,6 +29,7 @@ class FeedFragment : Fragment() {
 
     // databinding
     private lateinit var binding: FragmentFeedBinding
+    private lateinit var adapter: TweetAdapter
 
     // for accessing backend api using retrofit
     private val retrofit = Retrofit
@@ -54,7 +55,18 @@ class FeedFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // initializer adapter
+        adapter = TweetAdapter(listOf())
+
+        // get feed from backend
         getFeed(view)
+
+        // set onrefreshlistener
+        binding.feedSwipeRefreshLayout.setOnRefreshListener {
+            getFeed(view)
+            binding.feedSwipeRefreshLayout.isRefreshing = false
+        }
     }
 
     private fun getFeed(view: View) {
@@ -64,7 +76,9 @@ class FeedFragment : Fragment() {
             override fun onResponse(call: Call<List<Tweet>>, response: Response<List<Tweet>>) {
                 val tweetList = response.body()
                 tweetList?.let {
-                    val adapter = TweetAdapter(it)
+                    adapter.tweets = it
+                    adapter.notifyDataSetChanged()
+
                     binding.homeTweets.adapter = adapter
                     binding.homeTweets.layoutManager = LinearLayoutManager(view.context)
                 }
