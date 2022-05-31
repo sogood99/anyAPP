@@ -13,7 +13,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.adapter.FragmentViewHolder
+import androidx.viewpager2.widget.ViewPager2
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.ActivityHomeBinding
 import com.example.anyapp.util.Constants.Companion.BASE_URL
@@ -54,6 +57,49 @@ class Home : AppCompatActivity() {
         val pagerAdapter = BottomNavPagerAdapter(this)
         binding.fragPager.adapter = pagerAdapter
 
+
+        // For selecting the Menu Items
+        binding.homeToolbar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.miSearch -> {
+                    Log.v("Pity", "Clicked Search")
+                    true
+                }
+                R.id.miLogout -> {
+                    USER_TOKEN = null
+                    // reset adapter
+                    val adapter = binding.fragPager.adapter
+                    binding.fragPager.adapter = null
+                    binding.fragPager.adapter = adapter
+                    true
+                }
+                else -> true
+            }
+        }
+
+        // For selecting the Home
+        binding.homeButton.setOnClickListener { button ->
+            Log.v("Pity", "Clicked Home Button")
+        }
+
+        // setup tweet button
+        setupTweet()
+
+        // fragPager stuff: page change
+        binding.fragPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+
+                // set the homeButton text when change position
+                if (position == 0) {
+                    binding.homeButton.text = "Home"
+                } else if (position == 1) {
+                    binding.homeButton.text = "Profile"
+                }
+            }
+        })
+
+        // setup botNavBar when clicked
         binding.botNavBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.navHome -> {
@@ -69,31 +115,6 @@ class Home : AppCompatActivity() {
                 }
             }
         }
-
-
-        // For selecting the Menu Items
-        binding.homeToolbar.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.miSearch -> {
-                    Log.v("Pity", "Clicked Search")
-                    true
-                }
-                R.id.miLogout -> {
-                    Log.v("Pity", "Clicked Logout")
-                    true
-                }
-                else -> true
-            }
-        }
-
-        // For selecting the Home
-        binding.homeButton.setOnClickListener { button ->
-            Log.v("Pity", "Clicked Home Button")
-            true
-        }
-
-        setupTweet()
-
     }
 
     private fun setupTweet() {
@@ -177,39 +198,43 @@ class Home : AppCompatActivity() {
         }
 
     private fun sendTweet() {
-        // send file to backend
-        val requestBody =
-            imageFile?.let { RequestBody.create(MediaType.parse("multipart/form-data"), it) }
-        val fileToUpload =
-            requestBody?.let { MultipartBody.Part.createFormData("image", imageFile?.name, it) }
-        val text = RequestBody.create(
-            MediaType.parse("text/plain"),
-            binding.newTweetTextLayout.editText?.text.toString()
-        )
+        USER_TOKEN?.let {
+            // send file to backend
+            val requestBody =
+                imageFile?.let { RequestBody.create(MediaType.parse("multipart/form-data"), it) }
+            val fileToUpload =
+                requestBody?.let { MultipartBody.Part.createFormData("image", imageFile?.name, it) }
+            val text = RequestBody.create(
+                MediaType.parse("text/plain"),
+                binding.newTweetTextLayout.editText?.text.toString()
+            )
 
-        val call = tweetApi.tweet(
-            USER_TOKEN,
-            text,
-            fileToUpload
-        )
+            val call = tweetApi.tweet(
+                it,
+                text,
+                fileToUpload
+            )
 
-        call.enqueue(object : Callback<Tweet> {
-            override fun onResponse(
-                call: Call<Tweet>,
-                response: Response<Tweet>
-            ) {
-                Log.v("Pity", response.toString())
-                Log.v("Pity", response.body().toString())
-                response.body()?.videoUrl?.let { it1 -> Log.v("Pity", it1) }
-            }
+            call.enqueue(object : Callback<Tweet> {
+                override fun onResponse(
+                    call: Call<Tweet>,
+                    response: Response<Tweet>
+                ) {
+                    Log.v("Pity", response.toString())
+                    Log.v("Pity", response.body().toString())
+                    response.body()?.videoUrl?.let { it1 -> Log.v("Pity", it1) }
+                }
 
-            override fun onFailure(call: Call<Tweet>, t: Throwable) {
-                Log.v("Pity", t.toString())
-            }
-        })
+                override fun onFailure(call: Call<Tweet>, t: Throwable) {
+                    Log.v("Pity", t.toString())
+                }
+            })
+        }
     }
 
-    private inner class BottomNavPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
+    private inner class BottomNavPagerAdapter(
+        fa: FragmentActivity,
+    ) : FragmentStateAdapter(fa) {
         private val NUM_PAGES = 2
 
         override fun getItemCount(): Int {
@@ -217,13 +242,12 @@ class Home : AppCompatActivity() {
         }
 
         override fun createFragment(position: Int): Fragment {
-            Log.v("Pity", position.toString())
             return if (position == 0) {
                 FeedFragment.newInstance(FeedType.Popular)
             } else {
                 ProfileFragment.newInstance(0)
             }
         }
-    }
 
+    }
 }
