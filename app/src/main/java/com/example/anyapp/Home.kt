@@ -97,62 +97,67 @@ class Home : AppCompatActivity() {
     }
 
     private fun setupTweet() {
-        // for creating new tweets
-        binding.newTweetButton.setOnClickListener { button ->
-            binding.newTweetButton.visibility = View.GONE
-            binding.newTweet.visibility = View.VISIBLE
-            true
-        }
-
-        // for choosing new button
-        binding.choosePhotoBtn.setOnClickListener { button ->
-            // take picture intent
-            val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-
-            // choose picture intent
-            val choosePicture = Intent(Intent.ACTION_GET_CONTENT)
-            choosePicture.type = "image/*"
-
-            try {
-                val photoFile = File.createTempFile(
-                    "temp_image",
-                    ".jpg",
-                    getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-                )
-                val photoURI = FileProvider.getUriForFile(
-                    this,
-                    BuildConfig.APPLICATION_ID + ".provider",
-                    photoFile
-                )
-                imageFile = photoFile
-
-                MaterialAlertDialogBuilder(
-                    this,
-                    com.google.android.material.R.style.Theme_Material3_Dark_Dialog
-                )
-                    .setTitle("Image")
-                    .setMessage("Choose Method")
-                    .setNegativeButton("Take Picture") { dialog, which ->
-                        takePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                        takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-
-                        takePictureResult.launch(takePicture)
-                    }
-                    .setPositiveButton("Choose Gallery") { dialog, which ->
-                        chooseImageResult.launch(choosePicture)
-                    }
-                    .show()
-            } catch (e: ActivityNotFoundException) {
-
+        binding.apply {
+            // for creating new tweets
+            newTweetButton.setOnClickListener {
+                newTweetButton.visibility = View.GONE
+                newTweet.visibility = View.VISIBLE
             }
-            true
+
+            sendTweetButton.setOnClickListener {
+                sendTweet()
+                newTweet.visibility = View.GONE // maybe check if send correctly
+            }
+
+            // for choosing new button
+            choosePhotoBtn.setOnClickListener {
+                // take picture intent
+                val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+
+                // choose picture intent
+                val choosePicture = Intent(Intent.ACTION_GET_CONTENT)
+                choosePicture.type = "image/*"
+
+                try {
+                    val photoFile = File.createTempFile(
+                        "temp_image",
+                        ".jpg",
+                        getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                    )
+                    val photoURI = FileProvider.getUriForFile(
+                        this.root.context,
+                        BuildConfig.APPLICATION_ID + ".provider",
+                        photoFile
+                    )
+                    imageFile = photoFile
+
+                    MaterialAlertDialogBuilder(
+                        this.root.context,
+                        com.google.android.material.R.style.Theme_Material3_Dark_Dialog
+                    )
+                        .setTitle("Image")
+                        .setMessage("Choose Method")
+                        .setNegativeButton("Take Picture") { dialog, which ->
+                            takePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                            takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                            takePictureResult.launch(takePicture)
+                        }
+                        .setPositiveButton("Choose Gallery") { dialog, which ->
+                            chooseImageResult.launch(choosePicture)
+                        }
+                        .show()
+                } catch (e: ActivityNotFoundException) {
+
+                }
+            }
         }
     }
 
     private val takePictureResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                sendTweet()
+                // do something
             }
         }
 
@@ -167,7 +172,6 @@ class Home : AppCompatActivity() {
                         IOUtils.copy(inputStream, outputStream)
                     }
                 }
-                sendTweet()
             }
         }
 
@@ -178,11 +182,14 @@ class Home : AppCompatActivity() {
                 RequestBody.create(MediaType.parse("multipart/form-data"), it)
             val fileToUpload =
                 MultipartBody.Part.createFormData("image", it.name, requestBody)
-            val username = RequestBody.create(MediaType.parse("text/plain"), "abc")
+            val text = RequestBody.create(
+                MediaType.parse("text/plain"),
+                binding.newTweetTextLayout.editText?.text.toString()
+            )
 
             val call = tweetApi.tweet(
                 USER_TOKEN,
-                username,
+                text,
                 fileToUpload
             )
 

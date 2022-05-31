@@ -52,6 +52,7 @@
         app:layout_constraintBottom_toBottomOf="@id/botCoordLayout">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/sendTweetButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_tweet_icon"
