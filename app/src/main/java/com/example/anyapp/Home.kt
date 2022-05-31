@@ -2,6 +2,7 @@ package com.example.anyapp
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
@@ -21,12 +22,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import org.apache.commons.io.IOUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
+import java.io.FileOutputStream
 
 class Home : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
@@ -94,10 +97,75 @@ class Home : AppCompatActivity() {
 
     }
 
+    private fun setupTweet() {
+        // for creating new tweets
+        binding.newTweetButton.setOnClickListener { button ->
+            binding.newTweetButton.visibility = View.GONE
+            binding.newTweet.visibility = View.VISIBLE
+            true
+        }
+
+        // for choosing new button
+        binding.choosePhotoBtn.setOnClickListener { button ->
+            // take picture intent
+            val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+
+            // choose picture intent
+            val choosePicture = Intent(Intent.ACTION_GET_CONTENT)
+            choosePicture.type = "image/*"
+
+            try {
+                val photoFile = File.createTempFile(
+                    "temp_image",
+                    ".jpg",
+                    getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                )
+                val photoURI = FileProvider.getUriForFile(
+                    this,
+                    BuildConfig.APPLICATION_ID + ".provider",
+                    photoFile
+                )
+                imageFile = photoFile
+
+                MaterialAlertDialogBuilder(
+                    this,
+                    com.google.android.material.R.style.Theme_Material3_Dark_Dialog
+                )
+                    .setTitle("Image")
+                    .setMessage("Choose Method")
+                    .setNegativeButton("Take Picture") { dialog, which ->
+                        takePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                        takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                        startActivityForResult(takePicture, TAKE_PICTURE_CODE)
+                    }
+                    .setPositiveButton("Choose Gallery") { dialog, which ->
+                        startActivityForResult(choosePicture, CHOOSE_GALLERY_CODE)
+                    }
+                    .show()
+            } catch (e: ActivityNotFoundException) {
+
+            }
+            true
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
-            if (requestCode == TAKE_PICTURE_CODE) {
+            if (requestCode == CHOOSE_GALLERY_CODE || requestCode == TAKE_PICTURE_CODE) {
+
+                if (requestCode == CHOOSE_GALLERY_CODE) {
+                    // send the file to temp_file aka imageFile
+                    data?.data?.let {
+                        val inputStream = contentResolver.openInputStream(it)
+                        val outputStream = FileOutputStream(imageFile)
+                        if (inputStream != null) {
+                            IOUtils.copy(inputStream, outputStream)
+                        }
+                    }
+                }
+
                 // send file to backend
                 imageFile?.let {
                     val requestBody =
@@ -129,62 +197,7 @@ class Home : AppCompatActivity() {
 
                     })
                 }
-            } else if (requestCode == CHOOSE_GALLERY_CODE) {
-
             }
-        }
-    }
-
-    private fun setupTweet() {
-        // for creating new tweets
-        binding.newTweetButton.setOnClickListener { button ->
-            binding.newTweetButton.visibility = View.GONE
-            binding.newTweet.visibility = View.VISIBLE
-            true
-        }
-
-        // for choosing new button
-        binding.choosePhotoBtn.setOnClickListener { button ->
-            // take picture intent
-            val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-
-            // choose picture intent
-            val choosePicture = Intent(
-                Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            )
-            try {
-                MaterialAlertDialogBuilder(
-                    this,
-                    com.google.android.material.R.style.Theme_Material3_Dark_Dialog
-                )
-                    .setTitle("Image")
-                    .setMessage("Choose Method")
-                    .setNegativeButton("Take Picture") { dialog, which ->
-                        val photoFile = File.createTempFile(
-                            "temp_image",
-                            ".jpg",
-                            getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-                        )
-                        val photoURI = FileProvider.getUriForFile(
-                            this,
-                            BuildConfig.APPLICATION_ID + ".provider",
-                            photoFile
-                        )
-                        takePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                        takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                        imageFile = photoFile
-
-                        startActivityForResult(takePicture, TAKE_PICTURE_CODE)
-                    }
-                    .setPositiveButton("Choose Gallery") { dialog, which ->
-                        startActivityForResult(choosePicture, CHOOSE_GALLERY_CODE)
-                    }
-                    .show()
-            } catch (e: ActivityNotFoundException) {
-
-            }
-            true
         }
     }
 
@@ -204,4 +217,5 @@ class Home : AppCompatActivity() {
             }
         }
     }
+
 }
