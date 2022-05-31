@@ -1,5 +1,6 @@
 package com.example.anyapp
 
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
@@ -9,6 +10,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -137,10 +139,10 @@ class Home : AppCompatActivity() {
                         takePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                         takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
-                        startActivityForResult(takePicture, TAKE_PICTURE_CODE)
+                        takePictureResult.launch(takePicture)
                     }
                     .setPositiveButton("Choose Gallery") { dialog, which ->
-                        startActivityForResult(choosePicture, CHOOSE_GALLERY_CODE)
+                        chooseImageResult.launch(choosePicture)
                     }
                     .show()
             } catch (e: ActivityNotFoundException) {
@@ -150,54 +152,58 @@ class Home : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK) {
-            if (requestCode == CHOOSE_GALLERY_CODE || requestCode == TAKE_PICTURE_CODE) {
+    private val takePictureResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                sendTweet()
+            }
+        }
 
-                if (requestCode == CHOOSE_GALLERY_CODE) {
-                    // send the file to temp_file aka imageFile
-                    data?.data?.let {
-                        val inputStream = contentResolver.openInputStream(it)
-                        val outputStream = FileOutputStream(imageFile)
-                        if (inputStream != null) {
-                            IOUtils.copy(inputStream, outputStream)
-                        }
+    private val chooseImageResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // send the file to temp_file aka imageFile
+                result.data?.data?.let {
+                    val inputStream = contentResolver.openInputStream(it)
+                    val outputStream = FileOutputStream(imageFile)
+                    if (inputStream != null) {
+                        IOUtils.copy(inputStream, outputStream)
                     }
                 }
-
-                // send file to backend
-                imageFile?.let {
-                    val requestBody =
-                        RequestBody.create(MediaType.parse("multipart/form-data"), it)
-                    val fileToUpload =
-                        MultipartBody.Part.createFormData("image", it.name, requestBody)
-//                    val filename = RequestBody.create(MediaType.parse("text/plain"), it.name)
-                    val username = RequestBody.create(MediaType.parse("text/plain"), "abc")
-
-                    val call = tweetApi.tweet(
-                        USER_TOKEN,
-                        username,
-                        fileToUpload
-                    )
-
-                    call.enqueue(object : Callback<Tweet> {
-                        override fun onResponse(
-                            call: Call<Tweet>,
-                            response: Response<Tweet>
-                        ) {
-                            Log.v("Pity", response.toString())
-                            Log.v("Pity", response.body().toString())
-                            response.body()?.videoUrl?.let { it1 -> Log.v("Pity", it1) }
-                        }
-
-                        override fun onFailure(call: Call<Tweet>, t: Throwable) {
-                            Log.v("Pity", t.toString())
-                        }
-
-                    })
-                }
+                sendTweet()
             }
+        }
+
+    private fun sendTweet() {
+        // send file to backend
+        imageFile?.let {
+            val requestBody =
+                RequestBody.create(MediaType.parse("multipart/form-data"), it)
+            val fileToUpload =
+                MultipartBody.Part.createFormData("image", it.name, requestBody)
+//                    val filename = RequestBody.create(MediaType.parse("text/plain"), it.name)
+            val username = RequestBody.create(MediaType.parse("text/plain"), "abc")
+
+            val call = tweetApi.tweet(
+                USER_TOKEN,
+                username,
+                fileToUpload
+            )
+
+            call.enqueue(object : Callback<Tweet> {
+                override fun onResponse(
+                    call: Call<Tweet>,
+                    response: Response<Tweet>
+                ) {
+                    Log.v("Pity", response.toString())
+                    Log.v("Pity", response.body().toString())
+                    response.body()?.videoUrl?.let { it1 -> Log.v("Pity", it1) }
+                }
+
+                override fun onFailure(call: Call<Tweet>, t: Throwable) {
+                    Log.v("Pity", t.toString())
+                }
+            })
         }
     }
 
