@@ -47,37 +47,20 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <FrameLayout
-            android:id="@+id/newTweetBottomSheet"
+            android:id="@+id/newTweet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-            <!--        app:layout_anchor="@id/botNavBar"-->
-
-            <FrameLayout
-                android:id="@+id/newTweet"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </FrameLayout>
-
-        <!--    <com.google.android.material.bottomappbar.BottomAppBar-->
-        <!--        android:id="@+id/botNavBar"-->
-        <!--        android:layout_width="match_parent"-->
-        <!--        android:layout_height="?attr/actionBarSize"-->
-        <!--        android:layout_gravity="bottom|right"-->
-        <!--        app:fabAlignmentMode="end"-->
-        <!--        app:menu="@menu/navbar_menu" />-->
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/newTweetButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_add_icon" />
+            android:background="@color/background"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        app:itemIconTint="@color/navbar_tab_item"
+        app:itemTextColor="@color/navbar_tab_item"
         app:menu="@menu/navbar_menu" />
     <!--        app:layout_anchor="@id/botNavBar"-->
 

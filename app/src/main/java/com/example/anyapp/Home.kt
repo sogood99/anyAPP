@@ -3,6 +3,7 @@ package com.example.anyapp
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -29,15 +30,31 @@ class Home : AppCompatActivity() {
 
         // put in new tweet fragment
         val newTweetFragment = NewTweetFragment.newInstance()
-        val transaction = getSupportFragmentManager().beginTransaction()
+        val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.newTweet, newTweetFragment)
         transaction.addToBackStack("NewTweet")
         transaction.commit()
+
         // its bottomsheet style
-        BottomSheetBehavior.from(binding.newTweetBottomSheet).apply {
+        BottomSheetBehavior.from(binding.newTweet).apply {
             peekHeight = 100
             this.state = BottomSheetBehavior.STATE_COLLAPSED
         }
+
+        BottomSheetBehavior.from(binding.newTweet)
+            .addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                        Log.v("Pity", "EXPANDED")
+                    } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                        Log.v("Pity", "COLLAPSE")
+                    }
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+
+            })
+
 
         // For selecting the Menu Items
         binding.homeToolbar.setOnMenuItemClickListener { menuItem ->
@@ -78,21 +95,21 @@ class Home : AppCompatActivity() {
         })
 
         // setup botNavBar when clicked
-//        binding.botNavBar.setOnMenuItemClickListener {
-//            when (it.itemId) {
-//                R.id.navHome -> {
-//                    binding.fragPager.currentItem = 0
-//                    true
-//                }
-//                R.id.navProfile -> {
-//                    binding.fragPager.currentItem = 1
-//                    true
-//                }
-//                else -> {
-//                    false
-//                }
-//            }
-//        }
+        binding.bottomNav.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.navHome -> {
+                    binding.fragPager.currentItem = 0
+                    true
+                }
+                R.id.navProfile -> {
+                    binding.fragPager.currentItem = 1
+                    true
+                }
+                else -> {
+                    false
+                }
+            }
+        }
     }
 
 

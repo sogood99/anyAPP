@@ -63,16 +63,8 @@ class NewTweetFragment : Fragment() {
 
     private fun setupTweet() {
         binding.apply {
-            // for creating new tweets
-//            newTweetButton.setOnClickListener {
-//                newTweetButton.visibility = View.GONE
-//                newTweet.visibility = View.VISIBLE
-//            }
-
             sendTweetButton.setOnClickListener {
                 sendTweet()
-//                newTweet.visibility = View.GONE // maybe check if send correctly
-//                newTweetButton.visibility = View.VISIBLE
             }
 
             // for choosing new button
