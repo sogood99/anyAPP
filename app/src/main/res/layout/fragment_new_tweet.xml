@@ -15,8 +15,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_tweet_icon"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/newTweetTextLayout"
@@ -45,8 +45,8 @@
         android:id="@+id/tweetButtonsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/newTweetTextLayout"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/newTweetTextLayout">
 
         <Button
             android:id="@+id/choosePhotoBtn"
