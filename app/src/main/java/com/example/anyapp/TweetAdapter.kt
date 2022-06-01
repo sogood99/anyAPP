@@ -42,6 +42,15 @@ class TweetAdapter(
                 }
             }
 
+            if (tweets[position].userIconUrl != null){
+                // load image if tweet.imageContent has content
+                val url = BASE_URL + "/" + tweets[position].userIconUrl
+                Picasso.get().load(url).into(userIcon);
+            }else{
+                val url = "$BASE_URL/image/userIcon/default.jpg"
+                Picasso.get().load(url).into(userIcon);
+            }
+
             if (tweets[position].videoUrl != null) {
                 // same as image
                 val url = BASE_URL + "/" + tweets[position].videoUrl
