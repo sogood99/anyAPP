@@ -44,12 +44,14 @@ class Home : AppCompatActivity() {
         BottomSheetBehavior.from(binding.newTweet)
             .addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(view: View, newState: Int) {
+                    val newTweetFragment: NewTweetFragment =
+                        supportFragmentManager.findFragmentById(R.id.newTweet) as NewTweetFragment
                     when (newState) {
                         BottomSheetBehavior.STATE_EXPANDED -> {
-                            Log.v("Pity", "EXPANDED")
+                            newTweetFragment.show()
                         }
                         BottomSheetBehavior.STATE_COLLAPSED -> {
-                            Log.v("Pity", "COLLAPSE")
+                            newTweetFragment.hide()
                         }
                     }
                 }

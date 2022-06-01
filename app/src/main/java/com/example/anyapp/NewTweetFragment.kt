@@ -147,6 +147,15 @@ class NewTweetFragment : Fragment() {
         }
     }
 
+    fun show(){
+        // animate showing
+        binding.root.animate().alpha(1.0f).setDuration(100)
+    }
+
+    fun hide(){
+        binding.root.animate().alpha(0.0f).setDuration(100)
+    }
+
     private val takePictureResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
