@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipChildren="false"
-    android:clipToPadding="false"
+    android:orientation="vertical"
     tools:context=".Home">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -35,97 +34,34 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/fragPager"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/botCoordLayout"
-        app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/newTweet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/tweet_shape"
-        android:padding="10dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/botCoordLayout">
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/sendTweetButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_tweet_icon"
-            app:layout_constraintBottom_toTopOf="@id/newTweetTextLayout"
-            app:layout_constraintRight_toRightOf="parent" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/newTweetTextLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:minHeight="150dp"
-            android:padding="10dp"
-            app:boxCornerRadiusBottomEnd="10dp"
-            app:boxCornerRadiusBottomStart="10dp"
-            app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusTopStart="10dp"
-            app:layout_constraintBottom_toTopOf="@id/tweetButtonsLayout">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="What Is Going On?" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <LinearLayout
-            android:id="@+id/tweetButtonsLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@id/styleBlock">
-
-            <Button
-                android:id="@+id/choosePhotoBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/extreme_light_blue"
-                android:text="Photo" />
-
-        </LinearLayout>
-
-        <View
-            android:id="@+id/styleBlock"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
     <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/botCoordLayout"
+        android:id="@+id/coordinatorContent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layoutDirection="ltr"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
-        <com.google.android.material.bottomappbar.BottomAppBar
-            android:id="@+id/botNavBar"
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/fragPager"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_gravity="bottom|right"
-            app:fabAlignmentMode="end"
-            app:menu="@menu/navbar_menu" />
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/newTweetButton"
-            android:layout_width="wrap_content"
+        <FrameLayout
+            android:id="@+id/newTweet"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_add_icon"
-            app:layout_anchor="@id/botNavBar" />
+            android:background="@color/background"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:itemIconTint="@color/navbar_tab_item"
+        app:itemTextColor="@color/navbar_tab_item"
+        app:menu="@menu/navbar_menu" />
+    <!--        app:layout_anchor="@id/botNavBar"-->
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

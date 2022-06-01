@@ -3,6 +3,7 @@ package com.example.anyapp
 data class Tweet(
     val tweetId: Int,
     val userId: Int,
+    val userIconUrl: String,
     val username: String,
     val text: String,
     val imageUrl: String?,

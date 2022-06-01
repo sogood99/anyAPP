@@ -64,34 +64,36 @@ class ProfileFragment : Fragment() {
 
     private fun getProfile() {
         // get account detail from backend
-        val call = accountApi.getProfile(USER_TOKEN)
-        call.enqueue(object : Callback<ProfileResponse> {
-            override fun onResponse(
-                call: Call<ProfileResponse>,
-                response: Response<ProfileResponse>
-            ) {
-                Log.v("Pity", response.body().toString())
-                response.body()?.let {
-                    binding.apply {
-                        profileNickname.text = it.profileName
-                        profileUsername.text = it.username
-                        if (it.profileInfo == null) {
-                            profileInfo.text = "Still New."
-                        } else {
-                            profileInfo.text = it.profileInfo
-                        }
-                        profileCreatedDate.text = it.createDate
+        USER_TOKEN?.let {
+            val call = accountApi.getProfile(it)
+            call.enqueue(object : Callback<ProfileResponse> {
+                override fun onResponse(
+                    call: Call<ProfileResponse>,
+                    response: Response<ProfileResponse>
+                ) {
+                    Log.v("Pity", response.body().toString())
+                    response.body()?.let {
+                        binding.apply {
+                            profileNickname.text = it.profileName
+                            profileUsername.text = it.username
+                            if (it.profileInfo == null) {
+                                profileInfo.text = "Still New."
+                            } else {
+                                profileInfo.text = it.profileInfo
+                            }
+                            profileCreatedDate.text = it.createDate
 
-                        val url = Constants.BASE_URL + "/" + it.userIconUrl
-                        Picasso.get().load(url).into(profileIcon);
+                            val url = Constants.BASE_URL + "/" + it.userIconUrl
+                            Picasso.get().load(url).into(profileIcon);
+                        }
                     }
                 }
-            }
 
-            override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
-                Log.v("Pity", t.toString())
-            }
-        })
+                override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
+                    Log.v("Pity", t.toString())
+                }
+            })
+        }
     }
 
     companion object {
