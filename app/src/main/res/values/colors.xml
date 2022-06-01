@@ -8,5 +8,6 @@
     <color name="background">#EAEDF2</color>
     <color name="nav_bar">#F9F9F9</color>
     <color name="extreme_light_blue">#F1F4FF</color>
+    <color name="slight_light_blue">#DDE5FF</color>
     <color name="light_blue">#7B95FF</color>
 </resources>
