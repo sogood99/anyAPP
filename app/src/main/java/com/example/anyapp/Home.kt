@@ -38,20 +38,25 @@ class Home : AppCompatActivity() {
         // its bottomsheet style
         BottomSheetBehavior.from(binding.newTweet).apply {
             peekHeight = 100
-            this.state = BottomSheetBehavior.STATE_COLLAPSED
+            state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
         BottomSheetBehavior.from(binding.newTweet)
             .addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-                override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    if (newState == BottomSheetBehavior.STATE_EXPANDED) {
-                        Log.v("Pity", "EXPANDED")
-                    } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                        Log.v("Pity", "COLLAPSE")
+                override fun onStateChanged(view: View, newState: Int) {
+                    val newTweetFragment: NewTweetFragment =
+                        supportFragmentManager.findFragmentById(R.id.newTweet) as NewTweetFragment
+                    when (newState) {
+                        BottomSheetBehavior.STATE_EXPANDED -> {
+                            newTweetFragment.show()
+                        }
+                        BottomSheetBehavior.STATE_COLLAPSED -> {
+                            newTweetFragment.hide()
+                        }
                     }
                 }
 
-                override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+                override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
             })
 
@@ -88,8 +93,10 @@ class Home : AppCompatActivity() {
                 // set the homeButton text when change position
                 if (position == 0) {
                     binding.homeButton.text = "Home"
+                    binding.bottomNav.selectedItemId = R.id.navHome
                 } else if (position == 1) {
                     binding.homeButton.text = "Profile"
+                    binding.bottomNav.selectedItemId = R.id.navProfile
                 }
             }
         })

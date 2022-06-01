@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:alpha="0"
+    android:animateLayoutChanges="true"
     android:background="@drawable/tweet_shape"
     android:padding="10dp"
     tools:context=".NewTweetFragment">
@@ -13,8 +15,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_tweet_icon"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/newTweetTextLayout"
@@ -27,7 +29,10 @@
         app:boxCornerRadiusBottomStart="10dp"
         app:boxCornerRadiusTopEnd="10dp"
         app:boxCornerRadiusTopStart="10dp"
-        app:layout_constraintTop_toBottomOf="@id/sendTweetButton">
+        app:boxStrokeColor="#9E9E9E"
+        app:hintTextColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/sendTweetButton"
+        tools:layout_editor_absoluteX="10dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -40,8 +45,8 @@
         android:id="@+id/tweetButtonsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/newTweetTextLayout"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/newTweetTextLayout">
 
         <Button
             android:id="@+id/choosePhotoBtn"
