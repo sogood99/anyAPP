@@ -10,6 +10,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.anyapp.databinding.ActivityHomeBinding
 import com.example.anyapp.util.Constants.Companion.USER_TOKEN
 import com.example.anyapp.util.FeedType
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class Home : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
@@ -28,10 +29,15 @@ class Home : AppCompatActivity() {
 
         // put in new tweet fragment
         val newTweetFragment = NewTweetFragment.newInstance()
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.newTweetFrameLayout, newTweetFragment)
+        val transaction = getSupportFragmentManager().beginTransaction()
+        transaction.replace(R.id.newTweet, newTweetFragment)
         transaction.addToBackStack("NewTweet")
         transaction.commit()
+        // its bottomsheet style
+        BottomSheetBehavior.from(binding.newTweetBottomSheet).apply {
+            peekHeight = 100
+            this.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
 
         // For selecting the Menu Items
         binding.homeToolbar.setOnMenuItemClickListener { menuItem ->
