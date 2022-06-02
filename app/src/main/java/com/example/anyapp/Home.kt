@@ -14,6 +14,9 @@ import com.example.anyapp.util.FeedType
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class Home : AppCompatActivity() {
+    private val HOME_POS = 0
+    private val PROFILE_POS = 1
+
     private lateinit var binding: ActivityHomeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,6 +72,7 @@ class Home : AppCompatActivity() {
                     true
                 }
                 R.id.miLogout -> {
+                    // setup everything logout related
                     USER_TOKEN = null
                     // reset adapter
                     val adapter = binding.fragPager.adapter
@@ -91,10 +95,10 @@ class Home : AppCompatActivity() {
                 super.onPageSelected(position)
 
                 // set the homeButton text when change position
-                if (position == 0) {
+                if (position == HOME_POS) {
                     binding.homeButton.text = "Home"
                     binding.bottomNav.selectedItemId = R.id.navHome
-                } else if (position == 1) {
+                } else if (position == PROFILE_POS) {
                     binding.homeButton.text = "Profile"
                     binding.bottomNav.selectedItemId = R.id.navProfile
                 }
@@ -130,11 +134,15 @@ class Home : AppCompatActivity() {
         }
 
         override fun createFragment(position: Int): Fragment {
-            return if (position == 0) {
-                FeedFragment.newInstance(FeedType.Popular)
-            } else {
-                ProfileFragment.newInstance(0)
+            if (position == HOME_POS) {
+                return FeedFragment.newInstance(FeedType.Popular)
+            } else if (position == PROFILE_POS) {
+                return ProfileFragment.newInstance(true)
             }
+
+            assert(false) { "Creating fragment for unknown position" }
+            // default if error
+            return FeedFragment.newInstance(FeedType.Popular)
         }
     }
 }

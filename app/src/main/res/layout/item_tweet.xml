@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardBackgroundColor="@color/extreme_light_blue"
+        app:cardCornerRadius="20dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -57,7 +58,6 @@
                         android:textColor="?android:attr/textColorSecondary" />
 
                 </LinearLayout>
-
 
             </LinearLayout>
 

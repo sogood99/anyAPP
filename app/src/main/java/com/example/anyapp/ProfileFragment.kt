@@ -20,6 +20,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -27,6 +28,8 @@ private const val ARG_PARAM1 = "param1"
  * create an instance of this fragment.
  */
 class ProfileFragment : Fragment() {
+    // if isSelf == true, access profile through user token (and display self related buttons eg edit), else show regular visitor accessing profile
+    private var isSelf: Boolean? = null
     private var userId: Int? = null
 
     private lateinit var binding: FragmentProfileBinding
@@ -40,7 +43,8 @@ class ProfileFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            userId = it.getInt(ARG_PARAM1)
+            isSelf = it.getBoolean(ARG_PARAM1)
+            userId = it.getInt(ARG_PARAM2)
         }
     }
 
@@ -64,8 +68,8 @@ class ProfileFragment : Fragment() {
 
     private fun getProfile() {
         // get account detail from backend
-        USER_TOKEN?.let {
-            val call = accountApi.getProfile(it)
+        USER_TOKEN?.let { token ->
+            val call = accountApi.getProfile(token)
             call.enqueue(object : Callback<ProfileResponse> {
                 override fun onResponse(
                     call: Call<ProfileResponse>,
@@ -108,10 +112,11 @@ class ProfileFragment : Fragment() {
          * @return A new instance of fragment ProfileFragment.
          */
         @JvmStatic
-        fun newInstance(userId: Int) =
+        fun newInstance(isSelf: Boolean, userId: Int = -1) =
             ProfileFragment().apply {
                 arguments = Bundle().apply {
-                    putInt(ARG_PARAM1, userId)
+                    putBoolean(ARG_PARAM1, isSelf)
+                    putInt(ARG_PARAM2, userId)
                 }
             }
     }
