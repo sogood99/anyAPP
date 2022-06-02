@@ -75,16 +75,19 @@ class ProfileFragment : Fragment() {
                     response.body()?.let {
                         binding.apply {
                             profileNickname.text = it.profileName
-                            profileUsername.text = it.username
+                            profileUsername.text = "@" + it.username
                             if (it.profileInfo == null) {
                                 profileInfo.text = "Still New."
                             } else {
                                 profileInfo.text = it.profileInfo
                             }
-                            profileCreatedDate.text = it.createDate
+                            profileCreatedDate.text = "Date Created: " + it.createDate
 
-                            val url = Constants.BASE_URL + "/" + it.userIconUrl
-                            Picasso.get().load(url).into(profileIcon);
+                            // load images
+                            val iconUrl = Constants.BASE_URL + "/" + it.userIconUrl
+                            Picasso.get().load(iconUrl).into(profileIcon);
+                            val bkgUrl = Constants.BASE_URL + "/" + it.userBkgUrl
+                            Picasso.get().load(bkgUrl).into(profileBkgImg);
                         }
                     }
                 }
