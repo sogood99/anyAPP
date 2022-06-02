@@ -7,7 +7,6 @@ enum class FeedType {
 
 class Constants {
     companion object {
-        var USER_TOKEN: String? = "Token cb8bfb36c9f35898284afbb2f38636d1035aff4a"
         const val BASE_URL = "http://10.0.2.2:8000"
     }
 }

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">anyApp</string>
+    <string name="token_key">USER_TOKEN</string>
 </resources>

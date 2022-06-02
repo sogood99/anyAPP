@@ -2,6 +2,7 @@ package com.example.anyapp
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
@@ -16,7 +17,6 @@ import androidx.core.content.FileProvider
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.FragmentNewTweetBinding
 import com.example.anyapp.util.Constants
-import com.google.android.material.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -91,7 +91,7 @@ class NewTweetFragment : Fragment() {
 
                     MaterialAlertDialogBuilder(
                         this.root.context,
-                        R.style.Theme_Material3_Dark_Dialog
+                        R.style.Theme_AnyApp
                     )
                         .setTitle("Image")
                         .setMessage("Choose Method")
@@ -113,46 +113,59 @@ class NewTweetFragment : Fragment() {
     }
 
     private fun sendTweet() {
-        Constants.USER_TOKEN?.let {
-            // send file to backend
-            val requestBody =
-                imageFile?.let { RequestBody.create(MediaType.parse("multipart/form-data"), it) }
-            val fileToUpload =
-                requestBody?.let { MultipartBody.Part.createFormData("image", imageFile?.name, it) }
-            val text = RequestBody.create(
-                MediaType.parse("text/plain"),
-                binding.newTweetTextLayout.editText?.text.toString()
-            )
+        activity?.getPreferences(Context.MODE_PRIVATE)
+            ?.getString(getString(R.string.token_key), null)
+            ?.let {
+                // send file to backend
+                val requestBody =
+                    imageFile?.let {
+                        RequestBody.create(
+                            MediaType.parse("multipart/form-data"),
+                            it
+                        )
+                    }
+                val fileToUpload =
+                    requestBody?.let {
+                        MultipartBody.Part.createFormData(
+                            "image",
+                            imageFile?.name,
+                            it
+                        )
+                    }
+                val text = RequestBody.create(
+                    MediaType.parse("text/plain"),
+                    binding.newTweetTextLayout.editText?.text.toString()
+                )
 
-            val call = tweetApi.tweet(
-                it,
-                text,
-                fileToUpload
-            )
+                val call = tweetApi.tweet(
+                    it,
+                    text,
+                    fileToUpload
+                )
 
-            call.enqueue(object : Callback<Tweet> {
-                override fun onResponse(
-                    call: Call<Tweet>,
-                    response: Response<Tweet>
-                ) {
-                    Log.v("Pity", response.toString())
-                    Log.v("Pity", response.body().toString())
-                    response.body()?.videoUrl?.let { it1 -> Log.v("Pity", it1) }
-                }
+                call.enqueue(object : Callback<Tweet> {
+                    override fun onResponse(
+                        call: Call<Tweet>,
+                        response: Response<Tweet>
+                    ) {
+                        Log.v("Pity", response.toString())
+                        Log.v("Pity", response.body().toString())
+                        response.body()?.videoUrl?.let { it1 -> Log.v("Pity", it1) }
+                    }
 
-                override fun onFailure(call: Call<Tweet>, t: Throwable) {
-                    Log.v("Pity", t.toString())
-                }
-            })
-        }
+                    override fun onFailure(call: Call<Tweet>, t: Throwable) {
+                        Log.v("Pity", t.toString())
+                    }
+                })
+            }
     }
 
-    fun show(){
+    fun show() {
         // animate showing
         binding.root.animate().alpha(1.0f).setDuration(100)
     }
 
-    fun hide(){
+    fun hide() {
         binding.root.animate().alpha(0.0f).setDuration(100)
     }
 

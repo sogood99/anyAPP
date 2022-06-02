@@ -1,5 +1,6 @@
 package com.example.anyapp
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,7 +10,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.anyapp.databinding.ActivityHomeBinding
-import com.example.anyapp.util.Constants.Companion.USER_TOKEN
 import com.example.anyapp.util.FeedType
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
@@ -22,6 +22,13 @@ class Home : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        // set token for testing
+        getPreferences(Context.MODE_PRIVATE).edit()
+            .putString(
+                getString(R.string.token_key),
+                "Token cb8bfb36c9f35898284afbb2f38636d1035aff4a"
+            ).apply()
 
         // Create binding to activity_home
         binding = ActivityHomeBinding.inflate(layoutInflater)
@@ -73,7 +80,9 @@ class Home : AppCompatActivity() {
                 }
                 R.id.miLogout -> {
                     // setup everything logout related
-                    USER_TOKEN = null
+                    getPreferences(Context.MODE_PRIVATE).edit()
+                        .putString(getString(R.string.token_key), null).apply()
+
                     // reset adapter
                     val adapter = binding.fragPager.adapter
                     binding.fragPager.adapter = null
@@ -109,11 +118,11 @@ class Home : AppCompatActivity() {
         binding.bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.navHome -> {
-                    binding.fragPager.currentItem = 0
+                    binding.fragPager.currentItem = HOME_POS
                     true
                 }
                 R.id.navProfile -> {
-                    binding.fragPager.currentItem = 1
+                    binding.fragPager.currentItem = PROFILE_POS
                     true
                 }
                 else -> {

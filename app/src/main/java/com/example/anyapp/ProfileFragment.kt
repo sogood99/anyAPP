@@ -1,5 +1,6 @@
 package com.example.anyapp
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,7 +10,6 @@ import android.view.ViewGroup
 import com.example.anyapp.api.AccountApi
 import com.example.anyapp.databinding.FragmentProfileBinding
 import com.example.anyapp.util.Constants
-import com.example.anyapp.util.Constants.Companion.USER_TOKEN
 import com.example.anyapp.util.FeedType
 import com.example.anyapp.util.ProfileResponse
 import com.squareup.picasso.Picasso
@@ -68,39 +68,40 @@ class ProfileFragment : Fragment() {
 
     private fun getProfile() {
         // get account detail from backend
-        USER_TOKEN?.let { token ->
-            val call = accountApi.getProfile(token)
-            call.enqueue(object : Callback<ProfileResponse> {
-                override fun onResponse(
-                    call: Call<ProfileResponse>,
-                    response: Response<ProfileResponse>
-                ) {
-                    Log.v("Pity", response.body().toString())
-                    response.body()?.let {
-                        binding.apply {
-                            profileNickname.text = it.profileName
-                            profileUsername.text = "@" + it.username
-                            if (it.profileInfo == null) {
-                                profileInfo.text = "Still New."
-                            } else {
-                                profileInfo.text = it.profileInfo
-                            }
-                            profileCreatedDate.text = "Date Created: " + it.createDate
+        activity?.getPreferences(Context.MODE_PRIVATE)
+            ?.getString(getString(R.string.token_key), null)?.let { token ->
+                val call = accountApi.getProfile(token)
+                call.enqueue(object : Callback<ProfileResponse> {
+                    override fun onResponse(
+                        call: Call<ProfileResponse>,
+                        response: Response<ProfileResponse>
+                    ) {
+                        Log.v("Pity", response.body().toString())
+                        response.body()?.let {
+                            binding.apply {
+                                profileNickname.text = it.profileName
+                                profileUsername.text = "@" + it.username
+                                if (it.profileInfo == null) {
+                                    profileInfo.text = "Still New."
+                                } else {
+                                    profileInfo.text = it.profileInfo
+                                }
+                                profileCreatedDate.text = "Date Created: " + it.createDate
 
-                            // load images
-                            val iconUrl = Constants.BASE_URL + "/" + it.userIconUrl
-                            Picasso.get().load(iconUrl).into(profileIcon);
-                            val bkgUrl = Constants.BASE_URL + "/" + it.userBkgUrl
-                            Picasso.get().load(bkgUrl).into(profileBkgImg);
+                                // load images
+                                val iconUrl = Constants.BASE_URL + "/" + it.userIconUrl
+                                Picasso.get().load(iconUrl).into(profileIcon)
+                                val bkgUrl = Constants.BASE_URL + "/" + it.userBkgUrl
+                                Picasso.get().load(bkgUrl).into(profileBkgImg)
+                            }
                         }
                     }
-                }
 
-                override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
-                    Log.v("Pity", t.toString())
-                }
-            })
-        }
+                    override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
+                        Log.v("Pity", t.toString())
+                    }
+                })
+            }
     }
 
     companion object {
