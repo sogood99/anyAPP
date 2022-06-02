@@ -80,6 +80,7 @@ class Home : AppCompatActivity() {
                 }
                 R.id.miLogout -> {
                     // setup everything logout related
+                    // set token_key to null
                     getPreferences(Context.MODE_PRIVATE).edit()
                         .putString(getString(R.string.token_key), null).apply()
 
@@ -108,8 +109,19 @@ class Home : AppCompatActivity() {
                     binding.homeButton.text = "Home"
                     binding.bottomNav.selectedItemId = R.id.navHome
                 } else if (position == PROFILE_POS) {
-                    binding.homeButton.text = "Profile"
-                    binding.bottomNav.selectedItemId = R.id.navProfile
+                    // get user token
+                    val token = getPreferences(Context.MODE_PRIVATE)?.getString(
+                        getString(R.string.token_key),
+                        null
+                    )
+                    if (token == null) {
+                        // intent into login page
+                        binding.fragPager.setCurrentItem(HOME_POS, false)
+                    } else {
+                        // change to profile
+                        binding.homeButton.text = "Profile"
+                        binding.bottomNav.selectedItemId = R.id.navProfile
+                    }
                 }
             }
         })

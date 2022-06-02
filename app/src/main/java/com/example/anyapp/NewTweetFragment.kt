@@ -91,7 +91,7 @@ class NewTweetFragment : Fragment() {
 
                     MaterialAlertDialogBuilder(
                         this.root.context,
-                        R.style.Theme_AnyApp
+                        com.google.android.material.R.style.Base_Theme_Material3_Light_Dialog
                     )
                         .setTitle("Image")
                         .setMessage("Choose Method")
@@ -113,51 +113,52 @@ class NewTweetFragment : Fragment() {
     }
 
     private fun sendTweet() {
-        activity?.getPreferences(Context.MODE_PRIVATE)
+        val userToken = activity?.getPreferences(Context.MODE_PRIVATE)
             ?.getString(getString(R.string.token_key), null)
-            ?.let {
-                // send file to backend
-                val requestBody =
-                    imageFile?.let {
-                        RequestBody.create(
-                            MediaType.parse("multipart/form-data"),
-                            it
-                        )
-                    }
-                val fileToUpload =
-                    requestBody?.let {
-                        MultipartBody.Part.createFormData(
-                            "image",
-                            imageFile?.name,
-                            it
-                        )
-                    }
-                val text = RequestBody.create(
-                    MediaType.parse("text/plain"),
-                    binding.newTweetTextLayout.editText?.text.toString()
-                )
 
-                val call = tweetApi.tweet(
-                    it,
-                    text,
-                    fileToUpload
-                )
+        userToken?.let { token ->
+            // send file to backend
+            val requestBody =
+                imageFile?.let { file ->
+                    RequestBody.create(
+                        MediaType.parse("multipart/form-data"),
+                        file
+                    )
+                }
+            val fileToUpload =
+                requestBody?.let {
+                    MultipartBody.Part.createFormData(
+                        "image",
+                        imageFile?.name,
+                        it
+                    )
+                }
+            val text = RequestBody.create(
+                MediaType.parse("text/plain"),
+                binding.newTweetTextLayout.editText?.text.toString()
+            )
 
-                call.enqueue(object : Callback<Tweet> {
-                    override fun onResponse(
-                        call: Call<Tweet>,
-                        response: Response<Tweet>
-                    ) {
-                        Log.v("Pity", response.toString())
-                        Log.v("Pity", response.body().toString())
-                        response.body()?.videoUrl?.let { it1 -> Log.v("Pity", it1) }
-                    }
+            val call = tweetApi.tweet(
+                token,
+                text,
+                fileToUpload
+            )
 
-                    override fun onFailure(call: Call<Tweet>, t: Throwable) {
-                        Log.v("Pity", t.toString())
-                    }
-                })
-            }
+            call.enqueue(object : Callback<Tweet> {
+                override fun onResponse(
+                    call: Call<Tweet>,
+                    response: Response<Tweet>
+                ) {
+                    Log.v("Pity", response.toString())
+                    Log.v("Pity", response.body().toString())
+                    response.body()?.videoUrl?.let { it1 -> Log.v("Pity", it1) }
+                }
+
+                override fun onFailure(call: Call<Tweet>, t: Throwable) {
+                    Log.v("Pity", t.toString())
+                }
+            })
+        }
     }
 
     fun show() {

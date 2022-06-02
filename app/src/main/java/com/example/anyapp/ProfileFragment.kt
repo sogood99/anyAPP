@@ -68,40 +68,41 @@ class ProfileFragment : Fragment() {
 
     private fun getProfile() {
         // get account detail from backend
-        activity?.getPreferences(Context.MODE_PRIVATE)
-            ?.getString(getString(R.string.token_key), null)?.let { token ->
-                val call = accountApi.getProfile(token)
-                call.enqueue(object : Callback<ProfileResponse> {
-                    override fun onResponse(
-                        call: Call<ProfileResponse>,
-                        response: Response<ProfileResponse>
-                    ) {
-                        Log.v("Pity", response.body().toString())
-                        response.body()?.let {
-                            binding.apply {
-                                profileNickname.text = it.profileName
-                                profileUsername.text = "@" + it.username
-                                if (it.profileInfo == null) {
-                                    profileInfo.text = "Still New."
-                                } else {
-                                    profileInfo.text = it.profileInfo
-                                }
-                                profileCreatedDate.text = "Date Created: " + it.createDate
-
-                                // load images
-                                val iconUrl = Constants.BASE_URL + "/" + it.userIconUrl
-                                Picasso.get().load(iconUrl).into(profileIcon)
-                                val bkgUrl = Constants.BASE_URL + "/" + it.userBkgUrl
-                                Picasso.get().load(bkgUrl).into(profileBkgImg)
+        val userToken = activity?.getPreferences(Context.MODE_PRIVATE)
+            ?.getString(getString(R.string.token_key), null)
+        userToken?.let { token ->
+            val call = accountApi.getProfile(token)
+            call.enqueue(object : Callback<ProfileResponse> {
+                override fun onResponse(
+                    call: Call<ProfileResponse>,
+                    response: Response<ProfileResponse>
+                ) {
+                    Log.v("Pity", response.body().toString())
+                    response.body()?.let {
+                        binding.apply {
+                            profileNickname.text = it.profileName
+                            profileUsername.text = "@" + it.username
+                            if (it.profileInfo == null) {
+                                profileInfo.text = "Still New."
+                            } else {
+                                profileInfo.text = it.profileInfo
                             }
+                            profileCreatedDate.text = "Date Created: " + it.createDate
+
+                            // load images
+                            val iconUrl = Constants.BASE_URL + "/" + it.userIconUrl
+                            Picasso.get().load(iconUrl).into(profileIcon)
+                            val bkgUrl = Constants.BASE_URL + "/" + it.userBkgUrl
+                            Picasso.get().load(bkgUrl).into(profileBkgImg)
                         }
                     }
+                }
 
-                    override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
-                        Log.v("Pity", t.toString())
-                    }
-                })
-            }
+                override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
+                    Log.v("Pity", t.toString())
+                }
+            })
+        }
     }
 
     companion object {
