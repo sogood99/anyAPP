@@ -12,6 +12,7 @@ import com.example.anyapp.databinding.FragmentProfileBinding
 import com.example.anyapp.util.Constants
 import com.example.anyapp.util.FeedType
 import com.example.anyapp.util.ProfileResponse
+import com.example.anyapp.util.UserToken
 import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
@@ -58,18 +59,26 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // if not logged in, set to invisible
+        val token = UserToken(this.activity).readToken()
+        if (token == null) {
+            binding.root.visibility = View.INVISIBLE
+            return
+        }
+
         getProfile()
         val feedFragment = FeedFragment.newInstance(FeedType.Profile)
         childFragmentManager.beginTransaction().apply {
             replace(R.id.feedFrameLayout, feedFragment)
             commit()
         }
+
     }
 
     private fun getProfile() {
         // get account detail from backend
-        val userToken = activity?.getPreferences(Context.MODE_PRIVATE)
-            ?.getString(getString(R.string.token_key), null)
+        val userToken = UserToken(this.activity).readToken()
         userToken?.let { token ->
             val call = accountApi.getProfile(token)
             call.enqueue(object : Callback<ProfileResponse> {

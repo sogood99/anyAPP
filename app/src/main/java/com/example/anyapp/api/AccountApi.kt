@@ -7,6 +7,7 @@ import retrofit2.Call
 import retrofit2.http.*
 
 interface AccountApi {
+    @FormUrlEncoded
     @POST("api/user/create/")
     fun createUser(
         @Field("username") username: String,
@@ -14,10 +15,11 @@ interface AccountApi {
         @Field("email") email: String,
     ): Call<CreateUserResponse>
 
+    @FormUrlEncoded
     @POST("api/user/login/")
     fun login(
-        @Part("username") username: String,
-        @Part("password") password: String,
+        @Field("username") username: String,
+        @Field("password") password: String,
     ): Call<LoginResponse>
 
     @GET("api/user/profile/")

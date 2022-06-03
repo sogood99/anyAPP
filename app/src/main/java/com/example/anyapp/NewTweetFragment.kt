@@ -17,6 +17,7 @@ import androidx.core.content.FileProvider
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.FragmentNewTweetBinding
 import com.example.anyapp.util.Constants
+import com.example.anyapp.util.UserToken
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -113,8 +114,7 @@ class NewTweetFragment : Fragment() {
     }
 
     private fun sendTweet() {
-        val userToken = activity?.getPreferences(Context.MODE_PRIVATE)
-            ?.getString(getString(R.string.token_key), null)
+        val userToken = UserToken(this.activity).readToken()
 
         userToken?.let { token ->
             // send file to backend

@@ -1,7 +1,7 @@
 package com.example.anyapp
 
-import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +12,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.anyapp.databinding.ActivityHomeBinding
 import com.example.anyapp.util.FeedType
+import com.example.anyapp.util.UserToken
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class Home : AppCompatActivity() {
@@ -20,20 +21,26 @@ class Home : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
 
+    // created as member since
+    // https://stackoverflow.com/questions/2542938/sharedpreferences-onsharedpreferencechangelistener-not-being-called-consistently
+    private val userTokenListener: SharedPreferences.OnSharedPreferenceChangeListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, s ->
+            if (s == getString(R.string.token_key)) {
+                resetFragPager()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
-
-        // set token for testing
-        getPreferences(Context.MODE_PRIVATE).edit()
-            .putString(
-                getString(R.string.token_key),
-                "Token cb8bfb36c9f35898284afbb2f38636d1035aff4a"
-            ).apply()
 
         // Create binding to activity_home
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // on change listener for token & set token to null initially
+        val userToken = UserToken(this)
+        userToken.setToken(null)
+        userToken.sharedPreferences?.registerOnSharedPreferenceChangeListener(userTokenListener)
 
         // put in feed fragment
         val pagerAdapter = BottomNavPagerAdapter(this)
@@ -82,13 +89,10 @@ class Home : AppCompatActivity() {
                 R.id.miLogout -> {
                     // setup everything logout related
                     // set token_key to null
-                    getPreferences(Context.MODE_PRIVATE).edit()
-                        .putString(getString(R.string.token_key), null).apply()
+                    UserToken(this).setToken(null)
 
                     // reset adapter
-                    val adapter = binding.fragPager.adapter
-                    binding.fragPager.adapter = null
-                    binding.fragPager.adapter = adapter
+                    resetFragPager()
                     true
                 }
                 else -> true
@@ -111,10 +115,7 @@ class Home : AppCompatActivity() {
                     binding.bottomNav.selectedItemId = R.id.navHome
                 } else if (position == PROFILE_POS) {
                     // get user token
-                    val token = getPreferences(Context.MODE_PRIVATE)?.getString(
-                        getString(R.string.token_key),
-                        null
-                    )
+                    val token = UserToken(this@Home).readToken()
                     if (token == null) {
                         // intent into login page
                         binding.fragPager.setCurrentItem(HOME_POS, false)
@@ -136,10 +137,7 @@ class Home : AppCompatActivity() {
                     true
                 }
                 R.id.navProfile -> {
-                    val token = getPreferences(Context.MODE_PRIVATE)?.getString(
-                        getString(R.string.token_key),
-                        null
-                    )
+                    val token = UserToken(this).readToken()
                     if (token != null) {
                         binding.fragPager.currentItem = PROFILE_POS
                         true
@@ -153,6 +151,12 @@ class Home : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun resetFragPager() {
+        val adapter = binding.fragPager.adapter
+        binding.fragPager.adapter = null
+        binding.fragPager.adapter = adapter
     }
 
     fun startLoginRegisterActivity() {

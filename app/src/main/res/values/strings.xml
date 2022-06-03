@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">anyApp</string>
     <string name="token_key">USER_TOKEN</string>
+    <string name="preference_file_key">com.example.anyApp.preference_file_key</string>
 </resources>
