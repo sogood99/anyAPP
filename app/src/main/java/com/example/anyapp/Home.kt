@@ -1,6 +1,7 @@
 package com.example.anyapp
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -117,6 +118,7 @@ class Home : AppCompatActivity() {
                     if (token == null) {
                         // intent into login page
                         binding.fragPager.setCurrentItem(HOME_POS, false)
+                        startLoginRegisterActivity()
                     } else {
                         // change to profile
                         binding.homeButton.text = "Profile"
@@ -134,8 +136,17 @@ class Home : AppCompatActivity() {
                     true
                 }
                 R.id.navProfile -> {
-                    binding.fragPager.currentItem = PROFILE_POS
-                    true
+                    val token = getPreferences(Context.MODE_PRIVATE)?.getString(
+                        getString(R.string.token_key),
+                        null
+                    )
+                    if (token != null) {
+                        binding.fragPager.currentItem = PROFILE_POS
+                        true
+                    } else {
+                        startLoginRegisterActivity()
+                        false
+                    }
                 }
                 else -> {
                     false
@@ -144,6 +155,10 @@ class Home : AppCompatActivity() {
         }
     }
 
+    fun startLoginRegisterActivity() {
+        val intent = Intent(this@Home, LoginRegister::class.java)
+        startActivity(intent)
+    }
 
     private inner class BottomNavPagerAdapter(
         fa: FragmentActivity,

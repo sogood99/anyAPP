@@ -60,7 +60,7 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         getProfile()
         val feedFragment = FeedFragment.newInstance(FeedType.Profile)
-        parentFragmentManager.beginTransaction().apply {
+        childFragmentManager.beginTransaction().apply {
             replace(R.id.feedFrameLayout, feedFragment)
             commit()
         }
