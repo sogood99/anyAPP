@@ -2,6 +2,7 @@ package com.example.anyapp
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
@@ -16,7 +17,7 @@ import androidx.core.content.FileProvider
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.FragmentNewTweetBinding
 import com.example.anyapp.util.Constants
-import com.google.android.material.R
+import com.example.anyapp.util.UserToken
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -91,7 +92,7 @@ class NewTweetFragment : Fragment() {
 
                     MaterialAlertDialogBuilder(
                         this.root.context,
-                        R.style.Theme_Material3_Dark_Dialog
+                        com.google.android.material.R.style.Base_Theme_Material3_Light_Dialog
                     )
                         .setTitle("Image")
                         .setMessage("Choose Method")
@@ -113,19 +114,32 @@ class NewTweetFragment : Fragment() {
     }
 
     private fun sendTweet() {
-        Constants.USER_TOKEN?.let {
+        val userToken = UserToken(this.activity).readToken()
+
+        userToken?.let { token ->
             // send file to backend
             val requestBody =
-                imageFile?.let { RequestBody.create(MediaType.parse("multipart/form-data"), it) }
+                imageFile?.let { file ->
+                    RequestBody.create(
+                        MediaType.parse("multipart/form-data"),
+                        file
+                    )
+                }
             val fileToUpload =
-                requestBody?.let { MultipartBody.Part.createFormData("image", imageFile?.name, it) }
+                requestBody?.let {
+                    MultipartBody.Part.createFormData(
+                        "image",
+                        imageFile?.name,
+                        it
+                    )
+                }
             val text = RequestBody.create(
                 MediaType.parse("text/plain"),
                 binding.newTweetTextLayout.editText?.text.toString()
             )
 
             val call = tweetApi.tweet(
-                it,
+                token,
                 text,
                 fileToUpload
             )
@@ -147,12 +161,12 @@ class NewTweetFragment : Fragment() {
         }
     }
 
-    fun show(){
+    fun show() {
         // animate showing
         binding.root.animate().alpha(1.0f).setDuration(100)
     }
 
-    fun hide(){
+    fun hide() {
         binding.root.animate().alpha(0.0f).setDuration(100)
     }
 

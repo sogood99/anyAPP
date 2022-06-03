@@ -1,5 +1,7 @@
 package com.example.anyapp
 
+import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,20 +11,36 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.anyapp.databinding.ActivityHomeBinding
-import com.example.anyapp.util.Constants.Companion.USER_TOKEN
 import com.example.anyapp.util.FeedType
+import com.example.anyapp.util.UserToken
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class Home : AppCompatActivity() {
+    private val HOME_POS = 0
+    private val PROFILE_POS = 1
+
     private lateinit var binding: ActivityHomeBinding
+
+    // created as member since
+    // https://stackoverflow.com/questions/2542938/sharedpreferences-onsharedpreferencechangelistener-not-being-called-consistently
+    private val userTokenListener: SharedPreferences.OnSharedPreferenceChangeListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, s ->
+            if (s == getString(R.string.token_key)) {
+                resetFragPager()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
 
         // Create binding to activity_home
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // on change listener for token & set token to null initially
+        val userToken = UserToken(this)
+        userToken.setToken(null)
+        userToken.sharedPreferences?.registerOnSharedPreferenceChangeListener(userTokenListener)
 
         // put in feed fragment
         val pagerAdapter = BottomNavPagerAdapter(this)
@@ -69,11 +87,12 @@ class Home : AppCompatActivity() {
                     true
                 }
                 R.id.miLogout -> {
-                    USER_TOKEN = null
+                    // setup everything logout related
+                    // set token_key to null
+                    UserToken(this).setToken(null)
+
                     // reset adapter
-                    val adapter = binding.fragPager.adapter
-                    binding.fragPager.adapter = null
-                    binding.fragPager.adapter = adapter
+                    resetFragPager()
                     true
                 }
                 else -> true
@@ -91,12 +110,21 @@ class Home : AppCompatActivity() {
                 super.onPageSelected(position)
 
                 // set the homeButton text when change position
-                if (position == 0) {
+                if (position == HOME_POS) {
                     binding.homeButton.text = "Home"
                     binding.bottomNav.selectedItemId = R.id.navHome
-                } else if (position == 1) {
-                    binding.homeButton.text = "Profile"
-                    binding.bottomNav.selectedItemId = R.id.navProfile
+                } else if (position == PROFILE_POS) {
+                    // get user token
+                    val token = UserToken(this@Home).readToken()
+                    if (token == null) {
+                        // intent into login page
+                        binding.fragPager.setCurrentItem(HOME_POS, false)
+                        startLoginRegisterActivity()
+                    } else {
+                        // change to profile
+                        binding.homeButton.text = "Profile"
+                        binding.bottomNav.selectedItemId = R.id.navProfile
+                    }
                 }
             }
         })
@@ -105,12 +133,18 @@ class Home : AppCompatActivity() {
         binding.bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.navHome -> {
-                    binding.fragPager.currentItem = 0
+                    binding.fragPager.currentItem = HOME_POS
                     true
                 }
                 R.id.navProfile -> {
-                    binding.fragPager.currentItem = 1
-                    true
+                    val token = UserToken(this).readToken()
+                    if (token != null) {
+                        binding.fragPager.currentItem = PROFILE_POS
+                        true
+                    } else {
+                        startLoginRegisterActivity()
+                        false
+                    }
                 }
                 else -> {
                     false
@@ -119,6 +153,16 @@ class Home : AppCompatActivity() {
         }
     }
 
+    private fun resetFragPager() {
+        val adapter = binding.fragPager.adapter
+        binding.fragPager.adapter = null
+        binding.fragPager.adapter = adapter
+    }
+
+    fun startLoginRegisterActivity() {
+        val intent = Intent(this@Home, LoginRegister::class.java)
+        startActivity(intent)
+    }
 
     private inner class BottomNavPagerAdapter(
         fa: FragmentActivity,
@@ -130,11 +174,15 @@ class Home : AppCompatActivity() {
         }
 
         override fun createFragment(position: Int): Fragment {
-            return if (position == 0) {
-                FeedFragment.newInstance(FeedType.Popular)
-            } else {
-                ProfileFragment.newInstance(0)
+            if (position == HOME_POS) {
+                return FeedFragment.newInstance(FeedType.Popular)
+            } else if (position == PROFILE_POS) {
+                return ProfileFragment.newInstance(true)
             }
+
+            assert(false) { "Creating fragment for unknown position" }
+            // default if error
+            return FeedFragment.newInstance(FeedType.Popular)
         }
     }
 }

@@ -33,7 +33,7 @@ class TweetAdapter(
             if (tweets[position].imageUrl != null) {
                 // load image if tweet.imageContent has content
                 val url = BASE_URL + "/" + tweets[position].imageUrl
-                Picasso.get().load(url).into(imageContent);
+                Picasso.get().load(url).into(imageContent)
             } else {
                 // otherwise delete it
                 val parent: ViewGroup? = imageContent.parent as? ViewGroup
@@ -45,10 +45,10 @@ class TweetAdapter(
             if (tweets[position].userIconUrl != null){
                 // load image if tweet.imageContent has content
                 val url = BASE_URL + "/" + tweets[position].userIconUrl
-                Picasso.get().load(url).into(userIcon);
+                Picasso.get().load(url).into(userIcon)
             }else{
                 val url = "$BASE_URL/image/userIcon/default.jpg"
-                Picasso.get().load(url).into(userIcon);
+                Picasso.get().load(url).into(userIcon)
             }
 
             if (tweets[position].videoUrl != null) {

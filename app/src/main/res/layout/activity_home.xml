@@ -50,7 +50,8 @@
             android:id="@+id/newTweet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/background"
+            android:animateLayoutChanges="true"
+            android:background="@drawable/tweet_shape"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
@@ -59,9 +60,9 @@
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:background="@color/slight_light_blue"
         app:itemIconTint="@color/navbar_tab_item"
         app:itemTextColor="@color/navbar_tab_item"
         app:menu="@menu/navbar_menu" />
-    <!--        app:layout_anchor="@id/botNavBar"-->
 
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.example.anyapp
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,9 +10,9 @@ import android.view.ViewGroup
 import com.example.anyapp.api.AccountApi
 import com.example.anyapp.databinding.FragmentProfileBinding
 import com.example.anyapp.util.Constants
-import com.example.anyapp.util.Constants.Companion.USER_TOKEN
 import com.example.anyapp.util.FeedType
 import com.example.anyapp.util.ProfileResponse
+import com.example.anyapp.util.UserToken
 import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
@@ -20,6 +21,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -27,6 +29,8 @@ private const val ARG_PARAM1 = "param1"
  * create an instance of this fragment.
  */
 class ProfileFragment : Fragment() {
+    // if isSelf == true, access profile through user token (and display self related buttons eg edit), else show regular visitor accessing profile
+    private var isSelf: Boolean? = null
     private var userId: Int? = null
 
     private lateinit var binding: FragmentProfileBinding
@@ -40,7 +44,8 @@ class ProfileFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            userId = it.getInt(ARG_PARAM1)
+            isSelf = it.getBoolean(ARG_PARAM1)
+            userId = it.getInt(ARG_PARAM2)
         }
     }
 
@@ -54,18 +59,28 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // if not logged in, set to invisible
+        val token = UserToken(this.activity).readToken()
+        if (token == null) {
+            binding.root.visibility = View.INVISIBLE
+            return
+        }
+
         getProfile()
         val feedFragment = FeedFragment.newInstance(FeedType.Profile)
-        parentFragmentManager.beginTransaction().apply {
+        childFragmentManager.beginTransaction().apply {
             replace(R.id.feedFrameLayout, feedFragment)
             commit()
         }
+
     }
 
     private fun getProfile() {
         // get account detail from backend
-        USER_TOKEN?.let {
-            val call = accountApi.getProfile(it)
+        val userToken = UserToken(this.activity).readToken()
+        userToken?.let { token ->
+            val call = accountApi.getProfile(token)
             call.enqueue(object : Callback<ProfileResponse> {
                 override fun onResponse(
                     call: Call<ProfileResponse>,
@@ -75,16 +90,19 @@ class ProfileFragment : Fragment() {
                     response.body()?.let {
                         binding.apply {
                             profileNickname.text = it.profileName
-                            profileUsername.text = it.username
+                            profileUsername.text = "@" + it.username
                             if (it.profileInfo == null) {
                                 profileInfo.text = "Still New."
                             } else {
                                 profileInfo.text = it.profileInfo
                             }
-                            profileCreatedDate.text = it.createDate
+                            profileCreatedDate.text = "Date Created: " + it.createDate
 
-                            val url = Constants.BASE_URL + "/" + it.userIconUrl
-                            Picasso.get().load(url).into(profileIcon);
+                            // load images
+                            val iconUrl = Constants.BASE_URL + "/" + it.userIconUrl
+                            Picasso.get().load(iconUrl).into(profileIcon)
+                            val bkgUrl = Constants.BASE_URL + "/" + it.userBkgUrl
+                            Picasso.get().load(bkgUrl).into(profileBkgImg)
                         }
                     }
                 }
@@ -105,10 +123,11 @@ class ProfileFragment : Fragment() {
          * @return A new instance of fragment ProfileFragment.
          */
         @JvmStatic
-        fun newInstance(userId: Int) =
+        fun newInstance(isSelf: Boolean, userId: Int = -1) =
             ProfileFragment().apply {
                 arguments = Bundle().apply {
-                    putInt(ARG_PARAM1, userId)
+                    putBoolean(ARG_PARAM1, isSelf)
+                    putInt(ARG_PARAM2, userId)
                 }
             }
     }
