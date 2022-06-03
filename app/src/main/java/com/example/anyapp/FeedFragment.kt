@@ -11,6 +11,7 @@ import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.FragmentFeedBinding
 import com.example.anyapp.util.Constants
 import com.example.anyapp.util.FeedType
+import com.example.anyapp.util.UserToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -71,7 +72,7 @@ class FeedFragment : Fragment() {
 
     private fun getFeed(view: View) {
         // get the data from backend
-        val call = tweetApi.getFeed()
+        val call = tweetApi.getFeed(UserToken(activity).readToken(), option)
         call.enqueue(object : Callback<List<Tweet>> {
             override fun onResponse(call: Call<List<Tweet>>, response: Response<List<Tweet>>) {
                 val tweetList = response.body()

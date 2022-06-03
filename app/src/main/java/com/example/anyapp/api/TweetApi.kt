@@ -1,6 +1,7 @@
 package com.example.anyapp.api
 
 import com.example.anyapp.Tweet
+import com.example.anyapp.util.FeedType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -15,6 +16,10 @@ interface TweetApi {
         @Part imageFile: MultipartBody.Part?,
     ): Call<Tweet>
 
-    @GET("api/tweet/feed/")
-    fun getFeed(): Call<List<Tweet>>
+    @FormUrlEncoded
+    @POST("api/tweet/feed/")
+    fun getFeed(
+        @Header("Authorization") authorization: String?,
+        @Field("option") options: FeedType?,
+    ): Call<List<Tweet>>
 }
