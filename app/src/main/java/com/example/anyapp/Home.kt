@@ -153,6 +153,15 @@ class Home : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        // custom response to back button
+        if (BottomSheetBehavior.from(binding.newTweet).state == BottomSheetBehavior.STATE_EXPANDED) {
+            BottomSheetBehavior.from(binding.newTweet).state = BottomSheetBehavior.STATE_COLLAPSED
+        } else if (binding.bottomNav.selectedItemId != R.id.navHome) {
+            binding.bottomNav.selectedItemId = R.id.navHome
+        }
+    }
+
     private fun resetFragPager() {
         val adapter = binding.fragPager.adapter
         binding.fragPager.adapter = null
