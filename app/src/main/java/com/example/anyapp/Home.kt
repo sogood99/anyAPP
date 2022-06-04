@@ -101,7 +101,7 @@ class Home : AppCompatActivity() {
 
         // For selecting the Home
         binding.homeButton.setOnClickListener { button ->
-            Log.v("Pity", "Clicked Home Button")
+            resetFragPager()
         }
 
         // fragPager stuff: page change

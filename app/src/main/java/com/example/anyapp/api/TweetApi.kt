@@ -2,6 +2,7 @@ package com.example.anyapp.api
 
 import com.example.anyapp.Tweet
 import com.example.anyapp.util.FeedType
+import com.example.anyapp.util.LikeResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -22,4 +23,11 @@ interface TweetApi {
         @Header("Authorization") authorization: String?,
         @Field("option") options: FeedType?,
     ): Call<List<Tweet>>
+
+    @FormUrlEncoded
+    @POST("api/tweet/like/")
+    fun likeTweet(
+        @Header("Authorization") authorization: String?,
+        @Field("tweet") tweet: Int,
+    ): Call<LikeResponse>
 }
