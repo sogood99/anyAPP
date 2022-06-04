@@ -101,7 +101,7 @@ class Home : AppCompatActivity() {
 
         // For selecting the Home
         binding.homeButton.setOnClickListener { button ->
-            Log.v("Pity", "Clicked Home Button")
+            resetFragPager()
         }
 
         // fragPager stuff: page change
@@ -150,6 +150,15 @@ class Home : AppCompatActivity() {
                     false
                 }
             }
+        }
+    }
+
+    override fun onBackPressed() {
+        // custom response to back button
+        if (BottomSheetBehavior.from(binding.newTweet).state == BottomSheetBehavior.STATE_EXPANDED) {
+            BottomSheetBehavior.from(binding.newTweet).state = BottomSheetBehavior.STATE_COLLAPSED
+        } else if (binding.bottomNav.selectedItemId != R.id.navHome) {
+            binding.bottomNav.selectedItemId = R.id.navHome
         }
     }
 

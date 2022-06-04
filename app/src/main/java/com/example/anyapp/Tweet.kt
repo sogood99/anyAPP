@@ -10,4 +10,6 @@ data class Tweet(
     val videoUrl: String?,
     val repliesId: Int,
     val createDate: String,
+    val likes: Int,
+    val isLiked: Boolean,
 )

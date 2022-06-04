@@ -76,6 +76,7 @@ class FeedFragment : Fragment() {
         call.enqueue(object : Callback<List<Tweet>> {
             override fun onResponse(call: Call<List<Tweet>>, response: Response<List<Tweet>>) {
                 val tweetList = response.body()
+                Log.v("Pity", tweetList.toString())
                 tweetList?.let {
                     adapter.tweets = it
                     adapter.notifyDataSetChanged()

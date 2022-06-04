@@ -1,13 +1,23 @@
 package com.example.anyapp
 
+import android.app.Activity
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.ItemTweetBinding
 import com.example.anyapp.util.Constants.Companion.BASE_URL
+import com.example.anyapp.util.LikeResponse
+import com.example.anyapp.util.UserToken
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.squareup.picasso.Picasso
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class TweetAdapter(
     var tweets: List<Tweet>
@@ -15,6 +25,13 @@ class TweetAdapter(
 
     inner class TweetViewHolder(val binding: ItemTweetBinding) :
         RecyclerView.ViewHolder(binding.root)
+
+    // for accessing backend api using retrofit
+    private val retrofit = Retrofit
+        .Builder().addConverterFactory(GsonConverterFactory.create())
+        .baseUrl(BASE_URL)
+        .build()
+    private val tweetApi: TweetApi = retrofit.create(TweetApi::class.java)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TweetViewHolder {
         // how new item_tweets are created
@@ -29,6 +46,57 @@ class TweetAdapter(
             username.text = tweets[position].username
             userID.text = "@" + tweets[position].username
             textContent.text = tweets[position].text
+
+            var likeCountNum = tweets[position].likes
+            likeCount.text = likeCountNum.toString()
+
+            var isLikedTweet = tweets[position].isLiked
+            // set color for botton if liked
+            if (isLikedTweet) {
+                likeButton.setBackgroundColor(
+                    root.resources.getColor(R.color.light_blue, root.context.theme)
+                )
+            } else {
+                likeButton.setBackgroundColor(
+                    root.resources.getColor(R.color.white, root.context.theme)
+                )
+            }
+
+            val tweetId = tweets[position].tweetId
+            likeButton.setOnClickListener {
+                val call =
+                    tweetApi.likeTweet(UserToken(it.context as Activity?).readToken(), tweetId)
+
+                call.enqueue(object : Callback<LikeResponse> {
+                    override fun onResponse(
+                        call: Call<LikeResponse>,
+                        response: Response<LikeResponse>
+                    ) {
+                        val respObj: LikeResponse = response.body() ?: return
+                        Log.v("Pity", respObj.toString())
+                        if (isLikedTweet != respObj.isLike) {
+                            isLikedTweet = respObj.isLike
+                            if (isLikedTweet) {
+                                likeCountNum++
+                                likeButton.setBackgroundColor(
+                                    root.resources.getColor(R.color.light_blue, root.context.theme)
+                                )
+                            } else {
+                                likeCountNum--
+                                likeButton.setBackgroundColor(
+                                    root.resources.getColor(R.color.white, root.context.theme)
+                                )
+                            }
+                            likeCount.text = likeCountNum.toString()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<LikeResponse>, t: Throwable) {
+                        Log.v("Pity", t.toString())
+                    }
+
+                })
+            }
 
             if (tweets[position].imageUrl != null) {
                 // load image if tweet.imageContent has content
