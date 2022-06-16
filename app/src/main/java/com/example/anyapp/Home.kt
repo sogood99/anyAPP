@@ -47,7 +47,7 @@ class Home : AppCompatActivity() {
         binding.fragPager.adapter = pagerAdapter
 
         // put in new tweet fragment
-        val newTweetFragment = NewTweetFragment.newInstance()
+        val newTweetFragment = NewTweetFragment.newInstance(isReply = false)
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.newTweet, newTweetFragment)
         transaction.addToBackStack("NewTweet")

@@ -12,6 +12,18 @@
     android:padding="10dp"
     tools:context=".NewTweetFragment">
 
+    <TextView
+        android:id="@+id/indicatorText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingTop="24dp"
+        android:text="Text"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/sendTweetButton"
         android:layout_width="wrap_content"

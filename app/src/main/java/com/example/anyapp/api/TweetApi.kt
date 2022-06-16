@@ -14,6 +14,7 @@ interface TweetApi {
     fun tweet(
         @Header("Authorization") token: String,
         @Part("text") text: RequestBody,
+        @Part("repliesId") replyId: Int?,
         @Part imageFile: MultipartBody.Part?,
     ): Call<Tweet>
 

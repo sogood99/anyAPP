@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.FragmentNewTweetBinding
 import com.example.anyapp.util.Constants
@@ -23,6 +24,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 
+private const val ISREPLY_PARAM = "isReply"
+private const val REPLYID_PARAM = "replyId"
+
 /**
  * A simple [Fragment] subclass.
  * Use the [NewTweetFragment.newInstance] factory method to
@@ -30,6 +34,9 @@ import java.io.File
  */
 class NewTweetFragment : Fragment() {
     private lateinit var binding: FragmentNewTweetBinding
+
+    private var isReply: Boolean? = null
+    private var replyId: Int? = null
 
     private val retrofit = Retrofit
         .Builder().addConverterFactory(GsonConverterFactory.create())
@@ -43,6 +50,14 @@ class NewTweetFragment : Fragment() {
         override fun successCallback() {
             // get the successfully fetched image using getImageFile(), then set to NewTweetFragment.imageFile
             this@NewTweetFragment.imageFile = getImageFile()
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            isReply = it.getBoolean(ISREPLY_PARAM)
+            replyId = it.getInt(REPLYID_PARAM)
         }
     }
 
@@ -71,6 +86,12 @@ class NewTweetFragment : Fragment() {
                     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
                 }
             }
+
+            if (isReply == true) {
+                indicatorText.text = "Reply"
+            } else {
+                indicatorText.text = "New Tweet"
+            }
         }
     }
 
@@ -89,6 +110,9 @@ class NewTweetFragment : Fragment() {
 
     private fun sendTweet() {
         val userToken = UserToken(this.activity).readToken()
+        if (userToken == null) {
+            Toast.makeText(context, "Login to Send Tweet", Toast.LENGTH_LONG).show()
+        }
 
         userToken?.let { token ->
             // send file to backend
@@ -115,6 +139,7 @@ class NewTweetFragment : Fragment() {
             val call = tweetApi.tweet(
                 token,
                 text,
+                if (isReply == true) replyId else null,
                 fileToUpload
             )
 
@@ -153,6 +178,11 @@ class NewTweetFragment : Fragment() {
          * @return A new instance of fragment NewTweetFragment.
          */
         @JvmStatic
-        fun newInstance() = NewTweetFragment().apply {}
+        fun newInstance(isReply: Boolean, replyId: Int = -1) = NewTweetFragment().apply {
+            arguments = Bundle().apply {
+                putBoolean(ISREPLY_PARAM, isReply)
+                putInt(REPLYID_PARAM, replyId)
+            }
+        }
     }
 }
