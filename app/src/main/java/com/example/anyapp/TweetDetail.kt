@@ -1,6 +1,5 @@
 package com.example.anyapp
 
-import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -32,7 +31,7 @@ class TweetDetail : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTweetDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        postponeEnterTransition()
 
         // set replies
         val feedFragment = FeedFragment.newInstance(FeedType.Profile)
@@ -43,16 +42,17 @@ class TweetDetail : AppCompatActivity() {
 
         // set back button
         binding.toolBar.setNavigationOnClickListener {
-            finish()
+            onBackPressed()
         }
 
-        val id = intent.getIntExtra(TweetAdapter.EXTRA_TWEET_ID, -1)
-        if (id < 0) {
+        val tweetId = intent.getIntExtra(TweetAdapter.EXTRA_TWEET_ID, -1)
+        val position = intent.getIntExtra(TweetAdapter.EXTRA_POSITION, -1)
+        if (tweetId < 0 || position < 0) {
             // dont call without specifying tweetid
             finish()
         }
 
-        val call = tweetApi.tweetDetail(UserToken(this).readToken(), id)
+        val call = tweetApi.tweetDetail(UserToken(this).readToken(), tweetId)
         call.enqueue(object : Callback<Tweet> {
             override fun onResponse(call: Call<Tweet>, response: Response<Tweet>) {
                 Log.v("Pity", response.body().toString())
@@ -64,8 +64,12 @@ class TweetDetail : AppCompatActivity() {
                         username.text = "@" + tweet.username
                         textContent.text = tweet.text
 
+                        profileName.transitionName = "profileName$position"
+                        username.transitionName = "username$position"
+                        textContent.transitionName = "textContent$position"
+
                         // usual imageUrl & videoUrl setting
-                        if (it.userIconUrl != null) {
+                        if (it.userIconUrl != "") {
                             // load image if tweet.imageContent has content
                             val url = Constants.BASE_URL + "/" + it.userIconUrl
                             Picasso.get().load(url).into(userIcon)
@@ -73,11 +77,13 @@ class TweetDetail : AppCompatActivity() {
                             val url = "${Constants.BASE_URL}/image/userIcon/default.jpg"
                             Picasso.get().load(url).into(userIcon)
                         }
+                        // set transition name for activity shared element transition
+                        userIcon.transitionName = "userIcon$position"
 
                         if (it.videoUrl != null) {
                             // same as image
                             val url = Constants.BASE_URL + "/" + it.videoUrl
-                            url?.let {
+                            url.let {
                                 val player = ExoPlayer.Builder(videoContent.context).build()
                                 videoContent.player = player
                                 val mediaItem = MediaItem.fromUri(it)
@@ -102,6 +108,9 @@ class TweetDetail : AppCompatActivity() {
                                 parent.removeView(imageContent)
                             }
                         }
+                        imageContent.transitionName = "imageContent$position"
+
+                        startPostponedEnterTransition()
                     }
                 }
             }
@@ -110,9 +119,5 @@ class TweetDetail : AppCompatActivity() {
                 Log.v("Pity", t.toString())
             }
         })
-    }
-
-    override fun onBackPressed() {
-        finish()
     }
 }

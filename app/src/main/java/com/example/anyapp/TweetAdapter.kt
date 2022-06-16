@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityOptionsCompat
@@ -22,7 +23,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.net.HttpURLConnection
-import android.util.Pair as UtilPair
+import androidx.core.util.Pair as UtilPair
 
 
 class TweetAdapter(
@@ -31,6 +32,7 @@ class TweetAdapter(
 
     companion object {
         const val EXTRA_TWEET_ID = "com.example.anyapp.Tweet_ID"
+        const val EXTRA_POSITION = "com.example.anyapp.RvPosition"
     }
 
     inner class TweetViewHolder(val binding: ItemTweetBinding) :
@@ -70,19 +72,6 @@ class TweetAdapter(
                 likeButton.setBackgroundColor(
                     root.resources.getColor(R.color.white, root.context.theme)
                 )
-            }
-
-            tweetCard.setOnClickListener {
-                // when clicked tweet card, start TweetDetail activity
-                val intent = Intent(root.context, TweetDetail::class.java).apply {
-                    putExtra(EXTRA_TWEET_ID, tweets[position].tweetId)
-                }
-                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    root.context as Activity,
-                    imageContent,
-                    "imageContent"
-                )
-                root.context.startActivity(intent, options.toBundle())
             }
 
             val tweetId = tweets[position].tweetId
@@ -135,7 +124,7 @@ class TweetAdapter(
                 }
             }
 
-            if (tweets[position].userIconUrl != null) {
+            if (tweets[position].userIconUrl != "") {
                 // load image if tweet.imageContent has content
                 val url = BASE_URL + "/" + tweets[position].userIconUrl
                 Picasso.get().load(url).into(userIcon)
@@ -147,19 +136,36 @@ class TweetAdapter(
             if (tweets[position].videoUrl != null) {
                 // same as image
                 val url = BASE_URL + "/" + tweets[position].videoUrl
-                url?.let {
+                url.let {
                     val player = ExoPlayer.Builder(videoContent.context).build()
                     videoContent.player = player
                     val mediaItem = MediaItem.fromUri(it)
                     player.setMediaItem(mediaItem)
                     player.prepare()
-//                    player.play()
                 }
             } else {
                 val parent: ViewGroup? = videoContent.parent as? ViewGroup
                 parent?.let {
                     parent.removeView(videoContent)
                 }
+            }
+
+            tweetCard.setOnClickListener {
+                // when clicked tweet card, start TweetDetail activity
+                val intent = Intent(root.context, TweetDetail::class.java).apply {
+                    putExtra(EXTRA_TWEET_ID, tweets[position].tweetId)
+                    putExtra(EXTRA_POSITION, position)
+                }
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    root.context as Activity,
+                    UtilPair.create(userIcon as View, "userIcon$position"),
+                    UtilPair.create(profileName as View, "profileName$position"),
+                    UtilPair.create(username as View, "username$position"),
+                    UtilPair.create(textContent as View, "textContent$position"),
+                    UtilPair.create(imageContent as View, "imageContent$position"),
+                    UtilPair.create(videoContent as View, "videoContent$position"),
+                )
+                root.context.startActivity(intent, options.toBundle())
             }
         }
     }

@@ -62,8 +62,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="ProfileName"
-                            android:textAppearance="?attr/textAppearanceHeadline6"
-                            android:transitionName="profileName" />
+                            android:textAppearance="?attr/textAppearanceHeadline6" />
 
                         <TextView
                             android:id="@+id/username"
@@ -72,8 +71,7 @@
                             android:layout_marginTop="4dp"
                             android:text="\@username"
                             android:textAppearance="?attr/textAppearanceBody2"
-                            android:textColor="?android:attr/textColorSecondary"
-                            android:transitionName="username" />
+                            android:textColor="?android:attr/textColorSecondary" />
 
                     </LinearLayout>
 
@@ -95,7 +93,6 @@
                     android:layout_marginBottom="16dp"
                     android:contentDescription="Picture"
                     android:scaleType="centerCrop"
-                    android:transitionName="imageContent"
                     app:shapeAppearanceOverlay="@style/customRoundedImageView" />
 
                 <com.google.android.exoplayer2.ui.PlayerView
