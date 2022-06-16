@@ -20,6 +20,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 private const val OPTION_PARAM = "option"
+private const val REPLIESID_PARAM = "repliesId"
 
 /**
  * A simple [Fragment] subclass.
@@ -28,6 +29,7 @@ private const val OPTION_PARAM = "option"
  */
 class FeedFragment : Fragment() {
     private var option: FeedType? = null
+    private var repliesId: Int? = null
 
     // databinding
     private lateinit var binding: FragmentFeedBinding
@@ -44,6 +46,7 @@ class FeedFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             option = it.getSerializable(OPTION_PARAM) as FeedType?
+            repliesId = it.getInt(REPLIESID_PARAM)
         }
     }
 
@@ -73,7 +76,11 @@ class FeedFragment : Fragment() {
 
     private fun getFeed(view: View) {
         // get the data from backend
-        val call = tweetApi.getFeed(UserToken(activity).readToken(), option)
+        val call = tweetApi.getFeed(
+            UserToken(activity).readToken(),
+            option,
+            if (option == FeedType.Replies) repliesId else null
+        )
         call.enqueue(object : Callback<List<Tweet>> {
             override fun onResponse(call: Call<List<Tweet>>, response: Response<List<Tweet>>) {
                 val tweetList = response.body()
@@ -98,14 +105,19 @@ class FeedFragment : Fragment() {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param option Parameter which specifies which feed type (popular, following, notification, or profile)
+         * @param option Parameter which specifies which feed type (popular, following, notification, replies, or profile)
+         * @param repliesId Param which when combined with FeedType.Replies specifies which tweetId to see replies of
          * @return A new instance of fragment FeedFragment.
          */
         @JvmStatic
-        fun newInstance(option: FeedType) =
+        fun newInstance(option: FeedType, repliesId: Int = -1) =
             FeedFragment().apply {
                 arguments = Bundle().apply {
+                    if (option == FeedType.Replies && repliesId < 0) {
+                        assert(false, { "Error, negative replies id for FeedType.Replies" })
+                    }
                     putSerializable(OPTION_PARAM, option)
+                    putInt(REPLIESID_PARAM, repliesId)
                 }
             }
     }

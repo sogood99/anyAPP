@@ -11,7 +11,7 @@
         <entry key="app/src/main/res/layout/activity_login_register.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_profile.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/activity_tweet_detail.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_tweet_detail.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_feed.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_new_tweet.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.33" />

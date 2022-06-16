@@ -14,6 +14,7 @@ interface TweetApi {
     fun tweet(
         @Header("Authorization") token: String,
         @Part("text") text: RequestBody,
+        @Part("repliesId") replyId: Int?,
         @Part imageFile: MultipartBody.Part?,
     ): Call<Tweet>
 
@@ -29,6 +30,7 @@ interface TweetApi {
     fun getFeed(
         @Header("Authorization") authorization: String?,
         @Field("option") options: FeedType?,
+        @Field("repliesId") repliesId: Int?,
     ): Call<List<Tweet>>
 
     @FormUrlEncoded

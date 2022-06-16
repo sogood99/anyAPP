@@ -25,7 +25,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.net.HttpURLConnection
 import androidx.core.util.Pair as UtilPair
 
-
 class TweetAdapter(
     var tweets: List<Tweet>
 ) : RecyclerView.Adapter<TweetAdapter.TweetViewHolder>() {

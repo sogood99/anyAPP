@@ -9,7 +9,7 @@ data class Tweet(
     val text: String,
     val imageUrl: String?,
     val videoUrl: String?,
-    val repliesId: Int,
+    val repliesId: Int?,
     val createDate: String,
     val likes: Int,
     val isLiked: Boolean,

@@ -6,7 +6,7 @@ import com.example.anyapp.R
 
 enum class FeedType {
     // Different types of feed ordering for FeedFragment parameter passing
-    Popular, Following, Profile, Notifications
+    Popular, Following, Profile, Notifications, Replies
 }
 
 class Constants {
