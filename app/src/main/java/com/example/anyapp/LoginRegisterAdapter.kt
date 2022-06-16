@@ -1,11 +1,11 @@
 package com.example.anyapp
 
 import android.app.Activity
-import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.anyapp.api.AccountApi
@@ -39,7 +39,21 @@ class LoginRegisterAdapter : RecyclerView.Adapter<LoginRegisterAdapter.ViewPager
 
     override fun onBindViewHolder(holder: ViewPagerViewHolder, position: Int) {
         holder.binding.apply {
-            if (position == 0) {
+
+            // hide keyboard
+            root.setOnFocusChangeListener { view, hasFocus ->
+                if (hasFocus) {
+                    usernameInput.clearFocus()
+                    emailInput.clearFocus()
+                    passwordInput.clearFocus()
+
+                    val inputMethodManager =
+                        view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+                }
+            }
+
+            if (position == LoginRegister.LOGIN_POS) {
                 // login
                 emailInput.visibility = View.GONE
 
@@ -72,7 +86,7 @@ class LoginRegisterAdapter : RecyclerView.Adapter<LoginRegisterAdapter.ViewPager
                     })
                 }
 
-            } else {
+            } else if (position == LoginRegister.REGISTER_POS) {
                 // register
                 submitButton.setOnClickListener {
                     val activity = it.context as Activity

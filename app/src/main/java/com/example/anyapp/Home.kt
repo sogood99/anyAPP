@@ -163,8 +163,7 @@ class Home : AppCompatActivity() {
     }
 
     private fun resetFragPager() {
-        val adapter = binding.fragPager.adapter
-        binding.fragPager.adapter = null
+        val adapter = BottomNavPagerAdapter(this)
         binding.fragPager.adapter = adapter
     }
 

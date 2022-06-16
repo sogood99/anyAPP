@@ -8,6 +8,10 @@ import com.google.android.material.tabs.TabLayoutMediator
 class LoginRegister : AppCompatActivity() {
     private lateinit var binding: ActivityLoginRegisterBinding
 
+    companion object {
+        const val LOGIN_POS = 0
+        const val REGISTER_POS = 1
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +26,11 @@ class LoginRegister : AppCompatActivity() {
 
             // link tablayout to ViewPager2
             TabLayoutMediator(tabLayout, loginRegisterFieldPager) { tab, position ->
-                tab.text = "Tab ${position}"
+                if (position == LOGIN_POS) {
+                    tab.text = "Login"
+                } else if (position == REGISTER_POS) {
+                    tab.text = "Register"
+                }
             }.attach()
 
             // set back button to finish
