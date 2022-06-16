@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.FragmentFeedBinding
@@ -87,7 +88,7 @@ class FeedFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<List<Tweet>>, t: Throwable) {
-                Log.v("Pity", t.toString())
+                Toast.makeText(context, "Server Connection Error", Toast.LENGTH_LONG).show()
             }
         })
     }

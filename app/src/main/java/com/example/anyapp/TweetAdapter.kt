@@ -1,9 +1,13 @@
 package com.example.anyapp
 
 import android.app.Activity
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.ItemTweetBinding
@@ -18,10 +22,18 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.HttpURLConnection
+import androidx.core.util.Pair as UtilPair
+
 
 class TweetAdapter(
     var tweets: List<Tweet>
 ) : RecyclerView.Adapter<TweetAdapter.TweetViewHolder>() {
+
+    companion object {
+        const val EXTRA_TWEET_ID = "com.example.anyapp.Tweet_ID"
+        const val EXTRA_POSITION = "com.example.anyapp.RvPosition"
+    }
 
     inner class TweetViewHolder(val binding: ItemTweetBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -43,8 +55,8 @@ class TweetAdapter(
     override fun onBindViewHolder(holder: TweetViewHolder, position: Int) {
         // how the tweet.kt data class is synced with item_tweet
         holder.binding.apply {
-            username.text = tweets[position].username
-            userID.text = "@" + tweets[position].username
+            profileName.text = tweets[position].profileName
+            username.text = "@" + tweets[position].username
             textContent.text = tweets[position].text
 
             var likeCountNum = tweets[position].likes
@@ -72,6 +84,9 @@ class TweetAdapter(
                         call: Call<LikeResponse>,
                         response: Response<LikeResponse>
                     ) {
+                        if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                            Toast.makeText(root.context, "Please Log In", Toast.LENGTH_SHORT).show()
+                        }
                         val respObj: LikeResponse = response.body() ?: return
                         Log.v("Pity", respObj.toString())
                         if (isLikedTweet != respObj.isLike) {
@@ -94,7 +109,6 @@ class TweetAdapter(
                     override fun onFailure(call: Call<LikeResponse>, t: Throwable) {
                         Log.v("Pity", t.toString())
                     }
-
                 })
             }
 
@@ -110,7 +124,7 @@ class TweetAdapter(
                 }
             }
 
-            if (tweets[position].userIconUrl != null) {
+            if (tweets[position].userIconUrl != "") {
                 // load image if tweet.imageContent has content
                 val url = BASE_URL + "/" + tweets[position].userIconUrl
                 Picasso.get().load(url).into(userIcon)
@@ -122,19 +136,36 @@ class TweetAdapter(
             if (tweets[position].videoUrl != null) {
                 // same as image
                 val url = BASE_URL + "/" + tweets[position].videoUrl
-                url?.let {
+                url.let {
                     val player = ExoPlayer.Builder(videoContent.context).build()
                     videoContent.player = player
                     val mediaItem = MediaItem.fromUri(it)
                     player.setMediaItem(mediaItem)
                     player.prepare()
-//                    player.play()
                 }
             } else {
                 val parent: ViewGroup? = videoContent.parent as? ViewGroup
                 parent?.let {
                     parent.removeView(videoContent)
                 }
+            }
+
+            tweetCard.setOnClickListener {
+                // when clicked tweet card, start TweetDetail activity
+                val intent = Intent(root.context, TweetDetail::class.java).apply {
+                    putExtra(EXTRA_TWEET_ID, tweets[position].tweetId)
+                    putExtra(EXTRA_POSITION, position)
+                }
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    root.context as Activity,
+                    UtilPair.create(userIcon as View, "userIcon$position"),
+                    UtilPair.create(profileName as View, "profileName$position"),
+                    UtilPair.create(username as View, "username$position"),
+                    UtilPair.create(textContent as View, "textContent$position"),
+                    UtilPair.create(imageContent as View, "imageContent$position"),
+                    UtilPair.create(videoContent as View, "videoContent$position"),
+                )
+                root.context.startActivity(intent, options.toBundle())
             }
         }
     }
