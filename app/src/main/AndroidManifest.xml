@@ -20,6 +20,9 @@
         android:theme="@style/Theme.AnyApp"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".TweetDetail"
+            android:exported="false" />
+        <activity
             android:name=".LoginRegister"
             android:exported="false" />
 

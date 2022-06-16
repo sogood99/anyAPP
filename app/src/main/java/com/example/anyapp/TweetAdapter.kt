@@ -1,6 +1,7 @@
 package com.example.anyapp
 
 import android.app.Activity
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -24,6 +25,10 @@ import java.net.HttpURLConnection
 class TweetAdapter(
     var tweets: List<Tweet>
 ) : RecyclerView.Adapter<TweetAdapter.TweetViewHolder>() {
+
+    companion object {
+        const val EXTRA_TWEET_ID = "com.example.anyapp.Tweet_ID"
+    }
 
     inner class TweetViewHolder(val binding: ItemTweetBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -64,6 +69,14 @@ class TweetAdapter(
                 )
             }
 
+            tweetCard.setOnClickListener {
+                // when clicked tweet card, start TweetDetail activity
+                val intent = Intent(root.context, TweetDetail::class.java).apply {
+                    putExtra(EXTRA_TWEET_ID, tweets[position].tweetId)
+                }
+                root.context.startActivity(intent)
+            }
+
             val tweetId = tweets[position].tweetId
             likeButton.setOnClickListener {
                 val call =
@@ -99,7 +112,6 @@ class TweetAdapter(
                     override fun onFailure(call: Call<LikeResponse>, t: Throwable) {
                         Log.v("Pity", t.toString())
                     }
-
                 })
             }
 
