@@ -111,6 +111,20 @@ class TweetAdapter(
                 })
             }
 
+            // check if this tweet is a reply of another
+            val repliesId = tweets[position].repliesId
+            if (repliesId != null) {
+                replyText.text = "replies to @$repliesId"
+                replyText.setOnClickListener {
+                    val intent = Intent(root.context, TweetDetail::class.java).apply {
+                        putExtra(EXTRA_TWEET_ID, repliesId)
+                    }
+                    root.context.startActivity(intent)
+                }
+            } else {
+                replyText.visibility = View.GONE
+            }
+
             if (tweets[position].imageUrl != null) {
                 // load image if tweet.imageContent has content
                 val url = BASE_URL + "/" + tweets[position].imageUrl

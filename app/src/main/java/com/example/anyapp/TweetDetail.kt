@@ -38,7 +38,7 @@ class TweetDetail : AppCompatActivity() {
         // get intent params
         val tweetId = intent.getIntExtra(TweetAdapter.EXTRA_TWEET_ID, -1)
         val position = intent.getIntExtra(TweetAdapter.EXTRA_POSITION, -1)
-        if (tweetId < 0 || position < 0) {
+        if (tweetId < 0) {
             // dont call without specifying tweetid
             finish()
         }
