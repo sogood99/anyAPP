@@ -4,6 +4,7 @@ import android.app.Activity
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.ItemTweetBinding
@@ -18,6 +19,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.HttpURLConnection
 
 class TweetAdapter(
     var tweets: List<Tweet>
@@ -72,6 +74,9 @@ class TweetAdapter(
                         call: Call<LikeResponse>,
                         response: Response<LikeResponse>
                     ) {
+                        if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                            Toast.makeText(root.context, "Please Log In", Toast.LENGTH_SHORT).show()
+                        }
                         val respObj: LikeResponse = response.body() ?: return
                         Log.v("Pity", respObj.toString())
                         if (isLikedTweet != respObj.isLike) {
