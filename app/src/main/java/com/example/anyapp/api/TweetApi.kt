@@ -18,6 +18,13 @@ interface TweetApi {
     ): Call<Tweet>
 
     @FormUrlEncoded
+    @POST("api/tweet/detail/")
+    fun tweetDetail(
+        @Header("Authorization") token: String?,
+        @Field("tweet") tweetId: Int,
+    ): Call<Tweet>
+
+    @FormUrlEncoded
     @POST("api/tweet/feed/")
     fun getFeed(
         @Header("Authorization") authorization: String?,

@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.ItemTweetBinding
@@ -21,6 +22,8 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.net.HttpURLConnection
+import android.util.Pair as UtilPair
+
 
 class TweetAdapter(
     var tweets: List<Tweet>
@@ -74,7 +77,12 @@ class TweetAdapter(
                 val intent = Intent(root.context, TweetDetail::class.java).apply {
                     putExtra(EXTRA_TWEET_ID, tweets[position].tweetId)
                 }
-                root.context.startActivity(intent)
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    root.context as Activity,
+                    imageContent,
+                    "imageContent"
+                )
+                root.context.startActivity(intent, options.toBundle())
             }
 
             val tweetId = tweets[position].tweetId
