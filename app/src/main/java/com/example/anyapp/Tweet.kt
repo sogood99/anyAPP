@@ -5,6 +5,7 @@ data class Tweet(
     val userId: Int,
     val userIconUrl: String,
     val username: String,
+    val profileName: String,
     val text: String,
     val imageUrl: String?,
     val videoUrl: String?,

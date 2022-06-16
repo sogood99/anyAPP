@@ -53,8 +53,8 @@ class TweetAdapter(
     override fun onBindViewHolder(holder: TweetViewHolder, position: Int) {
         // how the tweet.kt data class is synced with item_tweet
         holder.binding.apply {
-            username.text = tweets[position].username
-            userID.text = "@" + tweets[position].username
+            profileName.text = tweets[position].profileName
+            username.text = "@" + tweets[position].username
             textContent.text = tweets[position].text
 
             var likeCountNum = tweets[position].likes
