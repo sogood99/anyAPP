@@ -39,6 +39,8 @@ class LoginRegisterAdapter : RecyclerView.Adapter<LoginRegisterAdapter.ViewPager
 
     override fun onBindViewHolder(holder: ViewPagerViewHolder, position: Int) {
         holder.binding.apply {
+
+            // hide keyboard
             root.setOnFocusChangeListener { view, hasFocus ->
                 if (hasFocus) {
                     usernameInput.clearFocus()

@@ -1,11 +1,13 @@
 package com.example.anyapp
 
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.FragmentNewTweetBinding
 import com.example.anyapp.util.Constants
@@ -37,8 +39,9 @@ class NewTweetFragment : Fragment() {
 
     private var imageFile: File? = null
 
-    val imageFetcher = object : ImageFetcher(this) {
+    private val imageFetcher = object : ImageFetcher(this) {
         override fun successCallback() {
+            // get the successfully fetched image using getImageFile(), then set to NewTweetFragment.imageFile
             this@NewTweetFragment.imageFile = getImageFile()
         }
     }
@@ -56,6 +59,19 @@ class NewTweetFragment : Fragment() {
 
         // setup tweet button
         setupTweet()
+
+        // hide keyboard
+        binding.apply {
+            root.setOnFocusChangeListener { view, hasFocus ->
+                if (hasFocus) {
+                    newTweetTextLayout.clearFocus()
+
+                    val inputMethodManager =
+                        view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+                }
+            }
+        }
     }
 
     private fun setupTweet() {
