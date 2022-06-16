@@ -114,7 +114,7 @@ class TweetAdapter(
             // check if this tweet is a reply of another
             val repliesId = tweets[position].repliesId
             if (repliesId != null) {
-                replyText.text = "replies to @$repliesId"
+                replyText.text = "replies to tweet@$repliesId"
                 replyText.setOnClickListener {
                     val intent = Intent(root.context, TweetDetail::class.java).apply {
                         putExtra(EXTRA_TWEET_ID, repliesId)
@@ -177,6 +177,7 @@ class TweetAdapter(
                     UtilPair.create(textContent as View, "textContent$position"),
                     UtilPair.create(imageContent as View, "imageContent$position"),
                     UtilPair.create(videoContent as View, "videoContent$position"),
+                    UtilPair.create(replyText as View, "replyText$position"),
                 )
                 root.context.startActivity(intent, options.toBundle())
             }

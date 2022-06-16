@@ -1,5 +1,6 @@
 package com.example.anyapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -104,6 +105,21 @@ class TweetDetail : AppCompatActivity() {
                         profileName.transitionName = "profileName$position"
                         username.transitionName = "username$position"
                         textContent.transitionName = "textContent$position"
+
+                        // check if this tweet is a reply of another
+                        val repliesId = tweet.repliesId
+                        if (repliesId != null) {
+                            replyText.text = "replies to tweet@$repliesId"
+                            replyText.setOnClickListener {
+                                val intent = Intent(root.context, TweetDetail::class.java).apply {
+                                    putExtra(TweetAdapter.EXTRA_TWEET_ID, repliesId)
+                                }
+                                root.context.startActivity(intent)
+                            }
+                        } else {
+                            replyText.visibility = View.GONE
+                        }
+                        replyText.transitionName = "replyText$position"
 
                         // usual imageUrl & videoUrl setting
                         if (it.userIconUrl != "") {

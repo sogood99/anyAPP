@@ -78,6 +78,16 @@
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/replyText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="replies"
+                    android:textAppearance="?attr/textAppearanceBody1"
+                    android:textColor="@color/light_blue"
+                    android:textSize="12dp" />
+
+                <TextView
                     android:id="@+id/textContent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
