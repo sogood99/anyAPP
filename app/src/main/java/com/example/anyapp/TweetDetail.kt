@@ -31,12 +31,14 @@ class TweetDetail : AppCompatActivity() {
         binding = ActivityTweetDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // set replies
         val feedFragment = FeedFragment.newInstance(FeedType.Profile)
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.replyFeedLayout, feedFragment)
             commit()
         }
 
+        // set back button
         binding.toolBar.setNavigationOnClickListener {
             finish()
         }
