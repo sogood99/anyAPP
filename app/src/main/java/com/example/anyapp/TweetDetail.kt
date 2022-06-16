@@ -44,7 +44,7 @@ class TweetDetail : AppCompatActivity() {
         }
 
         // set replies
-        val feedFragment = FeedFragment.newInstance(FeedType.Profile)
+        val feedFragment = FeedFragment.newInstance(FeedType.Replies, repliesId = tweetId)
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.replyFeedLayout, feedFragment)
             commit()
