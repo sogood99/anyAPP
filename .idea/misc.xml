@@ -6,8 +6,10 @@
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.353" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.353" />
         <entry key="app/src/main/res/drawable/ic_outline_home.xml" value="0.2065" />
+        <entry key="app/src/main/res/drawable/profile_shape.xml" value="0.126" />
         <entry key="app/src/main/res/drawable/replies_shape.xml" value="0.158" />
         <entry key="app/src/main/res/drawable/tweet_shape.xml" value="0.1825" />
+        <entry key="app/src/main/res/layout/activity_edit_profile.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_login_register.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
@@ -15,7 +17,7 @@
         <entry key="app/src/main/res/layout/activity_tweet_detail.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_feed.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_new_tweet.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.3113879003558719" />
         <entry key="app/src/main/res/layout/item_login_register.xml" value="0.30434782608695654" />
         <entry key="app/src/main/res/layout/item_tweet.xml" value="0.33" />
         <entry key="app/src/main/res/menu/home_menu.xml" value="0.359375" />

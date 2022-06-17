@@ -19,7 +19,7 @@ data class ProfileResponse(
     val userIconUrl: String,
     val userBkgUrl: String,
     val createDate: String,
-    val profileInfo: String,
+    val profileInfo: String?,
 )
 
 data class LikeResponse(

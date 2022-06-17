@@ -46,12 +46,7 @@ class NewTweetFragment : Fragment() {
 
     private var imageFile: File? = null
 
-    private val imageFetcher = object : ImageFetcher(this) {
-        override fun successCallback() {
-            // get the successfully fetched image using getImageFile(), then set to NewTweetFragment.imageFile
-            this@NewTweetFragment.imageFile = getImageFile()
-        }
-    }
+    private lateinit var imageFetcher: ImageFetcher
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +66,14 @@ class NewTweetFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        imageFetcher = object : ImageFetcher(requireActivity(), requireActivity().activityResultRegistry) {
+            override fun successCallback() {
+                // get the successfully fetched image using getImageFile(), then set to NewTweetFragment.imageFile
+                this@NewTweetFragment.imageFile = getImageFile()
+            }
+        }
+        lifecycle.addObserver(imageFetcher)
 
         // setup tweet button
         setupTweet()
