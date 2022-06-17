@@ -1,8 +1,9 @@
 package com.example.anyapp
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.example.anyapp.databinding.ActivityLoginRegisterBinding
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class LoginRegister : AppCompatActivity() {
@@ -26,15 +27,38 @@ class LoginRegister : AppCompatActivity() {
 
             // link tablayout to ViewPager2
             TabLayoutMediator(tabLayout, loginRegisterFieldPager) { tab, position ->
+                var showText = ""
                 if (position == LOGIN_POS) {
-                    tab.text = "Login"
+                    showText = "Login"
                 } else if (position == REGISTER_POS) {
-                    tab.text = "Register"
+                    showText = "Register"
                 }
+                tab.text = showText
             }.attach()
 
+            // tabLayout onchange
+            tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab?) {
+                    if (tab == null) {
+                        return
+                    }
+                    var showText = ""
+                    if (tab.position == LOGIN_POS) {
+                        showText = "Login"
+                    } else if (tab.position == REGISTER_POS) {
+                        showText = "Register"
+                    }
+                    toolBar.title = showText
+                }
+
+                override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
+                override fun onTabReselected(tab: TabLayout.Tab?) = Unit
+
+            })
+
+
             // set back button to finish
-            backButton.setOnClickListener {
+            toolBar.setNavigationOnClickListener {
                 finish()
             }
         }

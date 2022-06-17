@@ -62,7 +62,7 @@ class TweetAdapter(
             likeCount.text = likeCountNum.toString()
 
             var isLikedTweet = tweets[position].isLiked
-            // set color for botton if liked
+            // set color for button if liked
             if (isLikedTweet) {
                 likeButton.setBackgroundColor(
                     root.resources.getColor(R.color.light_blue, root.context.theme)
@@ -109,6 +109,23 @@ class TweetAdapter(
                         Log.v("Pity", t.toString())
                     }
                 })
+            }
+
+            // check if this tweet is a reply of another
+            val repliesId = tweets[position].repliesId
+            if (repliesId != null) {
+                replyText.text = "replies to tweet@$repliesId"
+                replyText.setOnClickListener {
+                    val intent = Intent(root.context, TweetDetail::class.java).apply {
+                        putExtra(EXTRA_TWEET_ID, repliesId)
+                    }
+                    root.context.startActivity(intent)
+                }
+            } else {
+                val parent: ViewGroup? = replyText.parent as? ViewGroup
+                parent?.let {
+                    parent.removeView(replyText)
+                }
             }
 
             if (tweets[position].imageUrl != null) {
@@ -163,6 +180,7 @@ class TweetAdapter(
                     UtilPair.create(textContent as View, "textContent$position"),
                     UtilPair.create(imageContent as View, "imageContent$position"),
                     UtilPair.create(videoContent as View, "videoContent$position"),
+                    UtilPair.create(replyText as View, "replyText$position"),
                 )
                 root.context.startActivity(intent, options.toBundle())
             }

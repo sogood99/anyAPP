@@ -148,15 +148,17 @@ class NewTweetFragment : Fragment() {
                     call: Call<Tweet>,
                     response: Response<Tweet>
                 ) {
+                    Toast.makeText(context, "Sent Tweet", Toast.LENGTH_LONG).show()
                     Log.v("Pity", response.toString())
                     Log.v("Pity", response.body().toString())
-                    response.body()?.videoUrl?.let { it1 -> Log.v("Pity", it1) }
                 }
 
                 override fun onFailure(call: Call<Tweet>, t: Throwable) {
-                    Log.v("Pity", t.toString())
+                    Toast.makeText(context, "Error: " + t.toString(), Toast.LENGTH_LONG).show()
                 }
             })
+
+            resetTweet()
         }
     }
 
@@ -167,6 +169,19 @@ class NewTweetFragment : Fragment() {
 
     fun hide() {
         binding.root.animate().alpha(0.0f).setDuration(100)
+    }
+
+    private fun resetTweet() {
+        // reset newTweet
+        binding.apply {
+            newTweetTextLayout.editText?.text?.clear()
+            imageFile = null
+
+            newTweetTextLayout.clearFocus()
+            val inputMethodManager =
+                root.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(root.windowToken, 0)
+        }
     }
 
 
