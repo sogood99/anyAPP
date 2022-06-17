@@ -30,6 +30,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
                     android:scaleType="fitXY"
+                    android:transitionName="profileBkgImg"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.imageview.ShapeableImageView
@@ -38,10 +39,11 @@
                     android:layout_height="50dp"
                     android:layout_marginLeft="25dp"
                     android:layout_marginTop="-25dp"
+                    android:elevation="2dp"
+                    android:transitionName="profileIcon"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/profileBkgImg"
                     app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
-
 
                 <LinearLayout
                     android:id="@+id/nicknameAndUsername"
@@ -55,7 +57,7 @@
                         android:id="@+id/profileNickname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
                         android:text="Nickname"
                         android:textColor="@color/black"
                         android:textSize="20sp" />
@@ -64,11 +66,20 @@
                         android:id="@+id/profileUsername"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
                         android:text="\@username"
                         android:textSize="12sp" />
 
                 </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/editProfileButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:text="Edit Profile"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/profileBkgImg" />
 
                 <TextView
                     android:id="@+id/profileInfo"

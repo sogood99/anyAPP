@@ -1,12 +1,15 @@
 package com.example.anyapp
 
-import android.content.Context
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
 import com.example.anyapp.api.AccountApi
 import com.example.anyapp.databinding.FragmentProfileBinding
 import com.example.anyapp.util.Constants
@@ -46,6 +49,10 @@ class ProfileFragment : Fragment() {
         arguments?.let {
             isSelf = it.getBoolean(ARG_PARAM1)
             userId = it.getInt(ARG_PARAM2)
+
+            if (isSelf == false && userId!! < 0) {
+                assert(false) { "Bug, please use profile fragment correctly" }
+            }
         }
     }
 
@@ -62,9 +69,28 @@ class ProfileFragment : Fragment() {
 
         // if not logged in, set to invisible
         val token = UserToken(this.activity).readToken()
-        if (token == null) {
-            binding.root.visibility = View.INVISIBLE
-            return
+        if (isSelf == false) {
+            binding.editProfileButton.visibility = View.GONE
+        } else {
+            if (token == null) {
+                // isSelf == true but token == null => not logged in yet
+                binding.root.visibility = View.INVISIBLE
+                return
+            }
+
+            // set onClick for editProfile
+            binding.apply {
+                editProfileButton.setOnClickListener {
+                    // intent to profileEdit
+                    val intent = Intent(root.context, EditProfile::class.java)
+                    val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        root.context as Activity,
+                        Pair.create(profileBkgImg as View, "profileBkgImg"),
+                        Pair.create(profileIcon as View, "profileIcon"),
+                    )
+                    startActivity(intent, options.toBundle())
+                }
+            }
         }
 
         getProfile()
