@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.ActivityTweetDetailBinding
 import com.example.anyapp.util.Constants
@@ -35,6 +36,7 @@ class TweetDetail : AppCompatActivity() {
         binding = ActivityTweetDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
         postponeEnterTransition()
+        window.statusBarColor = ContextCompat.getColor(this, R.color.slight_light_blue)
 
         // get intent params
         val tweetId = intent.getIntExtra(TweetAdapter.EXTRA_TWEET_ID, -1)

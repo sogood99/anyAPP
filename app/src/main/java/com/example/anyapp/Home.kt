@@ -16,8 +16,10 @@ import com.example.anyapp.util.UserToken
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class Home : AppCompatActivity() {
-    private val HOME_POS = 0
-    private val PROFILE_POS = 1
+    companion object {
+        const val HOME_POS = 0
+        const val PROFILE_POS = 1
+    }
 
     private lateinit var binding: ActivityHomeBinding
 
