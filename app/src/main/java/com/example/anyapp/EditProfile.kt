@@ -8,6 +8,7 @@ import android.view.inputmethod.InputMethodManager
 import com.example.anyapp.api.AccountApi
 import com.example.anyapp.databinding.ActivityEditProfileBinding
 import com.example.anyapp.util.Constants
+import com.example.anyapp.util.ImageFetcher
 import com.example.anyapp.util.ProfileResponse
 import com.example.anyapp.util.UserToken
 import com.squareup.picasso.Picasso
@@ -18,6 +19,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
 
 class EditProfile : AppCompatActivity() {
     private lateinit var binding: ActivityEditProfileBinding
@@ -28,12 +30,38 @@ class EditProfile : AppCompatActivity() {
         .build()
     private val accountApi = retrofit.create(AccountApi::class.java)
 
+    // images for profileIcon and profileBkgImg w/ corresponding fetchers
+    private lateinit var profileIconFetcher: ImageFetcher
+    private lateinit var profileBkgImgFetcher: ImageFetcher
+    private var profileIconFile: File? = null
+    private var profileBkgImgFile: File? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         postponeEnterTransition()
 
         binding = ActivityEditProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // setup fetchers
+        profileBkgImgFetcher = object : ImageFetcher(this@EditProfile, activityResultRegistry) {
+            override fun successCallback() {
+                // get the successfully fetched image using getImageFile(), then set to NewTweetFragment.imageFile
+                profileBkgImgFile = getImageFile()
+                Log.v("PityFile", profileIconFile.toString())
+                profileBkgImgFile?.let { Picasso.get().load(it).into(binding.profileBkgImg) }
+            }
+        }
+        profileIconFetcher = object : ImageFetcher(this@EditProfile, activityResultRegistry) {
+            override fun successCallback() {
+                // get the successfully fetched image using getImageFile(), then set to NewTweetFragment.imageFile
+                profileIconFile = getImageFile()
+                Log.v("PityFile", profileIconFile.toString())
+                profileIconFile?.let { Picasso.get().load(it).into(binding.profileIcon) }
+            }
+        }
+        lifecycle.addObserver(profileBkgImgFetcher)
+        lifecycle.addObserver(profileIconFetcher)
 
         binding.apply {
             // bind backButton
@@ -51,6 +79,14 @@ class EditProfile : AppCompatActivity() {
                         view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
                     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
                 }
+            }
+
+            // imageView onclicks
+            profileIcon.setOnClickListener {
+                profileIconFetcher.run()
+            }
+            profileBkgImg.setOnClickListener {
+                profileBkgImgFetcher.run()
             }
 
         }

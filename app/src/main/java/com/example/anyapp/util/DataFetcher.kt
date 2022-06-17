@@ -5,54 +5,78 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.example.anyapp.BuildConfig
 import com.google.android.material.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.apache.commons.io.IOUtils
 import java.io.File
 import java.io.FileOutputStream
+import java.util.concurrent.atomic.AtomicInteger
 
 // interface for data fetching used in NewTweet among other things sus
 // saves the fetched data into temp file, and callback
 // takes in a callback after data has been fetched
-abstract class DataFetcher(val fragment: Fragment) {
+abstract class DataFetcher(
+    protected val activity: Activity, protected val registry: ActivityResultRegistry
+) : DefaultLifecycleObserver {
+
     abstract fun run()
     abstract fun successCallback()
 }
 
 // must put as member or initialize in onCreate
 // since registerForActivityResult needs to have fragment in state Starting
-abstract class ImageFetcher(fragment: Fragment) : DataFetcher(fragment) {
+abstract class ImageFetcher(activity: Activity, registry: ActivityResultRegistry) :
+    DataFetcher(activity, registry) {
+    private lateinit var takePictureResult: ActivityResultLauncher<Intent>
+    private lateinit var chooseImageResult: ActivityResultLauncher<Intent>
+
     private var fetchedImageFile: File? = null
-
-    // callbacks for intent results
-    private val takePictureResult =
-        fragment.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                successCallback()
-            }
-        }
-
     val getImageFile: () -> File? = { fetchedImageFile }
 
-    private val chooseImageResult =
-        fragment.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    // for generating unique key
+    companion object {
+        private val count: AtomicInteger = AtomicInteger(1)
+    }
+
+    private val id = count.incrementAndGet()
+
+    override fun onCreate(owner: LifecycleOwner) {
+        // initialize the ActivityResultLaunchers
+        takePictureResult = registry.register(
+            "takePicture$id",
+            owner,
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            // Handle the returned Uri
+            successCallback()
+        }
+        chooseImageResult = registry.register(
+            "chooseImage$id",
+            owner,
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            // Handle the returned Uri
             if (result.resultCode == Activity.RESULT_OK) {
                 // send the file to temp_file aka imageFile
                 result.data?.data?.let {
-                    val inputStream = fragment.context?.contentResolver?.openInputStream(it)
+                    val inputStream = activity.contentResolver.openInputStream(it)
                     val outputStream = FileOutputStream(fetchedImageFile)
                     if (inputStream != null) {
                         IOUtils.copy(inputStream, outputStream)
                     }
                 }
-
                 successCallback()
             }
         }
+    }
 
     override fun run() {
         // take picture intent
@@ -66,39 +90,35 @@ abstract class ImageFetcher(fragment: Fragment) : DataFetcher(fragment) {
             val photoFile = File.createTempFile(
                 "temp_image",
                 ".jpg",
-                fragment.context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
             )
-            val photoURI = fragment.context?.let {
-                FileProvider.getUriForFile(
-                    it,
-                    BuildConfig.APPLICATION_ID + ".provider",
-                    photoFile
-                )
-            }
+            val photoURI = FileProvider.getUriForFile(
+                activity,
+                BuildConfig.APPLICATION_ID + ".provider",
+                photoFile
+            )
+
             fetchedImageFile = photoFile
 
-            fragment.context?.let {
-                MaterialAlertDialogBuilder(
-                    it,
-                    R.style.Base_Theme_Material3_Light_Dialog
-                )
-                    .setTitle("Image")
-                    .setMessage("Choose Method")
-                    .setNegativeButton("Take Picture") { dialog, which ->
-                        takePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                        takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            MaterialAlertDialogBuilder(
+                activity,
+                R.style.Base_Theme_Material3_Light_Dialog
+            )
+                .setTitle("Image")
+                .setMessage("Choose Method")
+                .setNegativeButton("Take Picture") { dialog, which ->
+                    takePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
-                        takePictureResult.launch(takePicture)
-                    }
-                    .setPositiveButton("Choose Gallery") { dialog, which ->
-                        chooseImageResult.launch(choosePicture)
-                    }
-                    .show()
-            }
+                    takePictureResult.launch(takePicture)
+                }
+                .setPositiveButton("Choose Gallery") { dialog, which ->
+                    chooseImageResult.launch(choosePicture)
+                }
+                .show()
 
         } catch (e: ActivityNotFoundException) {
-
+            Log.v("Pity", e.toString())
         }
     }
-
 }
