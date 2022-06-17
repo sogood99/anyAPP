@@ -32,7 +32,8 @@ abstract class DataFetcher(
 }
 
 // must put as member or initialize in onCreate
-// since registerForActivityResult needs to have fragment in state Starting
+// since registerForActivityResult needs to have ActivityResultRegistry in state Starting
+// and need activity for Dialog and External File and stuff
 abstract class ImageFetcher(activity: Activity, registry: ActivityResultRegistry) :
     DataFetcher(activity, registry) {
     private lateinit var takePictureResult: ActivityResultLauncher<Intent>
@@ -114,6 +115,99 @@ abstract class ImageFetcher(activity: Activity, registry: ActivityResultRegistry
                 }
                 .setPositiveButton("Choose Gallery") { dialog, which ->
                     chooseImageResult.launch(choosePicture)
+                }
+                .show()
+
+        } catch (e: ActivityNotFoundException) {
+            Log.v("Pity", e.toString())
+        }
+    }
+}
+
+// must put as member or initialize in onCreate
+// since registerForActivityResult needs to have ActivityResultRegistry in state Starting
+// and need activity for Dialog and External File and stuff
+abstract class VideoFetcher(activity: Activity, registry: ActivityResultRegistry) :
+    DataFetcher(activity, registry) {
+    private lateinit var takeVideoResult: ActivityResultLauncher<Intent>
+    private lateinit var chooseVideoResult: ActivityResultLauncher<Intent>
+
+    private var fetchedVideoFile: File? = null
+    val getVideoFile: () -> File? = { fetchedVideoFile }
+
+    // for generating unique key
+    companion object {
+        private val count: AtomicInteger = AtomicInteger(1)
+    }
+
+    private val id = count.incrementAndGet()
+
+    override fun onCreate(owner: LifecycleOwner) {
+        // initialize the ActivityResultLaunchers
+        takeVideoResult = registry.register(
+            "takeVideo$id",
+            owner,
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            // Handle the returned Uri
+            successCallback()
+        }
+        chooseVideoResult = registry.register(
+            "chooseVideo$id",
+            owner,
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            // Handle the returned Uri
+            if (result.resultCode == Activity.RESULT_OK) {
+                // send the file to temp_file aka imageFile
+                result.data?.data?.let {
+                    val inputStream = activity.contentResolver.openInputStream(it)
+                    val outputStream = FileOutputStream(fetchedVideoFile)
+                    if (inputStream != null) {
+                        IOUtils.copy(inputStream, outputStream)
+                    }
+                }
+                successCallback()
+            }
+        }
+    }
+
+    override fun run() {
+        // take video intent
+        val takeVideo = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+
+        // choose video intent
+        val chooseVideo = Intent(Intent.ACTION_GET_CONTENT)
+        chooseVideo.type = "video/*"
+
+        try {
+            val videoFile = File.createTempFile(
+                "temp_video",
+                ".mp4",
+                activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            )
+            val videoUri = FileProvider.getUriForFile(
+                activity,
+                BuildConfig.APPLICATION_ID + ".provider",
+                videoFile
+            )
+
+            fetchedVideoFile = videoFile
+
+            MaterialAlertDialogBuilder(
+                activity,
+                R.style.Base_Theme_Material3_Light_Dialog
+            )
+                .setTitle("Video")
+                .setMessage("Choose Method")
+                .setNegativeButton("Take Video") { dialog, which ->
+                    takeVideo.putExtra(MediaStore.EXTRA_OUTPUT, videoUri)
+                    takeVideo.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                    takeVideoResult.launch(takeVideo)
+                }
+                .setPositiveButton("Choose Gallery") { dialog, which ->
+                    chooseVideoResult.launch(chooseVideo)
                 }
                 .show()
 

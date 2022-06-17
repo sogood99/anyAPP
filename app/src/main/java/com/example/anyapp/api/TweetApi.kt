@@ -16,6 +16,7 @@ interface TweetApi {
         @Part("text") text: RequestBody,
         @Part("repliesId") replyId: Int?,
         @Part imageFile: MultipartBody.Part?,
+        @Part videoFile: MultipartBody.Part?,
     ): Call<Tweet>
 
     @FormUrlEncoded

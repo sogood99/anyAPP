@@ -2,10 +2,12 @@ package com.example.anyapp
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Outline
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import android.widget.Toast
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -150,6 +152,15 @@ class TweetAdapter(
             }
 
             if (tweets[position].videoUrl != null) {
+                // rounded corners
+                videoContent.clipToOutline = true
+                videoContent.outlineProvider = object : ViewOutlineProvider() {
+                    override fun getOutline(view: View?, outline: Outline?) {
+                        if (view != null) {
+                            outline?.setRoundRect(0, 0, view.width, view.height, 40F)
+                        }
+                    }
+                }
                 // same as image
                 val url = BASE_URL + "/" + tweets[position].videoUrl
                 url.let {

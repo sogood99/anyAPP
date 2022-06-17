@@ -14,6 +14,7 @@ import com.example.anyapp.databinding.FragmentNewTweetBinding
 import com.example.anyapp.util.Constants
 import com.example.anyapp.util.ImageFetcher
 import com.example.anyapp.util.UserToken
+import com.example.anyapp.util.VideoFetcher
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -45,8 +46,9 @@ class NewTweetFragment : Fragment() {
     private val tweetApi: TweetApi = retrofit.create(TweetApi::class.java)
 
     private var imageFile: File? = null
-
     private lateinit var imageFetcher: ImageFetcher
+    private var videoFile: File? = null
+    private lateinit var videoFetcher: VideoFetcher
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,13 +69,21 @@ class NewTweetFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        imageFetcher = object : ImageFetcher(requireActivity(), requireActivity().activityResultRegistry) {
-            override fun successCallback() {
-                // get the successfully fetched image using getImageFile(), then set to NewTweetFragment.imageFile
-                this@NewTweetFragment.imageFile = getImageFile()
+        imageFetcher =
+            object : ImageFetcher(requireActivity(), requireActivity().activityResultRegistry) {
+                override fun successCallback() {
+                    // get the successfully fetched image using getImageFile(), then set to NewTweetFragment.imageFile
+                    this@NewTweetFragment.imageFile = getImageFile()
+                }
             }
-        }
+        videoFetcher =
+            object : VideoFetcher(requireActivity(), requireActivity().activityResultRegistry) {
+                override fun successCallback() {
+                    this@NewTweetFragment.videoFile = getVideoFile()
+                }
+            }
         lifecycle.addObserver(imageFetcher)
+        lifecycle.addObserver(videoFetcher)
 
         // setup tweet button
         setupTweet()
@@ -105,8 +115,11 @@ class NewTweetFragment : Fragment() {
             }
 
             // for choosing new button
-            choosePhotoBtn.setOnClickListener {
+            imageButton.setOnClickListener {
                 imageFetcher.run()
+            }
+            videoButton.setOnClickListener {
+                videoFetcher.run()
             }
         }
     }
@@ -118,32 +131,52 @@ class NewTweetFragment : Fragment() {
         }
 
         userToken?.let { token ->
-            // send file to backend
-            val requestBody =
+            // process the tweet Parts/fields
+            val textContent = RequestBody.create(
+                MediaType.parse("text/plain"),
+                binding.newTweetTextLayout.editText?.text.toString()
+            )
+
+            // send image to backend
+            val imageBody =
                 imageFile?.let { file ->
                     RequestBody.create(
                         MediaType.parse("multipart/form-data"),
                         file
                     )
                 }
-            val fileToUpload =
-                requestBody?.let {
+            val imageMultipartBody =
+                imageBody?.let { body ->
                     MultipartBody.Part.createFormData(
                         "image",
                         imageFile?.name,
-                        it
+                        body
                     )
                 }
-            val text = RequestBody.create(
-                MediaType.parse("text/plain"),
-                binding.newTweetTextLayout.editText?.text.toString()
-            )
+
+            // send video to backend
+            val videoBody =
+                videoFile?.let { file ->
+                    RequestBody.create(
+                        MediaType.parse("multipart/form-data"),
+                        file
+                    )
+                }
+            val videoMultipartBody =
+                videoBody?.let { body ->
+                    MultipartBody.Part.createFormData(
+                        "video",
+                        videoFile?.name,
+                        body
+                    )
+                }
 
             val call = tweetApi.tweet(
                 token,
-                text,
+                textContent,
                 if (isReply == true) replyId else null,
-                fileToUpload
+                imageMultipartBody,
+                videoMultipartBody,
             )
 
             call.enqueue(object : Callback<Tweet> {
