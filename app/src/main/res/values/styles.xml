@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="customRoundedImageView" parent="">
+    <style name="CustomRoundedImageView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">8dp</item>
     </style>
@@ -10,5 +10,12 @@
         <item name="android:textSize">24sp</item>
     </style>
 
+    <style name="RoundedCornerButtonOverlay">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">32dp</item>
+    </style>
 
+    <style name="RoundedCornerButton" parent="Widget.MaterialComponents.Button">
+        <item name="shapeAppearanceOverlay">@style/RoundedCornerButtonOverlay</item>
+    </style>
 </resources>

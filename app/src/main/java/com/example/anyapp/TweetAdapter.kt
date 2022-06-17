@@ -62,7 +62,7 @@ class TweetAdapter(
             likeCount.text = likeCountNum.toString()
 
             var isLikedTweet = tweets[position].isLiked
-            // set color for botton if liked
+            // set color for button if liked
             if (isLikedTweet) {
                 likeButton.setBackgroundColor(
                     root.resources.getColor(R.color.light_blue, root.context.theme)
@@ -122,7 +122,10 @@ class TweetAdapter(
                     root.context.startActivity(intent)
                 }
             } else {
-                replyText.visibility = View.GONE
+                val parent: ViewGroup? = replyText.parent as? ViewGroup
+                parent?.let {
+                    parent.removeView(replyText)
+                }
             }
 
             if (tweets[position].imageUrl != null) {

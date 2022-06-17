@@ -58,11 +58,14 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/submitButton"
+        style="@style/RoundedCornerButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Submit" />
-
+        android:backgroundTint="@color/extreme_light_blue"
+        android:padding="10dp"
+        android:text="Submit"
+        android:textColor="@color/secondary_text" />
 
 </LinearLayout>
