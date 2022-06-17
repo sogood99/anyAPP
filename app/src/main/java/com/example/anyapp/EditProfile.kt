@@ -156,6 +156,9 @@ class EditProfile : AppCompatActivity() {
                         ) {
                             Log.v("Pity", response.toString())
                             Log.v("Pity", response.body().toString())
+
+                            // transition back
+                            finishAfterTransition()
                         }
 
                         override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
