@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
-    android:padding="20dp"
     tools:context=".LoginRegister">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:paddingHorizontal="20dp"
         app:navigationIcon="@drawable/ic_back_icon"
         app:title="Login" />
 
@@ -21,7 +21,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="20dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:paddingHorizontal="20dp" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
