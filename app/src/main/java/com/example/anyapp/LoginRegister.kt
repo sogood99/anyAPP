@@ -1,7 +1,7 @@
 package com.example.anyapp
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.example.anyapp.databinding.ActivityLoginRegisterBinding
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -34,7 +34,7 @@ class LoginRegister : AppCompatActivity() {
             }.attach()
 
             // set back button to finish
-            backButton.setOnClickListener {
+            toolBar.setNavigationOnClickListener {
                 finish()
             }
         }

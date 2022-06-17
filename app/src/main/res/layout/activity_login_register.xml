@@ -9,11 +9,11 @@
     android:padding="20dp"
     tools:context=".LoginRegister">
 
-    <Button
-        android:id="@+id/backButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:icon="@drawable/ic_back_icon" />
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_back_icon" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
