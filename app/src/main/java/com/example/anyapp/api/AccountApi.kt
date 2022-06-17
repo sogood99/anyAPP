@@ -3,6 +3,8 @@ package com.example.anyapp.api
 import com.example.anyapp.util.CreateUserResponse
 import com.example.anyapp.util.LoginResponse
 import com.example.anyapp.util.ProfileResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -25,5 +27,15 @@ interface AccountApi {
     @GET("api/user/profile/")
     fun getProfile(
         @Header("Authorization") authorization: String,
+    ): Call<ProfileResponse>
+
+    @Multipart
+    @POST("api/user/profile/update/")
+    fun updateProfile(
+        @Header("Authorization") token: String,
+        @Part("profileName") profileName: RequestBody,
+        @Part("profileInfo") profileInfo: RequestBody,
+        @Part userIcon: MultipartBody.Part?,
+        @Part userBkgImg: MultipartBody.Part?,
     ): Call<ProfileResponse>
 }
