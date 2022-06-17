@@ -7,13 +7,16 @@
     android:focusableInTouchMode="true"
     android:orientation="vertical">
 
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/usernameInput"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_weight="1"
         android:hint="Username"
         app:boxStrokeColor="@color/icon_color"
         app:hintTextColor="@color/black">
@@ -24,12 +27,16 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/emailInput"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:hint="Email"
         app:boxStrokeColor="@color/icon_color"
         app:hintTextColor="@color/black">
@@ -41,12 +48,16 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/passwordInput"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:hint="Password"
         app:boxStrokeColor="@color/icon_color"
         app:endIconMode="password_toggle"
@@ -59,15 +70,23 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/submitButton"
         style="@style/RoundedCornerButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
         android:backgroundTint="@color/extreme_light_blue"
         android:padding="10dp"
         android:text="Submit"
         android:textColor="@color/secondary_text" />
 
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" />
 </LinearLayout>
