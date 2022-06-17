@@ -14,7 +14,8 @@
         android:layout_height="?attr/actionBarSize"
         app:layout_collapseMode="pin"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/ic_back_icon" />
+        app:navigationIcon="@drawable/ic_back_icon"
+        app:title="Edit Profile" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

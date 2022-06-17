@@ -13,6 +13,7 @@ import com.example.anyapp.util.ProfileResponse
 import com.example.anyapp.util.UserToken
 import com.squareup.picasso.Picasso
 import okhttp3.MediaType
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -106,12 +107,46 @@ class EditProfile : AppCompatActivity() {
                         profileInfo.editText?.text.toString()
                     )
 
+                    // user icon
+                    val profileIconBody =
+                        profileIconFile?.let { file ->
+                            RequestBody.create(
+                                MediaType.parse("multipart/form-data"),
+                                file
+                            )
+                        }
+                    val profileIconMultipartBody =
+                        profileIconBody?.let { body ->
+                            MultipartBody.Part.createFormData(
+                                "userIcon",
+                                profileIconFile?.name,
+                                body
+                            )
+                        }
+
+                    // user bkg img
+                    val profileBkgImgBody =
+                        profileBkgImgFile?.let { file ->
+                            RequestBody.create(
+                                MediaType.parse("multipart/form-data"),
+                                file
+                            )
+                        }
+                    val profileBkgImgMultipartBody =
+                        profileBkgImgBody?.let { body ->
+                            MultipartBody.Part.createFormData(
+                                "userBkgImg",
+                                profileBkgImgFile?.name,
+                                body
+                            )
+                        }
+
                     val call = accountApi.updateProfile(
                         token,
                         profileNameText,
                         profileInfoText,
-                        null,
-                        null
+                        profileIconMultipartBody,
+                        profileBkgImgMultipartBody
                     )
 
                     call.enqueue(object : Callback<ProfileResponse> {

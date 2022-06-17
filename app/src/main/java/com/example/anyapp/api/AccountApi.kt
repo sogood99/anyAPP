@@ -35,7 +35,7 @@ interface AccountApi {
         @Header("Authorization") token: String,
         @Part("profileName") profileName: RequestBody,
         @Part("profileInfo") profileInfo: RequestBody,
-        @Part userIcon: MultipartBody.Part?,
-        @Part userBkgImg: MultipartBody.Part?,
+        @Part profileIcon: MultipartBody.Part?,
+        @Part profileBkgImg: MultipartBody.Part?,
     ): Call<ProfileResponse>
 }
