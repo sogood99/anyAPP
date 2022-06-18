@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -200,6 +201,9 @@ class TweetAdapter(
                 )
                 root.context.startActivity(intent, options.toBundle())
             }
+
+            // set animation
+            root.animation = AnimationUtils.loadAnimation(root.context, R.anim.scale_in)
         }
     }
 
