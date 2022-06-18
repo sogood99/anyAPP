@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import com.example.anyapp.R
@@ -36,6 +37,15 @@ class ProfileFragment : Fragment() {
     private var isSelf: Boolean = false
     private var isFollowed: Boolean = false
     private var userId: Int = -1
+
+    private lateinit var feedFragment: FeedFragment
+
+    // callback after finished editing
+    private val profileEditForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            setSelfProfile()
+            feedFragment.refresh()
+        }
 
     lateinit var binding: FragmentProfileBinding
 
@@ -84,7 +94,7 @@ class ProfileFragment : Fragment() {
 
             // get profile for self
             setSelfProfile()
-            val feedFragment = FeedFragment.newInstance(FeedType.Profile)
+            feedFragment = FeedFragment.newInstance(FeedType.Profile)
             childFragmentManager.beginTransaction().apply {
                 replace(R.id.feedFrameLayout, feedFragment)
                 commit()
@@ -194,7 +204,8 @@ class ProfileFragment : Fragment() {
                     Pair.create(profileBkgImg as View, "profileBkgImg"),
                     Pair.create(profileIcon as View, "profileIcon"),
                 )
-                startActivity(intent, options.toBundle())
+                // start result
+                profileEditForResult.launch(intent, options)
             }
         }
 

@@ -78,6 +78,10 @@ class FeedFragment : Fragment() {
         }
     }
 
+    fun refresh() {
+        getFeed(binding.root)
+    }
+
     private fun getFeed(view: View) {
         // get the data from backend
         val call = tweetApi.getFeed(
