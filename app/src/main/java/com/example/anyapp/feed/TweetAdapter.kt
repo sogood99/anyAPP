@@ -1,4 +1,4 @@
-package com.example.anyapp
+package com.example.anyapp.feed
 
 import android.app.Activity
 import android.content.Intent
@@ -11,6 +11,7 @@ import android.view.ViewOutlineProvider
 import android.widget.Toast
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.anyapp.R
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.ItemTweetBinding
 import com.example.anyapp.util.Constants.Companion.BASE_URL

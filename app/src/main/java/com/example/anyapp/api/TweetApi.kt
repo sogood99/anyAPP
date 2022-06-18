@@ -1,6 +1,6 @@
 package com.example.anyapp.api
 
-import com.example.anyapp.Tweet
+import com.example.anyapp.feed.Tweet
 import com.example.anyapp.util.FeedType
 import com.example.anyapp.util.LikeResponse
 import okhttp3.MultipartBody

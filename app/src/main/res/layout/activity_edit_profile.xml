@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:clickable="true"
     android:focusableInTouchMode="true"
-    tools:context=".EditProfile">
+    tools:context=".profile.EditProfile">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolBar"

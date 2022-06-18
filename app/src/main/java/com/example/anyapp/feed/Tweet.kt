@@ -1,4 +1,4 @@
-package com.example.anyapp
+package com.example.anyapp.feed
 
 data class Tweet(
     val tweetId: Int,

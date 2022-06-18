@@ -1,4 +1,4 @@
-package com.example.anyapp
+package com.example.anyapp.feed
 
 import android.content.Intent
 import android.graphics.Outline
@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
 import androidx.core.content.ContextCompat
+import com.example.anyapp.NewTweetFragment
+import com.example.anyapp.R
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.ActivityTweetDetailBinding
 import com.example.anyapp.util.Constants

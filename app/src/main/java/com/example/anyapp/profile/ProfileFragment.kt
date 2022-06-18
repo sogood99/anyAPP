@@ -1,4 +1,4 @@
-package com.example.anyapp
+package com.example.anyapp.profile
 
 import android.app.Activity
 import android.content.Intent
@@ -10,8 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
+import com.example.anyapp.R
 import com.example.anyapp.api.AccountApi
 import com.example.anyapp.databinding.FragmentProfileBinding
+import com.example.anyapp.feed.FeedFragment
 import com.example.anyapp.util.Constants
 import com.example.anyapp.util.FeedType
 import com.example.anyapp.util.ProfileResponse

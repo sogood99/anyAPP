@@ -1,4 +1,4 @@
-package com.example.anyapp
+package com.example.anyapp.loginregister
 
 import android.app.Activity
 import android.util.Log

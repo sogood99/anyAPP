@@ -20,13 +20,13 @@
         android:theme="@style/Theme.AnyApp"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".EditProfile"
+            android:name=".profile.EditProfile"
             android:exported="false" />
         <activity
-            android:name=".TweetDetail"
+            android:name=".feed.TweetDetail"
             android:exported="false" />
         <activity
-            android:name=".LoginRegister"
+            android:name=".loginregister.LoginRegister"
             android:exported="false" />
 
         <provider

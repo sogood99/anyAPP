@@ -1,4 +1,4 @@
-package com.example.anyapp
+package com.example.anyapp.feed
 
 import android.os.Bundle
 import android.util.Log

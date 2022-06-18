@@ -1,4 +1,4 @@
-package com.example.anyapp
+package com.example.anyapp.loginregister
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
