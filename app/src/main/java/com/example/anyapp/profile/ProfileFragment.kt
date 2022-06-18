@@ -8,13 +8,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
 import androidx.core.util.Pair
+import androidx.core.view.GravityCompat
+import androidx.core.view.setPadding
 import com.example.anyapp.R
 import com.example.anyapp.api.AccountApi
 import com.example.anyapp.databinding.FragmentProfileBinding
+import com.example.anyapp.databinding.ItemUserBinding
 import com.example.anyapp.feed.FeedFragment
+import com.example.anyapp.feed.TweetAdapter
 import com.example.anyapp.util.*
 import com.squareup.picasso.Picasso
 import retrofit2.Call
@@ -80,6 +86,7 @@ class ProfileFragment : Fragment() {
         val token = UserToken(this.activity).readToken()
         if (!isSelf) {
             setProfileDetail(userId)
+            setBoth()
             val feedFragment = FeedFragment.newInstance(FeedType.ProfileDetail, userId = userId)
             childFragmentManager.beginTransaction().apply {
                 replace(R.id.feedFrameLayout, feedFragment)
@@ -94,6 +101,7 @@ class ProfileFragment : Fragment() {
 
             // get profile for self
             setSelfProfile()
+            setBoth()
             feedFragment = FeedFragment.newInstance(FeedType.Profile)
             childFragmentManager.beginTransaction().apply {
                 replace(R.id.feedFrameLayout, feedFragment)
@@ -242,6 +250,72 @@ class ProfileFragment : Fragment() {
                 override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
                     Log.v("Pity", t.toString())
                 }
+            })
+        }
+    }
+
+    private fun setBoth() {
+        // setup functionality for both self and notself
+        binding.apply {
+            followerCount.setOnClickListener {
+                drawerLayout.openDrawer(GravityCompat.END)
+            }
+            val textView = TextView(this@ProfileFragment.context)
+            textView.text = "Followed Users"
+            textView.textSize = 24f
+            textView.setPadding(20)
+            navigationViewFollowedUsers.addHeaderView(textView)
+
+            // get all liked users
+            val followedUserCall = accountApi.followDetail(
+                UserToken(this@ProfileFragment.activity).readToken(),
+                if (userId >= 0) userId else null
+            )
+            followedUserCall.enqueue(object : Callback<List<ProfileResponse>> {
+                override fun onResponse(
+                    call: Call<List<ProfileResponse>>,
+                    response: Response<List<ProfileResponse>>
+                ) {
+                    response.body()?.let { profileList ->
+                        followerCount.text = "Followers: " + profileList.size.toString()
+                        for (profile in profileList) {
+                            val itemUserBinding =
+                                ItemUserBinding.inflate(layoutInflater)
+                            context?.let {
+                                itemUserBinding.userMenuButton.setBackgroundColor(
+                                    ContextCompat.getColor(
+                                        it,
+                                        R.color.white
+                                    )
+                                )
+                            }
+
+                            // sync values
+                            itemUserBinding.profileName.text = profile.profileName
+                            itemUserBinding.username.text = profile.username
+                            Picasso.get().load(Constants.BASE_URL + "/" + profile.userIconUrl)
+                                .fit()
+                                .into(itemUserBinding.userIcon)
+                            navigationViewFollowedUsers.addHeaderView(itemUserBinding.root)
+
+                            // on click go to ProfileDetail
+                            itemUserBinding.userMenuButton.setOnClickListener {
+                                val intent = Intent(
+                                    this@ProfileFragment.context,
+                                    ProfileDetail::class.java
+                                ).apply {
+                                    putExtra(TweetAdapter.EXTRA_USER_ID, profile.userId)
+                                }
+                                startActivity(intent)
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(
+                    call: Call<List<ProfileResponse>>,
+                    t: Throwable
+                ) = Unit
             })
         }
     }

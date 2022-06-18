@@ -50,4 +50,11 @@ interface AccountApi {
         @Header("Authorization") authorization: String?,
         @Field("followedUserId") followedUserId: Int,
     ): Call<FollowResponse>
+
+    @FormUrlEncoded
+    @POST("api/user/follow/detail/")
+    fun followDetail(
+        @Header("Authorization") authorization: String?,
+        @Field("userId") userId: Int?,
+    ): Call<List<ProfileResponse>>
 }
