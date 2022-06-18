@@ -185,17 +185,36 @@ class TweetAdapter(
                     putExtra(EXTRA_POSITION, position)
                     putExtra(EXTRA_VIDEO_POSITION, videoContent.player?.contentPosition)
                 }
-                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    root.context as Activity,
+                val transitionPair = mutableListOf(
                     UtilPair.create(userIcon as View, "userIcon$position"),
                     UtilPair.create(profileName as View, "profileName$position"),
                     UtilPair.create(username as View, "username$position"),
                     UtilPair.create(textContent as View, "textContent$position"),
                     UtilPair.create(likeButton as View, "likeButton$position"),
                     UtilPair.create(likeCount as View, "likeCount$position"),
-                    UtilPair.create(imageContent as View, "imageContent$position"),
-                    UtilPair.create(videoContent as View, "videoContent$position"),
-                    UtilPair.create(replyText as View, "replyText$position"),
+                )
+                if (imageContent.visibility == View.VISIBLE) {
+                    transitionPair += UtilPair.create(
+                        imageContent as View,
+                        "imageContent$position"
+                    )
+                }
+                if (videoContent.visibility == View.VISIBLE) {
+                    transitionPair +=
+                        UtilPair.create(
+                            videoContent as View,
+                            "videoContent$position"
+                        )
+                }
+                if (replyText.visibility == View.VISIBLE) {
+                    transitionPair += UtilPair.create(
+                        replyText as View,
+                        "replyText$position"
+                    )
+                }
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    root.context as Activity,
+                    *transitionPair.toTypedArray()
                 )
                 root.context.startActivity(intent, options.toBundle())
             }
