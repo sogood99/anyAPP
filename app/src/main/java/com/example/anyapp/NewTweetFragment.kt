@@ -116,7 +116,6 @@ class NewTweetFragment : Fragment() {
         binding.apply {
             sendTweetButton.setOnClickListener {
                 sendTweet()
-                onTweetCallback()
             }
 
             // for choosing new button
@@ -192,6 +191,7 @@ class NewTweetFragment : Fragment() {
                     Toast.makeText(context, "Sent Tweet", Toast.LENGTH_LONG).show()
                     Log.v("Pity", response.toString())
                     Log.v("Pity", response.body().toString())
+                    onTweetCallback()
                 }
 
                 override fun onFailure(call: Call<Tweet>, t: Throwable) {
@@ -205,14 +205,14 @@ class NewTweetFragment : Fragment() {
 
     fun show() {
         // animate showing
-        binding.root.animate().alpha(1.0f).setDuration(100)
+        binding.root.animate().alpha(1.0f).duration = 100
     }
 
     fun hide() {
-        binding.root.animate().alpha(0.0f).setDuration(100)
+        binding.root.animate().alpha(0.0f).duration = 100
     }
 
-    fun setTweetCallback(callback : () -> Unit){
+    fun setTweetCallback(callback: () -> Unit) {
         onTweetCallback = callback
     }
 

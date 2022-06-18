@@ -128,23 +128,19 @@ class TweetAdapter(
                     }
                     root.context.startActivity(intent)
                 }
+                replyText.visibility = View.VISIBLE
             } else {
-                val parent: ViewGroup? = replyText.parent as? ViewGroup
-                parent?.let {
-                    parent.removeView(replyText)
-                }
+                replyText.visibility = View.GONE
             }
 
             if (tweets[position].imageUrl != null) {
                 // load image if tweet.imageContent has content
                 val url = BASE_URL + "/" + tweets[position].imageUrl
                 Picasso.get().load(url).into(imageContent)
+                imageContent.visibility = View.VISIBLE
             } else {
                 // otherwise delete it
-                val parent: ViewGroup? = imageContent.parent as? ViewGroup
-                parent?.let {
-                    parent.removeView(imageContent)
-                }
+                imageContent.visibility = View.GONE
             }
 
             if (tweets[position].userIconUrl != "") {
@@ -175,11 +171,9 @@ class TweetAdapter(
                     player.setMediaItem(mediaItem)
                     player.prepare()
                 }
+                videoContent.visibility = View.VISIBLE
             } else {
-                val parent: ViewGroup? = videoContent.parent as? ViewGroup
-                parent?.let {
-                    parent.removeView(videoContent)
-                }
+                videoContent.visibility = View.GONE
             }
 
             tweetCard.setOnClickListener {

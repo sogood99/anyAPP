@@ -71,7 +71,7 @@ class FeedFragment : Fragment() {
         // get feed from backend
         getFeed(view)
 
-        // set onrefreshlistener
+        // set onRefreshListener
         binding.feedSwipeRefreshLayout.setOnRefreshListener {
             getFeed(view)
             binding.feedSwipeRefreshLayout.isRefreshing = false

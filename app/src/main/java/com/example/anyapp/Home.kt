@@ -13,6 +13,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.anyapp.loginregister.LoginRegister
 import com.example.anyapp.databinding.ActivityHomeBinding
 import com.example.anyapp.feed.FeedFragment
+import com.example.anyapp.feed.FeedTypeFragment
 import com.example.anyapp.profile.ProfileFragment
 import com.example.anyapp.util.FeedType
 import com.example.anyapp.util.UserToken
@@ -57,7 +58,7 @@ class Home : AppCompatActivity() {
         transaction.replace(R.id.newTweet, newTweetFragment)
         transaction.commit()
 
-        // its bottomsheet style
+        // its bottomSheet style
         BottomSheetBehavior.from(binding.newTweet).apply {
             peekHeight = 100
             state = BottomSheetBehavior.STATE_COLLAPSED
@@ -192,7 +193,7 @@ class Home : AppCompatActivity() {
 
         override fun createFragment(position: Int): Fragment {
             if (position == HOME_POS) {
-                return FeedFragment.newInstance(FeedType.Popular)
+                return FeedTypeFragment.newInstance()
             } else if (position == PROFILE_POS) {
                 return ProfileFragment.newInstance(true)
             }
