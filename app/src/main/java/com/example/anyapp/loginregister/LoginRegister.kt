@@ -25,7 +25,7 @@ class LoginRegister : AppCompatActivity() {
             val adapter = LoginRegisterAdapter()
             loginRegisterFieldPager.adapter = adapter
 
-            // link tablayout to ViewPager2
+            // link tabLayout to ViewPager2
             TabLayoutMediator(tabLayout, loginRegisterFieldPager) { tab, position ->
                 var showText = ""
                 if (position == LOGIN_POS) {
