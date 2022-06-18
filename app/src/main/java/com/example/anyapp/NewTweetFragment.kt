@@ -12,6 +12,8 @@ import android.widget.Toast
 import com.example.anyapp.feed.Tweet
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.FragmentNewTweetBinding
+import com.example.anyapp.draft.Draft
+import com.example.anyapp.draft.DraftList
 import com.example.anyapp.util.Constants
 import com.example.anyapp.util.ImageFetcher
 import com.example.anyapp.util.UserToken
@@ -25,6 +27,8 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
+import java.util.*
+import kotlin.concurrent.schedule
 
 private const val ISREPLY_PARAM = "isReply"
 private const val REPLYID_PARAM = "replyId"
@@ -78,12 +82,14 @@ class NewTweetFragment : Fragment() {
                 override fun successCallback() {
                     // get the successfully fetched image using getImageFile(), then set to NewTweetFragment.imageFile
                     this@NewTweetFragment.imageFile = getImageFile()
+                    binding.deleteImageButton.visibility = View.VISIBLE
                 }
             }
         videoFetcher =
             object : VideoFetcher(requireActivity(), requireActivity().activityResultRegistry) {
                 override fun successCallback() {
                     this@NewTweetFragment.videoFile = getVideoFile()
+                    binding.deleteVideoButton.visibility = View.VISIBLE
                 }
             }
         lifecycle.addObserver(imageFetcher)
@@ -118,7 +124,31 @@ class NewTweetFragment : Fragment() {
                 sendTweet()
             }
 
-            // for choosing new button
+            saveTweetButton.setOnClickListener {
+                DraftList().add(
+                    Draft(
+                        newTweetTextLayout.editText?.text.toString(),
+                        replyId,
+                        imageFile,
+                        videoFile
+                    )
+                )
+                Toast.makeText(context, "Tweet Saved", Toast.LENGTH_SHORT).show()
+            }
+
+            // for deleteButtons
+            deleteImageButton.setOnClickListener {
+                imageFile = null
+                hideButton(it)
+                Toast.makeText(context, "Image Deleted", Toast.LENGTH_SHORT).show()
+            }
+            deleteVideoButton.setOnClickListener {
+                videoFile = null
+                hideButton(it)
+                Toast.makeText(context, "Video Deleted", Toast.LENGTH_SHORT).show()
+            }
+
+            // for fetch resource button
             imageButton.setOnClickListener {
                 imageFetcher.run()
             }
@@ -191,15 +221,16 @@ class NewTweetFragment : Fragment() {
                     Toast.makeText(context, "Sent Tweet", Toast.LENGTH_LONG).show()
                     Log.v("Pity", response.toString())
                     Log.v("Pity", response.body().toString())
-                    onTweetCallback()
+                    resetTweet()
+                    Timer().schedule(100) {
+                        onTweetCallback()
+                    }
                 }
 
                 override fun onFailure(call: Call<Tweet>, t: Throwable) {
                     Toast.makeText(context, "Error: " + t.toString(), Toast.LENGTH_LONG).show()
                 }
             })
-
-            resetTweet()
         }
     }
 
@@ -216,6 +247,35 @@ class NewTweetFragment : Fragment() {
         onTweetCallback = callback
     }
 
+    fun setNewTweet(draft: Draft) {
+        // set newTweet according to draft
+        binding.apply {
+            newTweetTextLayout.editText?.setText(draft.text)
+            isReply = replyId != null
+            replyId = replyId
+            imageFile = draft.imageFile
+            videoFile = draft.videoFile
+            if (imageFile != null) {
+                showButton(deleteImageButton)
+            } else {
+                hideButton(deleteImageButton)
+            }
+            if (videoFile != null) {
+                showButton(deleteVideoButton)
+            } else {
+                hideButton(deleteVideoButton)
+            }
+        }
+    }
+
+    private fun showButton(view: View) {
+        view.visibility = View.VISIBLE
+    }
+
+    private fun hideButton(view: View) {
+        view.visibility = View.INVISIBLE
+    }
+
     private fun resetTweet() {
         // reset newTweet
         binding.apply {
@@ -228,7 +288,6 @@ class NewTweetFragment : Fragment() {
             inputMethodManager.hideSoftInputFromWindow(root.windowToken, 0)
         }
     }
-
 
     companion object {
         /**

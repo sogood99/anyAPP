@@ -8,6 +8,12 @@
         android:title="Home"
         app:showAsAction="always" />
     <item
+        android:id="@+id/navDraft"
+        android:enabled="true"
+        android:icon="@drawable/ic_draft_icon"
+        android:title="Draft"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/navProfile"
         android:enabled="true"
         android:icon="@drawable/ic_user_icon"

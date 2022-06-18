@@ -45,7 +45,6 @@ class FeedTypeFragment : Fragment() {
                 }
                 tab.text = showText
             }.attach()
-
         }
     }
 

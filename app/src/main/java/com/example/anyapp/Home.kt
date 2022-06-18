@@ -12,6 +12,8 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.anyapp.loginregister.LoginRegister
 import com.example.anyapp.databinding.ActivityHomeBinding
+import com.example.anyapp.draft.Draft
+import com.example.anyapp.draft.DraftListFragment
 import com.example.anyapp.feed.FeedFragment
 import com.example.anyapp.feed.FeedTypeFragment
 import com.example.anyapp.profile.ProfileFragment
@@ -22,7 +24,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 class Home : AppCompatActivity() {
     companion object {
         const val HOME_POS = 0
-        const val PROFILE_POS = 1
+        const val DRAFT_POS = 1
+        const val PROFILE_POS = 2
     }
 
     private lateinit var binding: ActivityHomeBinding
@@ -35,6 +38,8 @@ class Home : AppCompatActivity() {
                 resetFragPager()
             }
         }
+
+    private var onDraftSetNewTweet: (Draft) -> Unit = {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,6 +90,10 @@ class Home : AppCompatActivity() {
             BottomSheetBehavior.from(binding.newTweet)
                 .setState(BottomSheetBehavior.STATE_COLLAPSED)
         }
+        // set newtweet when draft set
+        onDraftSetNewTweet = {
+            newTweetFragment.setNewTweet(it)
+        }
 
         // For selecting the Menu Items
         binding.homeToolbar.setOnMenuItemClickListener { menuItem ->
@@ -123,6 +132,9 @@ class Home : AppCompatActivity() {
                 if (position == HOME_POS) {
                     binding.homeButton.text = "Home"
                     binding.bottomNav.selectedItemId = R.id.navHome
+                } else if (position == DRAFT_POS) {
+                    binding.homeButton.text = "Draft"
+                    binding.bottomNav.selectedItemId = R.id.navDraft
                 } else if (position == PROFILE_POS) {
                     // get user token
                     val token = UserToken(this@Home).readToken()
@@ -144,6 +156,10 @@ class Home : AppCompatActivity() {
             when (it.itemId) {
                 R.id.navHome -> {
                     binding.fragPager.currentItem = HOME_POS
+                    true
+                }
+                R.id.navDraft -> {
+                    binding.fragPager.currentItem = DRAFT_POS
                     true
                 }
                 R.id.navProfile -> {
@@ -185,7 +201,7 @@ class Home : AppCompatActivity() {
     private inner class BottomNavPagerAdapter(
         fa: FragmentActivity,
     ) : FragmentStateAdapter(fa) {
-        private val NUM_PAGES = 2
+        private val NUM_PAGES = 3
 
         override fun getItemCount(): Int {
             return NUM_PAGES
@@ -194,13 +210,17 @@ class Home : AppCompatActivity() {
         override fun createFragment(position: Int): Fragment {
             if (position == HOME_POS) {
                 return FeedTypeFragment.newInstance()
+            } else if (position == DRAFT_POS) {
+                val draftListFragment = DraftListFragment.newInstance()
+                draftListFragment.setOnDraftNewTweet(onDraftSetNewTweet)
+                return draftListFragment
             } else if (position == PROFILE_POS) {
                 return ProfileFragment.newInstance(true)
             }
 
             assert(false) { "Creating fragment for unknown position" }
             // default if error
-            return FeedFragment.newInstance(FeedType.Popular)
+            return FeedFragment.newInstance(FeedType.Recent)
         }
     }
 }
