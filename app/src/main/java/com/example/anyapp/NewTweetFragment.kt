@@ -12,6 +12,8 @@ import android.widget.Toast
 import com.example.anyapp.feed.Tweet
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.FragmentNewTweetBinding
+import com.example.anyapp.draft.Draft
+import com.example.anyapp.draft.DraftList
 import com.example.anyapp.util.Constants
 import com.example.anyapp.util.ImageFetcher
 import com.example.anyapp.util.UserToken
@@ -120,6 +122,17 @@ class NewTweetFragment : Fragment() {
                 sendTweet()
             }
 
+            saveTweetButton.setOnClickListener {
+                DraftList().add(
+                    Draft(
+                        newTweetTextLayout.editText?.text.toString(),
+                        replyId,
+                        imageFile,
+                        videoFile
+                    )
+                )
+            }
+
             // for choosing new button
             imageButton.setOnClickListener {
                 imageFetcher.run()
@@ -219,6 +232,17 @@ class NewTweetFragment : Fragment() {
         onTweetCallback = callback
     }
 
+    fun setNewTweet(draft: Draft) {
+        // set newTweet according to draft
+        binding.apply {
+            newTweetTextLayout.editText?.setText(draft.text)
+            isReply = replyId != null
+            replyId = replyId
+            imageFile = draft.imageFile
+            videoFile = draft.videoFile
+        }
+    }
+
     private fun resetTweet() {
         // reset newTweet
         binding.apply {
@@ -231,7 +255,6 @@ class NewTweetFragment : Fragment() {
             inputMethodManager.hideSoftInputFromWindow(root.windowToken, 0)
         }
     }
-
 
     companion object {
         /**
