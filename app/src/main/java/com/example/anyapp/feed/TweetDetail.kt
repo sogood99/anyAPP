@@ -13,6 +13,7 @@ import com.example.anyapp.NewTweetFragment
 import com.example.anyapp.R
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.ActivityTweetDetailBinding
+import com.example.anyapp.profile.ProfileDetail
 import com.example.anyapp.util.Constants
 import com.example.anyapp.util.FeedType
 import com.example.anyapp.util.UserToken
@@ -102,7 +103,6 @@ class TweetDetail : AppCompatActivity() {
                 .setState(BottomSheetBehavior.STATE_COLLAPSED)
         }
 
-
         val call = tweetApi.tweetDetail(UserToken(this).readToken(), tweetId)
         call.enqueue(object : Callback<Tweet> {
             override fun onResponse(call: Call<Tweet>, response: Response<Tweet>) {
@@ -187,6 +187,17 @@ class TweetDetail : AppCompatActivity() {
                             }
                         }
                         imageContent.transitionName = "imageContent$position"
+
+                        // allow click on profile info
+                        val profileClickListener = View.OnClickListener { _ ->
+                            val intent = Intent(root.context, ProfileDetail::class.java).apply {
+                                putExtra(TweetAdapter.EXTRA_USER_ID, it.userId)
+                            }
+                            root.context.startActivity(intent)
+                        }
+                        userIcon.setOnClickListener(profileClickListener)
+                        username.setOnClickListener(profileClickListener)
+                        profileName.setOnClickListener(profileClickListener)
 
                         startPostponedEnterTransition()
                     }
