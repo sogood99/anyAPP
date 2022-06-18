@@ -157,6 +157,17 @@ class TweetDetail : AppCompatActivity() {
                                             .fit()
                                             .into(itemUserBinding.userIcon)
                                         navigationViewLikedUsers.addHeaderView(itemUserBinding.root)
+
+                                        // on click go to ProfileDetail
+                                        itemUserBinding.userMenuButton.setOnClickListener {
+                                            val intent = Intent(
+                                                this@TweetDetail,
+                                                ProfileDetail::class.java
+                                            ).apply {
+                                                putExtra(TweetAdapter.EXTRA_USER_ID, profile.userId)
+                                            }
+                                            startActivity(intent)
+                                        }
                                     }
                                 }
                             }
