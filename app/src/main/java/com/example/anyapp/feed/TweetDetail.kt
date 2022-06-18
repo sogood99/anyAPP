@@ -257,6 +257,7 @@ class TweetDetail : AppCompatActivity() {
                                 }
                                 root.context.startActivity(intent)
                             }
+                            replyText.visibility = View.VISIBLE
                         } else {
                             replyText.visibility = View.GONE
                         }
@@ -296,23 +297,18 @@ class TweetDetail : AppCompatActivity() {
                                     player.seekTo(videoPlaybackPosition)
                                 }
                             }
+                            videoContent.visibility = View.VISIBLE
                         } else {
-                            val parent: ViewGroup? = videoContent.parent as? ViewGroup
-                            parent?.let {
-                                parent.removeView(videoContent)
-                            }
+                            videoContent.visibility = View.GONE
                         }
 
                         if (it.imageUrl != null) {
                             // load image if tweet.imageContent has content
                             val url = BASE_URL + "/" + it.imageUrl
                             Picasso.get().load(url).into(imageContent)
+                            imageContent.visibility = View.VISIBLE
                         } else {
-                            // otherwise delete it
-                            val parent: ViewGroup? = imageContent.parent as? ViewGroup
-                            parent?.let {
-                                parent.removeView(imageContent)
-                            }
+                            imageContent.visibility = View.GONE
                         }
                         imageContent.transitionName = "imageContent$position"
 
