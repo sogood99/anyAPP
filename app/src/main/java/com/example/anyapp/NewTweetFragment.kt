@@ -25,6 +25,8 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
+import java.util.*
+import kotlin.concurrent.schedule
 
 private const val ISREPLY_PARAM = "isReply"
 private const val REPLYID_PARAM = "replyId"
@@ -191,15 +193,16 @@ class NewTweetFragment : Fragment() {
                     Toast.makeText(context, "Sent Tweet", Toast.LENGTH_LONG).show()
                     Log.v("Pity", response.toString())
                     Log.v("Pity", response.body().toString())
-                    onTweetCallback()
+                    resetTweet()
+                    Timer().schedule(100) {
+                        onTweetCallback()
+                    }
                 }
 
                 override fun onFailure(call: Call<Tweet>, t: Throwable) {
                     Toast.makeText(context, "Error: " + t.toString(), Toast.LENGTH_LONG).show()
                 }
             })
-
-            resetTweet()
         }
     }
 
