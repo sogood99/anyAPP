@@ -1,14 +1,18 @@
-package com.example.anyapp
+package com.example.anyapp.feed
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Outline
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewOutlineProvider
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.anyapp.R
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.ItemTweetBinding
 import com.example.anyapp.util.Constants.Companion.BASE_URL
@@ -32,6 +36,7 @@ class TweetAdapter(
     companion object {
         const val EXTRA_TWEET_ID = "com.example.anyapp.Tweet_ID"
         const val EXTRA_POSITION = "com.example.anyapp.RvPosition"
+        const val EXTRA_VIDEO_POSITION = "com.example.anyapp.VideoPosition"
     }
 
     inner class TweetViewHolder(val binding: ItemTweetBinding) :
@@ -150,6 +155,15 @@ class TweetAdapter(
             }
 
             if (tweets[position].videoUrl != null) {
+                // rounded corners
+                videoContent.clipToOutline = true
+                videoContent.outlineProvider = object : ViewOutlineProvider() {
+                    override fun getOutline(view: View?, outline: Outline?) {
+                        if (view != null) {
+                            outline?.setRoundRect(0, 0, view.width, view.height, 40F)
+                        }
+                    }
+                }
                 // same as image
                 val url = BASE_URL + "/" + tweets[position].videoUrl
                 url.let {
@@ -167,10 +181,13 @@ class TweetAdapter(
             }
 
             tweetCard.setOnClickListener {
+                // pause video if exists
+                videoContent.player?.pause()
                 // when clicked tweet card, start TweetDetail activity
                 val intent = Intent(root.context, TweetDetail::class.java).apply {
                     putExtra(EXTRA_TWEET_ID, tweets[position].tweetId)
                     putExtra(EXTRA_POSITION, position)
+                    putExtra(EXTRA_VIDEO_POSITION, videoContent.player?.contentPosition)
                 }
                 val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     root.context as Activity,
@@ -184,6 +201,9 @@ class TweetAdapter(
                 )
                 root.context.startActivity(intent, options.toBundle())
             }
+
+            // set animation
+            root.animation = AnimationUtils.loadAnimation(root.context, R.anim.scale_in)
         }
     }
 

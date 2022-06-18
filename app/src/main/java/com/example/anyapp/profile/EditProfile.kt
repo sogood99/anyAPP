@@ -1,4 +1,4 @@
-package com.example.anyapp
+package com.example.anyapp.profile
 
 import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity

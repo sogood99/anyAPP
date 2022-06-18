@@ -1,12 +1,16 @@
-package com.example.anyapp
+package com.example.anyapp.feed
 
 import android.content.Intent
+import android.graphics.Outline
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import androidx.core.content.ContextCompat
+import com.example.anyapp.NewTweetFragment
+import com.example.anyapp.R
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.ActivityTweetDetailBinding
 import com.example.anyapp.util.Constants
@@ -41,9 +45,11 @@ class TweetDetail : AppCompatActivity() {
         // get intent params
         val tweetId = intent.getIntExtra(TweetAdapter.EXTRA_TWEET_ID, -1)
         val position = intent.getIntExtra(TweetAdapter.EXTRA_POSITION, -1)
+        val videoPlaybackPosition = intent.getLongExtra(TweetAdapter.EXTRA_VIDEO_POSITION, -1)
         if (tweetId < 0) {
-            // dont call without specifying tweetid
-            finish()
+            // don't call without specifying tweetId
+            assert(false) { "Bug, do not use Tweet Detail w/o tweetId" }
+            finishAfterTransition()
         }
 
         // set replies
@@ -136,6 +142,15 @@ class TweetDetail : AppCompatActivity() {
                         userIcon.transitionName = "userIcon$position"
 
                         if (it.videoUrl != null) {
+                            // rounded corners
+                            videoContent.clipToOutline = true
+                            videoContent.outlineProvider = object : ViewOutlineProvider() {
+                                override fun getOutline(view: View?, outline: Outline?) {
+                                    if (view != null) {
+                                        outline?.setRoundRect(0, 0, view.width, view.height, 40F)
+                                    }
+                                }
+                            }
                             // same as image
                             val url = Constants.BASE_URL + "/" + it.videoUrl
                             url.let {
@@ -144,6 +159,9 @@ class TweetDetail : AppCompatActivity() {
                                 val mediaItem = MediaItem.fromUri(it)
                                 player.setMediaItem(mediaItem)
                                 player.prepare()
+                                if (videoPlaybackPosition > 0) {
+                                    player.seekTo(videoPlaybackPosition)
+                                }
                             }
                         } else {
                             val parent: ViewGroup? = videoContent.parent as? ViewGroup
@@ -177,6 +195,7 @@ class TweetDetail : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        binding.videoContent.player?.stop()
         finishAfterTransition()
     }
 }

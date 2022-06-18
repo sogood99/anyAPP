@@ -10,7 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.example.anyapp.loginregister.LoginRegister
 import com.example.anyapp.databinding.ActivityHomeBinding
+import com.example.anyapp.feed.FeedFragment
+import com.example.anyapp.profile.ProfileFragment
 import com.example.anyapp.util.FeedType
 import com.example.anyapp.util.UserToken
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -77,7 +80,6 @@ class Home : AppCompatActivity() {
                 }
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
-
             })
 
 
@@ -103,6 +105,9 @@ class Home : AppCompatActivity() {
 
         // For selecting the Home
         binding.homeButton.setOnClickListener { button ->
+            // testing
+            UserToken(this).setToken("Token 2b7809d3aa63ab76483393d49e191bde9d96b335")
+
             resetFragPager()
         }
 
