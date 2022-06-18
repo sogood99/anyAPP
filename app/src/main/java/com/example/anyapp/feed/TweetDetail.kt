@@ -145,7 +145,7 @@ class TweetDetail : AppCompatActivity() {
                             val itemUserBinding = ItemUserBinding.inflate(layoutInflater)
                             Picasso.get().load(BASE_URL + "/image/userIcon/default.jpg")
                                 .fit()
-                                .into(itemUserBinding.userMenuIcon)
+                                .into(itemUserBinding.userIcon)
                             navigationViewLikedUsers.addHeaderView(itemUserBinding.root)
                         }
 
