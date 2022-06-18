@@ -31,8 +31,13 @@ data class ProfileDetailResponse(
     val createDate: String,
     val profileInfo: String?,
     val isSelf: Boolean,
+    val isFollowed: Boolean?,
 )
 
 data class LikeResponse(
     val isLike: Boolean // if not liked -> like, then this is set to true
+)
+
+data class FollowResponse(
+    val isFollowed: Boolean?
 )

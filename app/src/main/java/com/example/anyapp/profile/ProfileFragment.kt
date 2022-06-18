@@ -34,6 +34,7 @@ class ProfileFragment : Fragment() {
     // if isSelf == true, access profile through user token (and display self related buttons eg edit), else show regular visitor accessing profile
     // lateinit
     private var isSelf: Boolean = false
+    private var isFollowed: Boolean = false
     private var userId: Int = -1
 
     lateinit var binding: FragmentProfileBinding
@@ -50,9 +51,7 @@ class ProfileFragment : Fragment() {
             isSelf = it.getBoolean(ARG_PARAM1, false)
             userId = it.getInt(ARG_PARAM2, -1)
 
-            if (!isSelf && userId < 0) {
-                assert(false) { "Bug, please use profile fragment correctly" }
-            }
+            assert(!(!isSelf && userId < 0)) { "Bug, please use profile fragment correctly" }
         }
     }
 
@@ -70,9 +69,7 @@ class ProfileFragment : Fragment() {
         // if not logged in, set to invisible
         val token = UserToken(this.activity).readToken()
         if (!isSelf) {
-            binding.editProfileButton.visibility = View.GONE
-
-            getProfile(userId)
+            setProfileDetail(userId)
             val feedFragment = FeedFragment.newInstance(FeedType.ProfileDetail, userId = userId)
             childFragmentManager.beginTransaction().apply {
                 replace(R.id.feedFrameLayout, feedFragment)
@@ -85,22 +82,8 @@ class ProfileFragment : Fragment() {
                 return
             }
 
-            // set onClick for editProfile
-            binding.apply {
-                editProfileButton.setOnClickListener {
-                    // intent to profileEdit
-                    val intent = Intent(root.context, EditProfile::class.java)
-                    val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        root.context as Activity,
-                        Pair.create(profileBkgImg as View, "profileBkgImg"),
-                        Pair.create(profileIcon as View, "profileIcon"),
-                    )
-                    startActivity(intent, options.toBundle())
-                }
-            }
-
             // get profile for self
-            getSelfProfile()
+            setSelfProfile()
             val feedFragment = FeedFragment.newInstance(FeedType.Profile)
             childFragmentManager.beginTransaction().apply {
                 replace(R.id.feedFrameLayout, feedFragment)
@@ -109,8 +92,11 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private fun getProfile(userId: Int) {
-        // get account detail from backend
+    private fun setProfileDetail(userId: Int) {
+        // get account detail from backend (also set profile)
+        binding.editProfileButton.visibility = View.GONE
+        binding.followButton.visibility = View.VISIBLE
+
         val userToken = UserToken(this.activity).readToken()
         val call = accountApi.getProfileDetail(userToken, userId)
         call.enqueue(object : Callback<ProfileDetailResponse> {
@@ -121,6 +107,7 @@ class ProfileFragment : Fragment() {
                 Log.v("Pity", response.body().toString())
                 response.body()?.let {
                     binding.apply {
+
                         profileNickname.text = it.profileName
                         profileUsername.text = "@" + it.username
                         if (it.profileInfo == null) {
@@ -129,6 +116,20 @@ class ProfileFragment : Fragment() {
                             profileInfo.text = it.profileInfo
                         }
                         profileCreatedDate.text = "Date Created: " + it.createDate
+
+                        // set followed stuff
+                        isFollowed = it.isFollowed == true
+                        if (isFollowed) {
+                            followButton.setBackgroundColor(
+                                root.resources.getColor(R.color.light_blue, root.context.theme)
+                            )
+                            followButton.text = "Followed"
+                        } else {
+                            followButton.setBackgroundColor(
+                                root.resources.getColor(R.color.white, root.context.theme)
+                            )
+                            followButton.text = "Follow"
+                        }
 
                         // load images
                         val iconUrl = Constants.BASE_URL + "/" + it.userIconUrl
@@ -143,9 +144,60 @@ class ProfileFragment : Fragment() {
                 Log.v("Pity", t.toString())
             }
         })
+
+        // set onclick for followButton
+        binding.followButton.setOnClickListener {
+            val call = accountApi.follow(userToken, userId)
+            call.enqueue(object : Callback<FollowResponse> {
+                override fun onResponse(
+                    call: Call<FollowResponse>,
+                    response: Response<FollowResponse>
+                ) {
+                    val respObj = response.body() ?: return
+                    Log.v("Pity", respObj.toString())
+                    if (isFollowed != respObj.isFollowed) {
+                        isFollowed = respObj.isFollowed == true
+                        binding.apply {
+                            if (isFollowed) {
+                                followButton.setBackgroundColor(
+                                    root.resources.getColor(R.color.light_blue, root.context.theme)
+                                )
+                                followButton.text = "Followed"
+                            } else {
+                                followButton.setBackgroundColor(
+                                    root.resources.getColor(R.color.white, root.context.theme)
+                                )
+                                followButton.text = "Follow"
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<FollowResponse>, t: Throwable) {
+                    Log.v("Pity", t.toString())
+                }
+            })
+        }
     }
 
-    private fun getSelfProfile() {
+    private fun setSelfProfile() {
+        binding.editProfileButton.visibility = View.VISIBLE
+        binding.followButton.visibility = View.GONE
+
+        // set onClick for editProfile
+        binding.apply {
+            editProfileButton.setOnClickListener {
+                // intent to profileEdit
+                val intent = Intent(root.context, EditProfile::class.java)
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    root.context as Activity,
+                    Pair.create(profileBkgImg as View, "profileBkgImg"),
+                    Pair.create(profileIcon as View, "profileIcon"),
+                )
+                startActivity(intent, options.toBundle())
+            }
+        }
+
         // get account detail from backend
         val userToken = UserToken(this.activity).readToken()
         userToken?.let { token ->

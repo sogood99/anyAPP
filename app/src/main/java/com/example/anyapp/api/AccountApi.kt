@@ -1,9 +1,6 @@
 package com.example.anyapp.api
 
-import com.example.anyapp.util.CreateUserResponse
-import com.example.anyapp.util.LoginResponse
-import com.example.anyapp.util.ProfileDetailResponse
-import com.example.anyapp.util.ProfileResponse
+import com.example.anyapp.util.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -46,4 +43,11 @@ interface AccountApi {
         @Part profileIcon: MultipartBody.Part?,
         @Part profileBkgImg: MultipartBody.Part?,
     ): Call<ProfileResponse>
+
+    @FormUrlEncoded
+    @POST("api/user/follow/")
+    fun follow(
+        @Header("Authorization") authorization: String?,
+        @Field("followedUserId") followedUserId: Int,
+    ): Call<FollowResponse>
 }
