@@ -82,12 +82,14 @@ class NewTweetFragment : Fragment() {
                 override fun successCallback() {
                     // get the successfully fetched image using getImageFile(), then set to NewTweetFragment.imageFile
                     this@NewTweetFragment.imageFile = getImageFile()
+                    binding.deleteImageButton.visibility = View.VISIBLE
                 }
             }
         videoFetcher =
             object : VideoFetcher(requireActivity(), requireActivity().activityResultRegistry) {
                 override fun successCallback() {
                     this@NewTweetFragment.videoFile = getVideoFile()
+                    binding.deleteVideoButton.visibility = View.VISIBLE
                 }
             }
         lifecycle.addObserver(imageFetcher)
@@ -131,9 +133,22 @@ class NewTweetFragment : Fragment() {
                         videoFile
                     )
                 )
+                Toast.makeText(context, "Tweet Saved", Toast.LENGTH_SHORT).show()
             }
 
-            // for choosing new button
+            // for deleteButtons
+            deleteImageButton.setOnClickListener {
+                imageFile = null
+                hideButton(it)
+                Toast.makeText(context, "Image Deleted", Toast.LENGTH_SHORT).show()
+            }
+            deleteVideoButton.setOnClickListener {
+                videoFile = null
+                hideButton(it)
+                Toast.makeText(context, "Video Deleted", Toast.LENGTH_SHORT).show()
+            }
+
+            // for fetch resource button
             imageButton.setOnClickListener {
                 imageFetcher.run()
             }
@@ -240,7 +255,25 @@ class NewTweetFragment : Fragment() {
             replyId = replyId
             imageFile = draft.imageFile
             videoFile = draft.videoFile
+            if (imageFile != null) {
+                showButton(deleteImageButton)
+            } else {
+                hideButton(deleteImageButton)
+            }
+            if (videoFile != null) {
+                showButton(deleteVideoButton)
+            } else {
+                hideButton(deleteVideoButton)
+            }
         }
+    }
+
+    private fun showButton(view: View) {
+        view.visibility = View.VISIBLE
+    }
+
+    private fun hideButton(view: View) {
+        view.visibility = View.INVISIBLE
     }
 
     private fun resetTweet() {

@@ -6,15 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
+import android.view.animation.AnimationUtils
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
+import com.example.anyapp.R
 import com.example.anyapp.databinding.ItemDraftBinding
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.squareup.picasso.Picasso
 
 class DraftListAdapter(
-    var draftList: List<Draft>
+    private var draftList: List<Draft>
 ) : RecyclerView.Adapter<DraftListAdapter.DraftViewHolder>() {
 
     private var onDraftNewTweet: (draft: Draft) -> Unit = {
@@ -51,7 +53,6 @@ class DraftListAdapter(
                         }
                     }
                 }
-
                 val player = ExoPlayer.Builder(videoContent.context).build()
                 videoContent.player = player
                 val mediaItem = MediaItem.fromUri(draft.videoFile.toUri())
@@ -62,12 +63,16 @@ class DraftListAdapter(
             }
 
             setButton.setOnClickListener {
+                // use draft according to parent callback function
                 onDraftNewTweet(draft)
             }
 
             deleteButton.setOnClickListener {
                 DraftList().remove(draft)
             }
+
+            // set animation
+            root.animation = AnimationUtils.loadAnimation(root.context, R.anim.scale_in)
         }
     }
 
