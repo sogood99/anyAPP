@@ -19,11 +19,8 @@ import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.ActivityTweetDetailBinding
 import com.example.anyapp.databinding.ItemUserBinding
 import com.example.anyapp.profile.ProfileDetail
-import com.example.anyapp.util.Constants
+import com.example.anyapp.util.*
 import com.example.anyapp.util.Constants.Companion.BASE_URL
-import com.example.anyapp.util.FeedType
-import com.example.anyapp.util.LikeResponse
-import com.example.anyapp.util.UserToken
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -140,6 +137,25 @@ class TweetDetail : AppCompatActivity() {
                         textView.textSize = 24f
                         textView.setPadding(20)
                         navigationViewLikedUsers.addHeaderView(textView)
+
+                        // get all liked users
+                        val likedUsersCall = tweetApi.likeDetail(tweetId)
+                        likedUsersCall.enqueue(object : Callback<List<ProfileResponse>> {
+                            override fun onResponse(
+                                call: Call<List<ProfileResponse>>,
+                                response: Response<List<ProfileResponse>>
+                            ) {
+                                response.body()?.let { profileList ->
+                                    Log.v("Pity", profileList.toString())
+                                }
+                            }
+
+                            override fun onFailure(
+                                call: Call<List<ProfileResponse>>,
+                                t: Throwable
+                            ) = Unit
+
+                        })
 
                         for (i in 0..10) {
                             val itemUserBinding = ItemUserBinding.inflate(layoutInflater)
