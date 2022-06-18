@@ -55,7 +55,6 @@ class Home : AppCompatActivity() {
         val newTweetFragment = NewTweetFragment.newInstance(isReply = false)
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.newTweet, newTweetFragment)
-        transaction.addToBackStack("NewTweet")
         transaction.commit()
 
         // its bottomsheet style
@@ -63,7 +62,6 @@ class Home : AppCompatActivity() {
             peekHeight = 100
             state = BottomSheetBehavior.STATE_COLLAPSED
         }
-
         BottomSheetBehavior.from(binding.newTweet)
             .addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(view: View, newState: Int) {
@@ -81,7 +79,11 @@ class Home : AppCompatActivity() {
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
             })
-
+        // hide newTweet when sent
+        newTweetFragment.setTweetCallback {
+            BottomSheetBehavior.from(binding.newTweet)
+                .setState(BottomSheetBehavior.STATE_COLLAPSED)
+        }
 
         // For selecting the Menu Items
         binding.homeToolbar.setOnMenuItemClickListener { menuItem ->

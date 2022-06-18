@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.anyapp.R
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.ItemTweetBinding
+import com.example.anyapp.profile.ProfileDetail
 import com.example.anyapp.util.Constants.Companion.BASE_URL
 import com.example.anyapp.util.LikeResponse
 import com.example.anyapp.util.UserToken
@@ -34,7 +35,8 @@ class TweetAdapter(
 ) : RecyclerView.Adapter<TweetAdapter.TweetViewHolder>() {
 
     companion object {
-        const val EXTRA_TWEET_ID = "com.example.anyapp.Tweet_ID"
+        const val EXTRA_USER_ID = "com.example.anyapp.User_Id"
+        const val EXTRA_TWEET_ID = "com.example.anyapp.Tweet_Id"
         const val EXTRA_POSITION = "com.example.anyapp.RvPosition"
         const val EXTRA_VIDEO_POSITION = "com.example.anyapp.VideoPosition"
     }
@@ -195,12 +197,24 @@ class TweetAdapter(
                     UtilPair.create(profileName as View, "profileName$position"),
                     UtilPair.create(username as View, "username$position"),
                     UtilPair.create(textContent as View, "textContent$position"),
+                    UtilPair.create(likeButton as View, "likeButton$position"),
+                    UtilPair.create(likeCount as View, "likeCount$position"),
                     UtilPair.create(imageContent as View, "imageContent$position"),
                     UtilPair.create(videoContent as View, "videoContent$position"),
                     UtilPair.create(replyText as View, "replyText$position"),
                 )
                 root.context.startActivity(intent, options.toBundle())
             }
+
+            val profileClickListener = View.OnClickListener {
+                val intent = Intent(root.context, ProfileDetail::class.java).apply {
+                    putExtra(EXTRA_USER_ID, tweets[position].userId)
+                }
+                root.context.startActivity(intent)
+            }
+            userIcon.setOnClickListener(profileClickListener)
+            username.setOnClickListener(profileClickListener)
+            profileName.setOnClickListener(profileClickListener)
 
             // set animation
             root.animation = AnimationUtils.loadAnimation(root.context, R.anim.scale_in)
