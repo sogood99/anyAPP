@@ -1,5 +1,6 @@
 package com.example.anyapp.feed
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Outline
 import androidx.appcompat.app.AppCompatActivity
@@ -8,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.anyapp.NewTweetFragment
 import com.example.anyapp.R
@@ -16,6 +18,7 @@ import com.example.anyapp.databinding.ActivityTweetDetailBinding
 import com.example.anyapp.profile.ProfileDetail
 import com.example.anyapp.util.Constants
 import com.example.anyapp.util.FeedType
+import com.example.anyapp.util.LikeResponse
 import com.example.anyapp.util.UserToken
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
@@ -26,6 +29,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.HttpURLConnection
 
 class TweetDetail : AppCompatActivity() {
     private lateinit var binding: ActivityTweetDetailBinding
@@ -103,6 +107,7 @@ class TweetDetail : AppCompatActivity() {
                 .setState(BottomSheetBehavior.STATE_COLLAPSED)
         }
 
+
         val call = tweetApi.tweetDetail(UserToken(this).readToken(), tweetId)
         call.enqueue(object : Callback<Tweet> {
             override fun onResponse(call: Call<Tweet>, response: Response<Tweet>) {
@@ -115,9 +120,65 @@ class TweetDetail : AppCompatActivity() {
                         username.text = "@" + tweet.username
                         textContent.text = tweet.text
 
+                        // setup like button
+                        var likeCountNum = tweet.likes
+                        likeCount.text = likeCountNum.toString()
+
+                        var isLikedTweet = tweet.isLiked
+                        // set color for button if liked
+                        if (isLikedTweet) {
+                            likeButton.setBackgroundColor(
+                                root.resources.getColor(R.color.light_blue, root.context.theme)
+                            )
+                        } else {
+                            likeButton.setBackgroundColor(
+                                root.resources.getColor(R.color.white, root.context.theme)
+                            )
+                        }
+
+                        val tweetId = tweet.tweetId
+                        likeButton.setOnClickListener {
+                            val likeCall =
+                                tweetApi.likeTweet(UserToken(it.context as Activity?).readToken(), tweetId)
+
+                            likeCall.enqueue(object : Callback<LikeResponse> {
+                                override fun onResponse(
+                                    call: Call<LikeResponse>,
+                                    response: Response<LikeResponse>
+                                ) {
+                                    if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                                        Toast.makeText(root.context, "Please Log In", Toast.LENGTH_SHORT).show()
+                                    }
+                                    val respObj: LikeResponse = response.body() ?: return
+                                    Log.v("Pity", respObj.toString())
+                                    if (isLikedTweet != respObj.isLike) {
+                                        isLikedTweet = respObj.isLike
+                                        if (isLikedTweet) {
+                                            likeCountNum++
+                                            likeButton.setBackgroundColor(
+                                                root.resources.getColor(R.color.light_blue, root.context.theme)
+                                            )
+                                        } else {
+                                            likeCountNum--
+                                            likeButton.setBackgroundColor(
+                                                root.resources.getColor(R.color.white, root.context.theme)
+                                            )
+                                        }
+                                        likeCount.text = likeCountNum.toString()
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<LikeResponse>, t: Throwable) {
+                                    Log.v("Pity", t.toString())
+                                }
+                            })
+                        }
+
                         profileName.transitionName = "profileName$position"
                         username.transitionName = "username$position"
                         textContent.transitionName = "textContent$position"
+                        likeButton.transitionName = "likeButton$position"
+                        likeCount.transitionName = "likeCount$position"
 
                         // check if this tweet is a reply of another
                         val repliesId = tweet.repliesId

@@ -3,15 +3,11 @@ package com.example.anyapp.profile
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import androidx.lifecycle.LifecycleObserver
 import com.example.anyapp.R
 import com.example.anyapp.api.AccountApi
 import com.example.anyapp.databinding.ActivityProfileDetailBinding
-import com.example.anyapp.databinding.FragmentProfileBinding
-import com.example.anyapp.feed.FeedFragment
 import com.example.anyapp.feed.TweetAdapter
 import com.example.anyapp.util.Constants
-import com.example.anyapp.util.FeedType
 import com.example.anyapp.util.ProfileDetailResponse
 import com.example.anyapp.util.UserToken
 import retrofit2.Call

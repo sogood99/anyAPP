@@ -197,6 +197,8 @@ class TweetAdapter(
                     UtilPair.create(profileName as View, "profileName$position"),
                     UtilPair.create(username as View, "username$position"),
                     UtilPair.create(textContent as View, "textContent$position"),
+                    UtilPair.create(likeButton as View, "likeButton$position"),
+                    UtilPair.create(likeCount as View, "likeCount$position"),
                     UtilPair.create(imageContent as View, "imageContent$position"),
                     UtilPair.create(videoContent as View, "videoContent$position"),
                     UtilPair.create(replyText as View, "replyText$position"),
