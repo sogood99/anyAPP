@@ -9,14 +9,18 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.core.view.setPadding
 import com.example.anyapp.NewTweetFragment
 import com.example.anyapp.R
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.ActivityTweetDetailBinding
+import com.example.anyapp.databinding.ItemUserBinding
 import com.example.anyapp.profile.ProfileDetail
 import com.example.anyapp.util.Constants
+import com.example.anyapp.util.Constants.Companion.BASE_URL
 import com.example.anyapp.util.FeedType
 import com.example.anyapp.util.LikeResponse
 import com.example.anyapp.util.UserToken
@@ -107,7 +111,6 @@ class TweetDetail : AppCompatActivity() {
                 .setState(BottomSheetBehavior.STATE_COLLAPSED)
         }
 
-
         val call = tweetApi.tweetDetail(UserToken(this).readToken(), tweetId)
         call.enqueue(object : Callback<Tweet> {
             override fun onResponse(call: Call<Tweet>, response: Response<Tweet>) {
@@ -120,9 +123,31 @@ class TweetDetail : AppCompatActivity() {
                         username.text = "@" + tweet.username
                         textContent.text = tweet.text
 
-                        // setup like button
+                        // setup like count/button
                         var likeCountNum = tweet.likes
                         likeCount.text = likeCountNum.toString()
+                        likeCount.setOnClickListener {
+                            drawerLayout.openDrawer(GravityCompat.END)
+                        }
+                        drawerLayout.setScrimColor(
+                            ContextCompat.getColor(
+                                this@TweetDetail,
+                                android.R.color.transparent
+                            )
+                        )
+                        val textView = TextView(this@TweetDetail)
+                        textView.text = "Liked Users"
+                        textView.textSize = 24f
+                        textView.setPadding(20)
+                        navigationViewLikedUsers.addHeaderView(textView)
+
+                        for (i in 0..10) {
+                            val itemUserBinding = ItemUserBinding.inflate(layoutInflater)
+                            Picasso.get().load(BASE_URL + "/image/userIcon/default.jpg")
+                                .fit()
+                                .into(itemUserBinding.userMenuIcon)
+                            navigationViewLikedUsers.addHeaderView(itemUserBinding.root)
+                        }
 
                         var isLikedTweet = tweet.isLiked
                         // set color for button if liked
@@ -138,8 +163,10 @@ class TweetDetail : AppCompatActivity() {
 
                         val tweetId = tweet.tweetId
                         likeButton.setOnClickListener {
-                            val likeCall =
-                                tweetApi.likeTweet(UserToken(it.context as Activity?).readToken(), tweetId)
+                            val likeCall = tweetApi.likeTweet(
+                                UserToken(it.context as Activity?).readToken(),
+                                tweetId
+                            )
 
                             likeCall.enqueue(object : Callback<LikeResponse> {
                                 override fun onResponse(
@@ -147,7 +174,11 @@ class TweetDetail : AppCompatActivity() {
                                     response: Response<LikeResponse>
                                 ) {
                                     if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                                        Toast.makeText(root.context, "Please Log In", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            root.context,
+                                            "Please Log In",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                     val respObj: LikeResponse = response.body() ?: return
                                     Log.v("Pity", respObj.toString())
@@ -156,12 +187,18 @@ class TweetDetail : AppCompatActivity() {
                                         if (isLikedTweet) {
                                             likeCountNum++
                                             likeButton.setBackgroundColor(
-                                                root.resources.getColor(R.color.light_blue, root.context.theme)
+                                                root.resources.getColor(
+                                                    R.color.light_blue,
+                                                    root.context.theme
+                                                )
                                             )
                                         } else {
                                             likeCountNum--
                                             likeButton.setBackgroundColor(
-                                                root.resources.getColor(R.color.white, root.context.theme)
+                                                root.resources.getColor(
+                                                    R.color.white,
+                                                    root.context.theme
+                                                )
                                             )
                                         }
                                         likeCount.text = likeCountNum.toString()
@@ -198,10 +235,10 @@ class TweetDetail : AppCompatActivity() {
                         // usual imageUrl & videoUrl setting
                         if (it.userIconUrl != "") {
                             // load image if tweet.imageContent has content
-                            val url = Constants.BASE_URL + "/" + it.userIconUrl
+                            val url = BASE_URL + "/" + it.userIconUrl
                             Picasso.get().load(url).into(userIcon)
                         } else {
-                            val url = "${Constants.BASE_URL}/image/userIcon/default.jpg"
+                            val url = "$BASE_URL/image/userIcon/default.jpg"
                             Picasso.get().load(url).into(userIcon)
                         }
                         // set transition name for activity shared element transition
@@ -218,7 +255,7 @@ class TweetDetail : AppCompatActivity() {
                                 }
                             }
                             // same as image
-                            val url = Constants.BASE_URL + "/" + it.videoUrl
+                            val url = BASE_URL + "/" + it.videoUrl
                             url.let {
                                 val player = ExoPlayer.Builder(videoContent.context).build()
                                 videoContent.player = player
@@ -238,7 +275,7 @@ class TweetDetail : AppCompatActivity() {
 
                         if (it.imageUrl != null) {
                             // load image if tweet.imageContent has content
-                            val url = Constants.BASE_URL + "/" + it.imageUrl
+                            val url = BASE_URL + "/" + it.imageUrl
                             Picasso.get().load(url).into(imageContent)
                         } else {
                             // otherwise delete it

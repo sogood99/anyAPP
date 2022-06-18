@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingLeft="20dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/userMenuIcon"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/userMenuButton"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:backgroundTint="@color/slight_light_blue"
+        android:gravity="center|left"
+        android:paddingLeft="20dp"
+        android:text="User"
+        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+        android:textColor="@color/icon_color"
+        android:textSize="20sp" />
+
+</LinearLayout>
