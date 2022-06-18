@@ -146,7 +146,18 @@ class TweetDetail : AppCompatActivity() {
                                 response: Response<List<ProfileResponse>>
                             ) {
                                 response.body()?.let { profileList ->
-                                    Log.v("Pity", profileList.toString())
+                                    for (profile in profileList) {
+                                        val itemUserBinding =
+                                            ItemUserBinding.inflate(layoutInflater)
+
+                                        // sync values
+                                        itemUserBinding.profileName.text = profile.profileName
+                                        itemUserBinding.username.text = profile.username
+                                        Picasso.get().load(BASE_URL + "/" + profile.userIconUrl)
+                                            .fit()
+                                            .into(itemUserBinding.userIcon)
+                                        navigationViewLikedUsers.addHeaderView(itemUserBinding.root)
+                                    }
                                 }
                             }
 
@@ -156,14 +167,6 @@ class TweetDetail : AppCompatActivity() {
                             ) = Unit
 
                         })
-
-                        for (i in 0..10) {
-                            val itemUserBinding = ItemUserBinding.inflate(layoutInflater)
-                            Picasso.get().load(BASE_URL + "/image/userIcon/default.jpg")
-                                .fit()
-                                .into(itemUserBinding.userIcon)
-                            navigationViewLikedUsers.addHeaderView(itemUserBinding.root)
-                        }
 
                         var isLikedTweet = tweet.isLiked
                         // set color for button if liked
