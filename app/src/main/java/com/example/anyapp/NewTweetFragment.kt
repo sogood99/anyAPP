@@ -51,6 +51,9 @@ class NewTweetFragment : Fragment() {
     private var videoFile: File? = null
     private lateinit var videoFetcher: VideoFetcher
 
+    // when clicked tweet send
+    private var onTweetCallback: () -> Unit = {}
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -113,6 +116,7 @@ class NewTweetFragment : Fragment() {
         binding.apply {
             sendTweetButton.setOnClickListener {
                 sendTweet()
+                onTweetCallback()
             }
 
             // for choosing new button
@@ -206,6 +210,10 @@ class NewTweetFragment : Fragment() {
 
     fun hide() {
         binding.root.animate().alpha(0.0f).setDuration(100)
+    }
+
+    fun setTweetCallback(callback : () -> Unit){
+        onTweetCallback = callback
     }
 
     private fun resetTweet() {

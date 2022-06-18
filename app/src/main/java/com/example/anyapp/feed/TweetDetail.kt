@@ -77,7 +77,6 @@ class TweetDetail : AppCompatActivity() {
             peekHeight = 100
             state = BottomSheetBehavior.STATE_COLLAPSED
         }
-
         // bottom sheet set
         BottomSheetBehavior.from(binding.newTweet)
             .addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
@@ -97,6 +96,11 @@ class TweetDetail : AppCompatActivity() {
                 override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
             })
+        // hide newTweet when sent
+        newTweetFragment.setTweetCallback {
+            BottomSheetBehavior.from(binding.newTweet)
+                .setState(BottomSheetBehavior.STATE_COLLAPSED)
+        }
 
 
         val call = tweetApi.tweetDetail(UserToken(this).readToken(), tweetId)
