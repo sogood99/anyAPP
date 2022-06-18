@@ -32,6 +32,7 @@ interface TweetApi {
         @Header("Authorization") authorization: String?,
         @Field("option") options: FeedType?,
         @Field("repliesId") repliesId: Int?,
+        @Field("userId") userId: Int?,
     ): Call<List<Tweet>>
 
     @FormUrlEncoded

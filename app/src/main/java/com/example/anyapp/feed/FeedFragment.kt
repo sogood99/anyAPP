@@ -21,6 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 private const val OPTION_PARAM = "option"
 private const val REPLIESID_PARAM = "repliesId"
+private const val USERID_PARAM = "userId"
 
 /**
  * A simple [Fragment] subclass.
@@ -28,8 +29,10 @@ private const val REPLIESID_PARAM = "repliesId"
  * create an instance of this fragment.
  */
 class FeedFragment : Fragment() {
-    private var option: FeedType? = null
-    private var repliesId: Int? = null
+    // lateinit
+    private var option = FeedType.NotSet
+    private var repliesId = -1
+    private var userId = -1
 
     // databinding
     private lateinit var binding: FragmentFeedBinding
@@ -45,8 +48,9 @@ class FeedFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            option = it.getSerializable(OPTION_PARAM) as FeedType?
+            option = it.getSerializable(OPTION_PARAM) as FeedType
             repliesId = it.getInt(REPLIESID_PARAM)
+            userId = it.getInt(USERID_PARAM)
         }
     }
 
@@ -79,7 +83,8 @@ class FeedFragment : Fragment() {
         val call = tweetApi.getFeed(
             UserToken(activity).readToken(),
             option,
-            if (option == FeedType.Replies) repliesId else null
+            if (option == FeedType.Replies) repliesId else null,
+            if (option == FeedType.ProfileDetail) userId else null
         )
         call.enqueue(object : Callback<List<Tweet>> {
             override fun onResponse(call: Call<List<Tweet>>, response: Response<List<Tweet>>) {
@@ -110,14 +115,14 @@ class FeedFragment : Fragment() {
          * @return A new instance of fragment FeedFragment.
          */
         @JvmStatic
-        fun newInstance(option: FeedType, repliesId: Int = -1) =
+        fun newInstance(option: FeedType, repliesId: Int = -1, userId: Int = -1) =
             FeedFragment().apply {
                 arguments = Bundle().apply {
-                    if (option == FeedType.Replies && repliesId < 0) {
-                        assert(false, { "Error, negative replies id for FeedType.Replies" })
-                    }
+                    assert(!(option == FeedType.Replies && repliesId < 0)) { "Error, negative replies id for FeedType.Replies" }
+                    assert(!(option == FeedType.ProfileDetail && userId < 0)) { "Error, negative user id for FeedType.ProfileDetail" }
                     putSerializable(OPTION_PARAM, option)
                     putInt(REPLIESID_PARAM, repliesId)
+                    putInt(USERID_PARAM, userId)
                 }
             }
     }

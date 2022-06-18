@@ -29,6 +29,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 class TweetDetail : AppCompatActivity() {
     private lateinit var binding: ActivityTweetDetailBinding
 
+    // lateinit
+    private var tweetId = -1
+    private var position = -1
+
     private val retrofit = Retrofit
         .Builder().addConverterFactory(GsonConverterFactory.create())
         .baseUrl(Constants.BASE_URL)
@@ -43,14 +47,11 @@ class TweetDetail : AppCompatActivity() {
         window.statusBarColor = ContextCompat.getColor(this, R.color.slight_light_blue)
 
         // get intent params
-        val tweetId = intent.getIntExtra(TweetAdapter.EXTRA_TWEET_ID, -1)
-        val position = intent.getIntExtra(TweetAdapter.EXTRA_POSITION, -1)
+        tweetId = intent.getIntExtra(TweetAdapter.EXTRA_TWEET_ID, -1)
+        position = intent.getIntExtra(TweetAdapter.EXTRA_POSITION, -1)
         val videoPlaybackPosition = intent.getLongExtra(TweetAdapter.EXTRA_VIDEO_POSITION, -1)
-        if (tweetId < 0) {
-            // don't call without specifying tweetId
-            assert(false) { "Bug, do not use Tweet Detail w/o tweetId" }
-            finishAfterTransition()
-        }
+        // don't call without specifying tweetId
+        assert(tweetId >= 0) { "Bug, do not use Tweet Detail w/o tweetId" }
 
         // set replies
         val feedFragment = FeedFragment.newInstance(FeedType.Replies, repliesId = tweetId)

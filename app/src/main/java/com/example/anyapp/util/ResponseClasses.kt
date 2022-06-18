@@ -22,6 +22,17 @@ data class ProfileResponse(
     val profileInfo: String?,
 )
 
+data class ProfileDetailResponse(
+    val userId: Int,
+    val username: String,
+    val profileName: String,
+    val userIconUrl: String,
+    val userBkgUrl: String,
+    val createDate: String,
+    val profileInfo: String?,
+    val isSelf: Boolean,
+)
+
 data class LikeResponse(
     val isLike: Boolean // if not liked -> like, then this is set to true
 )

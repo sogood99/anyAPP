@@ -14,10 +14,7 @@ import com.example.anyapp.R
 import com.example.anyapp.api.AccountApi
 import com.example.anyapp.databinding.FragmentProfileBinding
 import com.example.anyapp.feed.FeedFragment
-import com.example.anyapp.util.Constants
-import com.example.anyapp.util.FeedType
-import com.example.anyapp.util.ProfileResponse
-import com.example.anyapp.util.UserToken
+import com.example.anyapp.util.*
 import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
@@ -35,10 +32,11 @@ private const val ARG_PARAM2 = "param2"
  */
 class ProfileFragment : Fragment() {
     // if isSelf == true, access profile through user token (and display self related buttons eg edit), else show regular visitor accessing profile
-    private var isSelf: Boolean? = null
-    private var userId: Int? = null
+    // lateinit
+    private var isSelf: Boolean = false
+    private var userId: Int = -1
 
-    private lateinit var binding: FragmentProfileBinding
+    lateinit var binding: FragmentProfileBinding
 
     private val retrofit = Retrofit
         .Builder().addConverterFactory(GsonConverterFactory.create())
@@ -49,10 +47,10 @@ class ProfileFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            isSelf = it.getBoolean(ARG_PARAM1)
-            userId = it.getInt(ARG_PARAM2)
+            isSelf = it.getBoolean(ARG_PARAM1, false)
+            userId = it.getInt(ARG_PARAM2, -1)
 
-            if (isSelf == false && userId!! < 0) {
+            if (!isSelf && userId < 0) {
                 assert(false) { "Bug, please use profile fragment correctly" }
             }
         }
@@ -71,8 +69,15 @@ class ProfileFragment : Fragment() {
 
         // if not logged in, set to invisible
         val token = UserToken(this.activity).readToken()
-        if (isSelf == false) {
+        if (!isSelf) {
             binding.editProfileButton.visibility = View.GONE
+
+            getProfile(userId)
+            val feedFragment = FeedFragment.newInstance(FeedType.ProfileDetail, userId = userId)
+            childFragmentManager.beginTransaction().apply {
+                replace(R.id.feedFrameLayout, feedFragment)
+                commit()
+            }
         } else {
             if (token == null) {
                 // isSelf == true but token == null => not logged in yet
@@ -93,18 +98,54 @@ class ProfileFragment : Fragment() {
                     startActivity(intent, options.toBundle())
                 }
             }
-        }
 
-        getProfile()
-        val feedFragment = FeedFragment.newInstance(FeedType.Profile)
-        childFragmentManager.beginTransaction().apply {
-            replace(R.id.feedFrameLayout, feedFragment)
-            commit()
+            // get profile for self
+            getSelfProfile()
+            val feedFragment = FeedFragment.newInstance(FeedType.Profile)
+            childFragmentManager.beginTransaction().apply {
+                replace(R.id.feedFrameLayout, feedFragment)
+                commit()
+            }
         }
-
     }
 
-    private fun getProfile() {
+    private fun getProfile(userId: Int) {
+        // get account detail from backend
+        val userToken = UserToken(this.activity).readToken()
+        val call = accountApi.getProfileDetail(userToken, userId)
+        call.enqueue(object : Callback<ProfileDetailResponse> {
+            override fun onResponse(
+                call: Call<ProfileDetailResponse>,
+                response: Response<ProfileDetailResponse>
+            ) {
+                Log.v("Pity", response.body().toString())
+                response.body()?.let {
+                    binding.apply {
+                        profileNickname.text = it.profileName
+                        profileUsername.text = "@" + it.username
+                        if (it.profileInfo == null) {
+                            profileInfo.text = "Still New."
+                        } else {
+                            profileInfo.text = it.profileInfo
+                        }
+                        profileCreatedDate.text = "Date Created: " + it.createDate
+
+                        // load images
+                        val iconUrl = Constants.BASE_URL + "/" + it.userIconUrl
+                        Picasso.get().load(iconUrl).into(profileIcon)
+                        val bkgUrl = Constants.BASE_URL + "/" + it.userBkgUrl
+                        Picasso.get().load(bkgUrl).into(profileBkgImg)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<ProfileDetailResponse>, t: Throwable) {
+                Log.v("Pity", t.toString())
+            }
+        })
+    }
+
+    private fun getSelfProfile() {
         // get account detail from backend
         val userToken = UserToken(this.activity).readToken()
         userToken?.let { token ->

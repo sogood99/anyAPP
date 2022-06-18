@@ -20,6 +20,9 @@
         android:theme="@style/Theme.AnyApp"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".profile.ProfileDetail"
+            android:exported="false" />
+        <activity
             android:name=".profile.EditProfile"
             android:exported="false" />
         <activity

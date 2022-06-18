@@ -2,6 +2,7 @@ package com.example.anyapp.api
 
 import com.example.anyapp.util.CreateUserResponse
 import com.example.anyapp.util.LoginResponse
+import com.example.anyapp.util.ProfileDetailResponse
 import com.example.anyapp.util.ProfileResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -28,6 +29,13 @@ interface AccountApi {
     fun getProfile(
         @Header("Authorization") authorization: String,
     ): Call<ProfileResponse>
+
+    @FormUrlEncoded
+    @POST("api/user/profile/")
+    fun getProfileDetail(
+        @Header("Authorization") authorization: String?,
+        @Field("userId") userId: Int,
+    ): Call<ProfileDetailResponse>
 
     @Multipart
     @POST("api/user/profile/update/")
