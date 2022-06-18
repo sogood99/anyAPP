@@ -15,7 +15,7 @@ import com.google.android.material.tabs.TabLayoutMediator
  * Used to control FeedFragment for when option == Popular
  */
 class FeedTypeFragment : Fragment() {
-    // databinding
+    // dataBinding
     private lateinit var binding: FragmentFeedTypeBinding
 
     override fun onCreateView(
