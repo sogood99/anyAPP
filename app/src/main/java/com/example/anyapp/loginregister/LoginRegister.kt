@@ -2,6 +2,8 @@ package com.example.anyapp.loginregister
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.example.anyapp.R
 import com.example.anyapp.databinding.ActivityLoginRegisterBinding
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -19,6 +21,7 @@ class LoginRegister : AppCompatActivity() {
 
         binding = ActivityLoginRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
 
         binding.apply {
             // attach adapter to ViewPager2
