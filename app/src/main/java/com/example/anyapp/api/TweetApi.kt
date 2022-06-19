@@ -49,4 +49,11 @@ interface TweetApi {
     fun likeDetail(
         @Field("tweet") tweet: Int,
     ): Call<List<ProfileResponse>>
+
+    @FormUrlEncoded
+    @POST("api/tweet/search/")
+    fun search(
+        @Header("Authorization") authorization: String?,
+        @Field("searchArg") searchArg: String,
+    ): Call<List<Tweet>>
 }

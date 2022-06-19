@@ -20,7 +20,7 @@
         android:theme="@style/Theme.AnyApp"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".TweetSearch"
+            android:name=".search.TweetSearch"
             android:exported="false" />
         <activity
             android:name=".profile.ProfileDetail"

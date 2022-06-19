@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -17,6 +16,7 @@ import com.example.anyapp.draft.DraftListFragment
 import com.example.anyapp.feed.FeedFragment
 import com.example.anyapp.feed.FeedTypeFragment
 import com.example.anyapp.profile.ProfileFragment
+import com.example.anyapp.search.TweetSearch
 import com.example.anyapp.util.FeedType
 import com.example.anyapp.util.UserToken
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -101,7 +101,8 @@ class Home : AppCompatActivity() {
         binding.homeToolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.miSearch -> {
-                    Log.v("Pity", "Clicked Search")
+                    val intent = Intent(this@Home, TweetSearch::class.java)
+                    startActivity(intent)
                     true
                 }
                 R.id.miLogout -> {
