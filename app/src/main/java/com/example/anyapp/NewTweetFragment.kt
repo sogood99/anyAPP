@@ -18,7 +18,6 @@ import com.example.anyapp.util.Constants
 import com.example.anyapp.util.ImageFetcher
 import com.example.anyapp.util.UserToken
 import com.example.anyapp.util.VideoFetcher
-import com.google.android.material.snackbar.Snackbar
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -128,7 +127,7 @@ class NewTweetFragment : Fragment() {
                 DraftList().add(
                     Draft(
                         newTweetTextLayout.editText?.text.toString(),
-                        replyId,
+                        if (isReply == true) replyId else null,
                         imageFile,
                         videoFile
                     )
@@ -165,7 +164,7 @@ class NewTweetFragment : Fragment() {
     private fun sendTweet() {
         val userToken = UserToken(this.activity).readToken()
         if (userToken == null) {
-            Snackbar.make(binding.root, "Login to Send Tweet", Snackbar.LENGTH_LONG).show()
+            Toast.makeText(context, "Login to Send Tweet", Toast.LENGTH_LONG).show()
         }
 
         userToken?.let { token ->
