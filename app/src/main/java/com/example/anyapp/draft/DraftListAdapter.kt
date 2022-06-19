@@ -38,6 +38,12 @@ class DraftListAdapter(
             val draft = draftList[position]
             textContent.text = draft.text
 
+            if (draft.replyId != null && draft.replyId >= 0) {
+                replyText.text = "replies " + draft.replyId.toString()
+            } else {
+                replyText.visibility = View.GONE
+            }
+
             if (draft.imageFile != null) {
                 Picasso.get().load(draft.imageFile).into(imageContent)
             } else {

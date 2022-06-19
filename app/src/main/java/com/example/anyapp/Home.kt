@@ -93,6 +93,8 @@ class Home : AppCompatActivity() {
         // set newtweet when draft set
         onDraftSetNewTweet = {
             newTweetFragment.setNewTweet(it)
+            BottomSheetBehavior.from(binding.newTweet)
+                .setState(BottomSheetBehavior.STATE_EXPANDED)
         }
 
         // For selecting the Menu Items
@@ -118,8 +120,6 @@ class Home : AppCompatActivity() {
         // For selecting the Home
         binding.homeButton.setOnClickListener { button ->
             // testing
-            UserToken(this).setToken("Token 2b7809d3aa63ab76483393d49e191bde9d96b335")
-
             resetFragPager()
         }
 

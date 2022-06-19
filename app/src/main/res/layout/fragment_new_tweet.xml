@@ -112,7 +112,7 @@
                 android:id="@+id/videoButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/extreme_light_red"
+                android:backgroundTint="@color/extreme_light_blue"
                 android:text="Video" />
 
             <com.google.android.material.button.MaterialButton
@@ -130,6 +130,17 @@
             android:layout_height="1dp"
             android:layout_weight="1" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/clearButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/extreme_light_red"
+            android:text="Clear" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

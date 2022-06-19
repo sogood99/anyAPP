@@ -44,6 +44,8 @@ class NewTweetFragment : Fragment() {
     private var isReply: Boolean? = null
     private var replyId: Int? = null
 
+    private var currentReplyId: Int? = null // for draft
+
     private val retrofit = Retrofit
         .Builder().addConverterFactory(GsonConverterFactory.create())
         .baseUrl(Constants.BASE_URL)
@@ -98,6 +100,9 @@ class NewTweetFragment : Fragment() {
         // setup tweet button
         setupTweet()
 
+        // set currentId based on og value
+        resetCurrentReplyId()
+
         // hide keyboard
         binding.apply {
             root.setOnFocusChangeListener { view, hasFocus ->
@@ -108,12 +113,6 @@ class NewTweetFragment : Fragment() {
                         view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
                     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
                 }
-            }
-
-            if (isReply == true) {
-                indicatorText.text = "Reply"
-            } else {
-                indicatorText.text = "New Tweet"
             }
         }
     }
@@ -146,6 +145,10 @@ class NewTweetFragment : Fragment() {
                 videoFile = null
                 hideButton(it)
                 Toast.makeText(context, "Video Deleted", Toast.LENGTH_SHORT).show()
+            }
+
+            clearButton.setOnClickListener {
+                resetTweet()
             }
 
             // for fetch resource button
@@ -208,7 +211,7 @@ class NewTweetFragment : Fragment() {
             val call = tweetApi.tweet(
                 token,
                 textContent,
-                if (isReply == true) replyId else null,
+                currentReplyId,
                 imageMultipartBody,
                 videoMultipartBody,
             )
@@ -251,10 +254,11 @@ class NewTweetFragment : Fragment() {
         // set newTweet according to draft
         binding.apply {
             newTweetTextLayout.editText?.setText(draft.text)
-            isReply = replyId != null
-            replyId = replyId
             imageFile = draft.imageFile
             videoFile = draft.videoFile
+
+            setCurrentReplyId(draft.replyId)
+
             if (imageFile != null) {
                 showButton(deleteImageButton)
             } else {
@@ -276,11 +280,46 @@ class NewTweetFragment : Fragment() {
         view.visibility = View.INVISIBLE
     }
 
+    private fun setCurrentReplyId(newId: Int?) {
+        // set it based on newId
+        currentReplyId = newId
+
+        binding.apply {
+            if (currentReplyId != null && currentReplyId!! >= 0) {
+                indicatorText.text = "Reply #$currentReplyId"
+            } else {
+                indicatorText.text = "New Tweet"
+            }
+        }
+    }
+
+    private fun resetCurrentReplyId() {
+        // set it based on original value (isReply and replyId)
+        if (isReply == false) {
+            currentReplyId = null
+        } else {
+            currentReplyId = replyId
+        }
+
+        binding.apply {
+            if (currentReplyId != null && currentReplyId!! >= 0) {
+                indicatorText.text = "Reply #$currentReplyId"
+            } else {
+                indicatorText.text = "New Tweet"
+            }
+        }
+    }
+
     private fun resetTweet() {
         // reset newTweet
         binding.apply {
             newTweetTextLayout.editText?.text?.clear()
             imageFile = null
+            videoFile = null
+            hideButton(deleteImageButton)
+            hideButton(deleteVideoButton)
+
+            resetCurrentReplyId()
 
             newTweetTextLayout.clearFocus()
             val inputMethodManager =
