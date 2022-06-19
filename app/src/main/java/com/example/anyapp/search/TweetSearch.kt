@@ -3,6 +3,7 @@ package com.example.anyapp.search
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.core.content.ContextCompat
 import com.example.anyapp.R
 import com.example.anyapp.databinding.ActivityTweetSearchBinding
 import com.example.anyapp.feed.FeedFragment
@@ -22,6 +23,7 @@ class TweetSearch : AppCompatActivity() {
 
         binding = ActivityTweetSearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.slight_light_blue)
 
         // set replies
         val feedFragment = FeedFragment.newInstance(FeedType.Search)
