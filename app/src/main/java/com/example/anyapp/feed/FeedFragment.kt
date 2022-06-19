@@ -82,6 +82,29 @@ class FeedFragment : Fragment() {
         getFeed(binding.root)
     }
 
+    fun search(searchArg: String) {
+        if (option == FeedType.Search) {
+            val call = tweetApi.search(UserToken(activity).readToken(), searchArg)
+            call.enqueue(object : Callback<List<Tweet>> {
+                override fun onResponse(call: Call<List<Tweet>>, response: Response<List<Tweet>>) {
+                    val tweetList = response.body()
+                    Log.v("Pity", tweetList.toString())
+                    tweetList?.let {
+                        adapter.tweets = it
+                        adapter.notifyDataSetChanged()
+
+                        binding.homeTweets.adapter = adapter
+                        binding.homeTweets.layoutManager = LinearLayoutManager(binding.root.context)
+                    }
+                }
+
+                override fun onFailure(call: Call<List<Tweet>>, t: Throwable) {
+                    Toast.makeText(context, "Server Connection Error", Toast.LENGTH_LONG).show()
+                }
+            })
+        }
+    }
+
     private fun getFeed(view: View) {
         // get the data from backend
         val call = tweetApi.getFeed(

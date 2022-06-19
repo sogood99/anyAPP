@@ -78,7 +78,7 @@ class TweetDetail : AppCompatActivity() {
         transaction.addToBackStack("NewTweet")
         transaction.commit()
 
-        // its bottomsheet style
+        // its bottomSheet style
         BottomSheetBehavior.from(binding.newTweet).apply {
             peekHeight = 100
             state = BottomSheetBehavior.STATE_COLLAPSED
