@@ -11,11 +11,7 @@ enum class FeedType {
 
 class Constants {
     companion object {
-<<<<<<< HEAD
-        const val BASE_URL = "http://192.168.1.7:8000"
-=======
         const val BASE_URL = "http://20.243.138.178:8080"
->>>>>>> main
     }
 }
 
