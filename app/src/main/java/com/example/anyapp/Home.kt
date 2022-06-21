@@ -53,7 +53,6 @@ class Home : AppCompatActivity() {
 
         // on change listener for token & set token to null initially
         val userToken = UserToken(this)
-        userToken.setToken(null)
         userToken.sharedPreferences?.registerOnSharedPreferenceChangeListener(userTokenListener)
 
         // put in feed fragment
