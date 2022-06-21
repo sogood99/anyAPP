@@ -37,6 +37,7 @@ class DraftListAdapter(
         holder.binding.apply {
             val draft = draftList[position]
             textContent.text = draft.text
+            locationText.text = draft.location
 
             if (draft.replyId != null && draft.replyId >= 0) {
                 replyText.text = "replies " + draft.replyId.toString()

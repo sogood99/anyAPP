@@ -55,6 +55,8 @@ class NewTweetFragment : Fragment() {
     private lateinit var videoFetcher: VideoFetcher
     private var audioFile: File? = null
     private lateinit var audioFetcher: AudioFetcher
+    private var location: String = ""
+    private lateinit var locationFetcher: LocationFetcher
 
     // when clicked tweet send
     private var onTweetCallback: () -> Unit = {}
@@ -100,6 +102,13 @@ class NewTweetFragment : Fragment() {
                     binding.deleteAudioButton.visibility = View.VISIBLE
                 }
             }
+        locationFetcher =
+            object: LocationFetcher(requireActivity(), requireActivity().activityResultRegistry) {
+                override fun successCallback() {
+                    this@NewTweetFragment.location = getLocation()
+                    binding.deleteLocationButton.visibility = View.VISIBLE
+                }
+            }
         lifecycle.addObserver(imageFetcher)
         lifecycle.addObserver(videoFetcher)
         lifecycle.addObserver(audioFetcher)
@@ -137,7 +146,8 @@ class NewTweetFragment : Fragment() {
                         if (isReply == true) replyId else null,
                         imageFile,
                         videoFile,
-                        audioFile
+                        audioFile,
+                        location
                     )
                 )
                 Toast.makeText(context, "Tweet Saved", Toast.LENGTH_SHORT).show()
@@ -159,6 +169,11 @@ class NewTweetFragment : Fragment() {
                 hideButton(it)
                 Toast.makeText(context, "Audio Deleted", Toast.LENGTH_SHORT).show()
             }
+            deleteLocationButton.setOnClickListener {
+                location = ""
+                hideButton(it)
+                Toast.makeText(context, "Location Deleted", Toast.LENGTH_SHORT).show()
+            }
 
             clearButton.setOnClickListener {
                 resetTweet()
@@ -174,6 +189,9 @@ class NewTweetFragment : Fragment() {
             audioButton.setOnClickListener {
                 audioFetcher.run()
             }
+            locationButton.setOnClickListener {
+                locationFetcher.run()
+            }
         }
     }
 
@@ -188,6 +206,11 @@ class NewTweetFragment : Fragment() {
             val textContent = RequestBody.create(
                 MediaType.parse("text/plain"),
                 binding.newTweetTextLayout.editText?.text.toString()
+            )
+
+            val locationContent = RequestBody.create(
+                MediaType.parse("text/location"),
+                location
             )
 
             // send image to backend
@@ -248,6 +271,7 @@ class NewTweetFragment : Fragment() {
                 imageMultipartBody,
                 videoMultipartBody,
                 audioMultipartBody,
+                locationContent
             )
 
             call.enqueue(object : Callback<Tweet> {
@@ -291,6 +315,7 @@ class NewTweetFragment : Fragment() {
             imageFile = draft.imageFile
             videoFile = draft.videoFile
             audioFile = draft.audioFile
+            location = draft.location
 
             setCurrentReplyId(draft.replyId)
 
@@ -308,6 +333,11 @@ class NewTweetFragment : Fragment() {
                 showButton(deleteAudioButton)
             } else {
                 hideButton(deleteAudioButton)
+            }
+            if (location != "") {
+                showButton(deleteLocationButton)
+            } else {
+                hideButton(deleteLocationButton)
             }
         }
     }
@@ -357,9 +387,11 @@ class NewTweetFragment : Fragment() {
             imageFile = null
             videoFile = null
             audioFile = null
+            location = ""
             hideButton(deleteImageButton)
             hideButton(deleteVideoButton)
             hideButton(deleteAudioButton)
+            hideButton(deleteLocationButton)
 
             resetCurrentReplyId()
 

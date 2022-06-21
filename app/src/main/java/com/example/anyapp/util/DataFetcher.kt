@@ -2,14 +2,21 @@ package com.example.anyapp.util
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
+import android.location.LocationProvider
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.FileProvider
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -20,6 +27,11 @@ import org.apache.commons.io.IOUtils
 import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.atomic.AtomicInteger
+import androidx.core.content.ContextCompat.getSystemService
+
+
+
+
 
 // interface for data fetching used in NewTweet among other things sus
 // saves the fetched data into temp file, and callback
@@ -320,4 +332,32 @@ abstract class AudioFetcher(activity: Activity, registry: ActivityResultRegistry
             Log.v("Pity", e.toString())
         }
     }
+}
+
+// must put as member or initialize in onCreate
+// since registerForActivityResult needs to have ActivityResultRegistry in state Starting
+// and need activity for Dialog and External File and stuff
+abstract class LocationFetcher(activity: Activity, registry: ActivityResultRegistry) :
+    LocationListener {
+    var locationManager : LocationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    var locationString : String = ""
+
+    override fun onLocationChanged(p0: Location) {
+        locationString = "" + p0.latitude + ", " + p0.longitude
+    }
+
+    fun getLocation(): String {
+        return locationString
+    }
+
+    fun run() {
+        try {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        }
+        successCallback()
+    }
+
+    abstract fun successCallback()
 }

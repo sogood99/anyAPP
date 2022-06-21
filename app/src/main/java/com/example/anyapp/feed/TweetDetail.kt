@@ -295,6 +295,13 @@ class TweetDetail : AppCompatActivity() {
                         }
                         replyText.transitionName = "replyText$position"
 
+                        if (it.location != null) {
+                            locationText.text = it.location
+                            locationText.visibility = View.VISIBLE
+                        } else {
+                            locationText.visibility = View.GONE
+                        }
+
                         // usual imageUrl & videoUrl setting
                         if (it.userIconUrl != "") {
                             // load image if tweet.imageContent has content
