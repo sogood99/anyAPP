@@ -16,6 +16,7 @@ import com.example.anyapp.draft.Draft
 import com.example.anyapp.draft.DraftListFragment
 import com.example.anyapp.feed.FeedFragment
 import com.example.anyapp.feed.FeedTypeFragment
+import com.example.anyapp.notification.NotificationServices
 import com.example.anyapp.profile.ProfileFragment
 import com.example.anyapp.search.TweetSearch
 import com.example.anyapp.settings.SettingsActivity
@@ -54,6 +55,11 @@ class Home : AppCompatActivity() {
         // on change listener for token & set token to null initially
         val userToken = UserToken(this)
         userToken.sharedPreferences?.registerOnSharedPreferenceChangeListener(userTokenListener)
+
+        // notification services
+        startService(Intent(this, NotificationServices::class.java).apply {
+            putExtra("userToken", userToken.readToken())
+        })
 
         // put in feed fragment
         val pagerAdapter = BottomNavPagerAdapter(this)
