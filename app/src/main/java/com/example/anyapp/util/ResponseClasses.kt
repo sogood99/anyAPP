@@ -51,7 +51,11 @@ data class NotificationResponse(
     val type: String,
     val createDate: String,
     val tweetId: Int?, // for notification related to tweet sent by user
+    val tweetBrief: String?,
     val likeUserId: Int?, // for if some user replied to
+    val likeUserInfo: String?,
     val followUserId: Int?, // if some user followed
+    val followUserInfo: String?,
     val replyTweetId: Int?, // if some user replied using replyTweetId
+    val replyTweetBrief: String?,
 )

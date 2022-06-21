@@ -55,7 +55,7 @@ class NotificationServices : android.app.Service() {
                                         )
                                             .setSmallIcon(R.drawable.ic_like_icon)
                                             .setContentTitle("New Like")
-                                            .setContentText("Hello World!")
+                                            .setContentText(notificationResponse.likeUserInfo)
                                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                                             .setAutoCancel(true)
 
@@ -70,7 +70,7 @@ class NotificationServices : android.app.Service() {
                                         )
                                             .setSmallIcon(R.drawable.ic_tweet_icon)
                                             .setContentTitle("New Reply")
-                                            .setContentText("Hello World!")
+                                            .setContentText(notificationResponse.replyTweetBrief)
                                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                                             .setAutoCancel(true)
 
@@ -85,7 +85,7 @@ class NotificationServices : android.app.Service() {
                                         )
                                             .setSmallIcon(R.drawable.ic_user_icon)
                                             .setContentTitle("New Follow")
-                                            .setContentText("Followed by")
+                                            .setContentText(notificationResponse.followUserInfo)
                                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                                             .setAutoCancel(true)
 
