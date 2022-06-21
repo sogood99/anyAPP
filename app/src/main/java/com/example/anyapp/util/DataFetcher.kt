@@ -248,7 +248,6 @@ abstract class AudioFetcher(activity: Activity, registry: ActivityResultRegistry
             if (result.resultCode == Activity.RESULT_OK) {
                 // send the file to temp_file aka audioFile
                 result.data?.data?.let {
-                    System.out.println(it)
                     val inputStream = activity.contentResolver.openInputStream(it)
                     val outputStream = FileOutputStream(fetchedAudioFile)
                     if (inputStream != null) {
@@ -267,7 +266,6 @@ abstract class AudioFetcher(activity: Activity, registry: ActivityResultRegistry
             if (result.resultCode == Activity.RESULT_OK) {
                 // send the file to temp_file aka audioFile
                 result.data?.data?.let {
-                    System.out.println(it)
                     val inputStream = activity.contentResolver.openInputStream(it)
                     val outputStream = FileOutputStream(fetchedAudioFile)
                     if (inputStream != null) {

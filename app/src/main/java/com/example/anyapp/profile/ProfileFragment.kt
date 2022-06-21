@@ -32,16 +32,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ProfileFragment : Fragment() {
     // if isSelf == true, access profile through user token (and display self related buttons eg edit), else show regular visitor accessing profile
     // lateinit
     private var isSelf: Boolean = false
     private var isFollowed: Boolean = false
+    private var isBlocked: Boolean = false
     private var userId: Int = -1
 
     private lateinit var feedFragment: FeedFragment
@@ -114,6 +110,7 @@ class ProfileFragment : Fragment() {
         // get account detail from backend (also set profile)
         binding.editProfileButton.visibility = View.GONE
         binding.followButton.visibility = View.VISIBLE
+        binding.blockButton.visibility = View.VISIBLE
 
         val userToken = UserToken(this.activity).readToken()
         val call = accountApi.getProfileDetail(userToken, userId)
@@ -148,6 +145,13 @@ class ProfileFragment : Fragment() {
                             )
                             followButton.text = "Follow"
                         }
+                        // set blocked stuff
+                        isBlocked = it.isBlocked == true
+                        if (isBlocked) {
+                            blockButton.text = "Blocked"
+                        } else {
+                            blockButton.text = "Block"
+                        }
 
                         // load images
                         val iconUrl = Constants.BASE_URL + "/" + it.userIconUrl
@@ -165,8 +169,7 @@ class ProfileFragment : Fragment() {
 
         // set onclick for followButton
         binding.followButton.setOnClickListener {
-            val call = accountApi.follow(userToken, userId)
-            call.enqueue(object : Callback<FollowResponse> {
+            accountApi.follow(userToken, userId).enqueue(object : Callback<FollowResponse> {
                 override fun onResponse(
                     call: Call<FollowResponse>,
                     response: Response<FollowResponse>
@@ -196,11 +199,39 @@ class ProfileFragment : Fragment() {
                 }
             })
         }
+
+        // set onclick for blockButton
+        binding.blockButton.setOnClickListener {
+            accountApi.block(userToken, userId).enqueue(object : Callback<BlockResponse> {
+                override fun onResponse(
+                    call: Call<BlockResponse>,
+                    response: Response<BlockResponse>
+                ) {
+                    val respObj = response.body() ?: return
+                    Log.v("Pity", respObj.toString())
+                    if (isBlocked != respObj.isBlocked) {
+                        isBlocked = respObj.isBlocked == true
+                        binding.apply {
+                            if (isBlocked) {
+                                blockButton.text = "Blocked"
+                            } else {
+                                blockButton.text = "Block"
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<BlockResponse>, t: Throwable) {
+                    Log.v("Pity", t.toString())
+                }
+            })
+        }
     }
 
     private fun setSelfProfile() {
         binding.editProfileButton.visibility = View.VISIBLE
         binding.followButton.visibility = View.GONE
+        binding.blockButton.visibility = View.GONE
 
         // set onClick for editProfile
         binding.apply {
@@ -322,9 +353,6 @@ class ProfileFragment : Fragment() {
 
     companion object {
         /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
          * @param userId Integer to access which profile.
          * @return A new instance of fragment ProfileFragment.
          */

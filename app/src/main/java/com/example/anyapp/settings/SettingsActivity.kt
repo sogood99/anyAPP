@@ -132,9 +132,14 @@ class SettingsActivity : AppCompatActivity() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
-            val changePassword = findPreference<Preference>("key")
+            val changePassword = findPreference<Preference>("changePassword")
             changePassword?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 alertDialog?.show()
+                true
+            }
+
+            val blockedUsers = findPreference<Preference>("blockedUser")
+            blockedUsers?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 true
             }
         }
