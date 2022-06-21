@@ -38,6 +38,7 @@ class TweetAdapter(
     companion object {
         const val EXTRA_USER_ID = "com.example.anyapp.User_Id"
         const val EXTRA_TWEET_ID = "com.example.anyapp.Tweet_Id"
+        const val EXTRA_LOCATION_ID = "com.example.anyapp.Location_Id"
         const val EXTRA_POSITION = "com.example.anyapp.RvPosition"
         const val EXTRA_VIDEO_POSITION = "com.example.anyapp.VideoPosition"
         const val EXTRA_AUDIO_POSITION = "com.example.anyapp.AudioPosition"
@@ -169,6 +170,13 @@ class TweetAdapter(
             } else {
                 // otherwise delete it
                 imageContent.visibility = View.GONE
+            }
+
+            if (!tweets[position].location.isNullOrEmpty()) {
+                locationText.text = tweets[position].location
+                locationText.visibility = View.VISIBLE
+            } else {
+                locationText.visibility = View.GONE
             }
 
             if (tweets[position].userIconUrl != "") {

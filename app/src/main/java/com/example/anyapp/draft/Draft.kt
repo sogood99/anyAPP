@@ -8,6 +8,7 @@ data class Draft(
     val imageFile: File?,
     val videoFile: File?,
     val audioFile: File?,
+    val location: String,
 )
 
 class DraftList {

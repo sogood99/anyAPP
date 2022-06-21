@@ -21,6 +21,7 @@ interface TweetApi {
         @Part imageFile: MultipartBody.Part?,
         @Part videoFile: MultipartBody.Part?,
         @Part audioFile: MultipartBody.Part?,
+        @Part("location") location: RequestBody
     ): Call<Tweet>
 
     @FormUrlEncoded
