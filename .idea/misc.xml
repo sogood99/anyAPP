@@ -3,25 +3,40 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/trans/Documents/GitHub/anyApp/app/src/main/res/layout/activity_home.xml" value="0.264" />
-        <entry key="..\:/Users/trans/Documents/GitHub/anyApp/app/src/main/res/layout/fragment_feed.xml" value="0.264" />
-        <entry key="..\:/Users/trans/Documents/GitHub/anyApp/app/src/main/res/layout/item_tweet.xml" value="0.21105072463768115" />
-        <entry key="..\:/Users/trans/Documents/GitHub/anyApp/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
+        <entry key="../../../../../../layout/custom_preview.xml" value="0.12799760191846524" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.353" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.353" />
         <entry key="app/src/main/res/drawable/ic_outline_home.xml" value="0.2065" />
+        <entry key="app/src/main/res/drawable/profile_shape.xml" value="0.126" />
+        <entry key="app/src/main/res/drawable/replies_shape.xml" value="0.158" />
         <entry key="app/src/main/res/drawable/tweet_shape.xml" value="0.1825" />
-        <entry key="app/src/main/res/layout/activity_home.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_edit_profile.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_home.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_login_register.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_profile.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_profile_detail.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_tweet_detail.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_tweet_search.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_draft_list.xml" value="0.18" />
         <entry key="app/src/main/res/layout/fragment_feed.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/item_tweet.xml" value="0.25" />
-        <entry key="app/src/main/res/menu/home_menu.xml" value="0.359375" />
+        <entry key="app/src/main/res/layout/fragment_new_tweet.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_popular_following_feed.xml" value="0.18" />
+        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.3113879003558719" />
+        <entry key="app/src/main/res/layout/item_change_password.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/item_draft.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/item_login_register.xml" value="0.30434782608695654" />
+        <entry key="app/src/main/res/layout/item_tweet.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/item_user.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/settings_activity.xml" value="0.1" />
+        <entry key="app/src/main/res/menu/home_menu.xml" value="0.18" />
         <entry key="app/src/main/res/menu/main_menu.xml" value="0.359375" />
         <entry key="app/src/main/res/menu/navbar_menu.xml" value="0.23697916666666666" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2165" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.2165" />
         <entry key="app/src/main/res/xml/provider_paths.xml" value="0.1" />
+        <entry key="app/src/main/res/xml/root_preferences.xml" value="0.22" />
+        <entry key="app/src/main/res/xml/settings.xml" value="0.33" />
       </map>
     </option>
   </component>

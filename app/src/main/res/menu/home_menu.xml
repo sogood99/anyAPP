@@ -8,6 +8,11 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/miSettings"
+        android:title="Settings"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/miLogout"
         android:title="Log Out"
         app:showAsAction="never" />

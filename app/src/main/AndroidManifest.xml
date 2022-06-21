@@ -20,6 +20,10 @@
         android:theme="@style/Theme.AnyApp"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".settings.SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings" />
+        <activity
             android:name=".search.TweetSearch"
             android:exported="false" />
         <activity
