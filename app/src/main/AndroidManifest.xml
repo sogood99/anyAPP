@@ -21,6 +21,9 @@
         android:theme="@style/Theme.AnyApp"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".settings.SettingsActivity"
+            android:exported="false" />
+        <activity
             android:name=".search.TweetSearch"
             android:exported="false" />
         <activity

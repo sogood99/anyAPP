@@ -3,6 +3,7 @@ package com.example.anyapp.api
 import com.example.anyapp.util.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -14,6 +15,14 @@ interface AccountApi {
         @Field("password") password: String,
         @Field("email") email: String,
     ): Call<CreateUserResponse>
+
+    @FormUrlEncoded
+    @POST("api/user/update/")
+    fun updateUser(
+        @Header("Authorization") authorization: String?,
+        @Field("password") password: String?,
+        @Field("newPassword") newPassword: String?,
+    ): Call<ResponseBody>
 
     @FormUrlEncoded
     @POST("api/user/login/")

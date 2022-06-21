@@ -18,6 +18,7 @@ import com.example.anyapp.feed.FeedFragment
 import com.example.anyapp.feed.FeedTypeFragment
 import com.example.anyapp.profile.ProfileFragment
 import com.example.anyapp.search.TweetSearch
+import com.example.anyapp.settings.SettingsActivity
 import com.example.anyapp.util.FeedType
 import com.example.anyapp.util.UserToken
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -104,6 +105,11 @@ class Home : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.miSearch -> {
                     val intent = Intent(this@Home, TweetSearch::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.miSettings -> {
+                    val intent = Intent(this@Home, SettingsActivity::class.java)
                     startActivity(intent)
                     true
                 }
