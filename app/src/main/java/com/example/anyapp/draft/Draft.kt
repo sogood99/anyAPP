@@ -7,6 +7,7 @@ data class Draft(
     val replyId: Int?,
     val imageFile: File?,
     val videoFile: File?,
+    val audioFile: File?,
 )
 
 class DraftList {

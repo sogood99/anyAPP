@@ -14,10 +14,7 @@ import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.FragmentNewTweetBinding
 import com.example.anyapp.draft.Draft
 import com.example.anyapp.draft.DraftList
-import com.example.anyapp.util.Constants
-import com.example.anyapp.util.ImageFetcher
-import com.example.anyapp.util.UserToken
-import com.example.anyapp.util.VideoFetcher
+import com.example.anyapp.util.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -56,6 +53,8 @@ class NewTweetFragment : Fragment() {
     private lateinit var imageFetcher: ImageFetcher
     private var videoFile: File? = null
     private lateinit var videoFetcher: VideoFetcher
+    private var audioFile: File? = null
+    private lateinit var audioFetcher: AudioFetcher
 
     // when clicked tweet send
     private var onTweetCallback: () -> Unit = {}
@@ -94,8 +93,16 @@ class NewTweetFragment : Fragment() {
                     binding.deleteVideoButton.visibility = View.VISIBLE
                 }
             }
+        audioFetcher =
+            object: AudioFetcher(requireActivity(), requireActivity().activityResultRegistry) {
+                override fun successCallback() {
+                    this@NewTweetFragment.audioFile = getAudioFile()
+                    binding.deleteAudioButton.visibility = View.VISIBLE
+                }
+            }
         lifecycle.addObserver(imageFetcher)
         lifecycle.addObserver(videoFetcher)
+        lifecycle.addObserver(audioFetcher)
 
         // setup tweet button
         setupTweet()
@@ -129,7 +136,8 @@ class NewTweetFragment : Fragment() {
                         newTweetTextLayout.editText?.text.toString(),
                         if (isReply == true) replyId else null,
                         imageFile,
-                        videoFile
+                        videoFile,
+                        audioFile
                     )
                 )
                 Toast.makeText(context, "Tweet Saved", Toast.LENGTH_SHORT).show()
@@ -146,6 +154,11 @@ class NewTweetFragment : Fragment() {
                 hideButton(it)
                 Toast.makeText(context, "Video Deleted", Toast.LENGTH_SHORT).show()
             }
+            deleteAudioButton.setOnClickListener {
+                audioFile = null
+                hideButton(it)
+                Toast.makeText(context, "Audio Deleted", Toast.LENGTH_SHORT).show()
+            }
 
             clearButton.setOnClickListener {
                 resetTweet()
@@ -157,6 +170,9 @@ class NewTweetFragment : Fragment() {
             }
             videoButton.setOnClickListener {
                 videoFetcher.run()
+            }
+            audioButton.setOnClickListener {
+                audioFetcher.run()
             }
         }
     }
@@ -208,12 +224,30 @@ class NewTweetFragment : Fragment() {
                     )
                 }
 
+            // send audio to backend
+            val audioBody =
+                audioFile?.let { file ->
+                    RequestBody.create(
+                        MediaType.parse("multipart/form-data"),
+                        file
+                    )
+                }
+            val audioMultipartBody =
+                audioBody?.let { body ->
+                    MultipartBody.Part.createFormData(
+                        "audio",
+                        audioFile?.name,
+                        body
+                    )
+                }
+
             val call = tweetApi.tweet(
                 token,
                 textContent,
                 currentReplyId,
                 imageMultipartBody,
                 videoMultipartBody,
+                audioMultipartBody,
             )
 
             call.enqueue(object : Callback<Tweet> {
@@ -256,6 +290,7 @@ class NewTweetFragment : Fragment() {
             newTweetTextLayout.editText?.setText(draft.text)
             imageFile = draft.imageFile
             videoFile = draft.videoFile
+            audioFile = draft.audioFile
 
             setCurrentReplyId(draft.replyId)
 
@@ -268,6 +303,11 @@ class NewTweetFragment : Fragment() {
                 showButton(deleteVideoButton)
             } else {
                 hideButton(deleteVideoButton)
+            }
+            if (audioFile != null) {
+                showButton(deleteAudioButton)
+            } else {
+                hideButton(deleteAudioButton)
             }
         }
     }
@@ -316,8 +356,10 @@ class NewTweetFragment : Fragment() {
             newTweetTextLayout.editText?.text?.clear()
             imageFile = null
             videoFile = null
+            audioFile = null
             hideButton(deleteImageButton)
             hideButton(deleteVideoButton)
+            hideButton(deleteAudioButton)
 
             resetCurrentReplyId()
 

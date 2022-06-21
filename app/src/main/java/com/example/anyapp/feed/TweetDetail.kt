@@ -56,6 +56,7 @@ class TweetDetail : AppCompatActivity() {
         tweetId = intent.getIntExtra(TweetAdapter.EXTRA_TWEET_ID, -1)
         position = intent.getIntExtra(TweetAdapter.EXTRA_POSITION, -1)
         val videoPlaybackPosition = intent.getLongExtra(TweetAdapter.EXTRA_VIDEO_POSITION, -1)
+        val audioPlaybackPosition = intent.getLongExtra(TweetAdapter.EXTRA_AUDIO_POSITION, -1)
         // don't call without specifying tweetId
         assert(tweetId >= 0) { "Bug, do not use Tweet Detail w/o tweetId" }
 
@@ -300,6 +301,33 @@ class TweetDetail : AppCompatActivity() {
                             videoContent.visibility = View.VISIBLE
                         } else {
                             videoContent.visibility = View.GONE
+                        }
+
+                        if (it.audioUrl != null) {
+                            // rounded corners
+                            audioContent.clipToOutline = true
+                            audioContent.outlineProvider = object : ViewOutlineProvider() {
+                                override fun getOutline(view: View?, outline: Outline?) {
+                                    if (view != null) {
+                                        outline?.setRoundRect(0, 0, view.width, view.height, 40F)
+                                    }
+                                }
+                            }
+                            // same as image
+                            val url = BASE_URL + "/" + it.audioUrl
+                            url.let {
+                                val player = ExoPlayer.Builder(audioContent.context).build()
+                                audioContent.player = player
+                                val mediaItem = MediaItem.fromUri(it)
+                                player.setMediaItem(mediaItem)
+                                player.prepare()
+                                if (audioPlaybackPosition > 0) {
+                                    player.seekTo(audioPlaybackPosition)
+                                }
+                            }
+                            audioContent.visibility = View.VISIBLE
+                        } else {
+                            audioContent.visibility = View.GONE
                         }
 
                         if (it.imageUrl != null) {
