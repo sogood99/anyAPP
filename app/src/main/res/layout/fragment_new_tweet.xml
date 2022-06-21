@@ -183,6 +183,35 @@
                 android:layout_height="1dp"
                 android:layout_weight="1" />
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/locationButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/extreme_light_blue"
+                    android:text="Location" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/deleteLocationButton"
+                    style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:visibility="invisible"
+                    app:icon="@drawable/ic_delete_icon"
+                    app:iconTint="@color/light_red" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/clearButton"
                 android:layout_width="wrap_content"
