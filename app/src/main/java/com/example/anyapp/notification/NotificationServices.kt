@@ -24,7 +24,7 @@ class NotificationServices : android.app.Service() {
     private val timer = Timer()
 
     companion object {
-        const val MS: Long = 10000
+        const val MS: Long = 2000
     }
 
     private var userToken: String? = null

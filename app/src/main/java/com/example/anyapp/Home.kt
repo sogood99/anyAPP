@@ -18,6 +18,7 @@ import com.example.anyapp.draft.Draft
 import com.example.anyapp.draft.DraftListFragment
 import com.example.anyapp.feed.FeedFragment
 import com.example.anyapp.feed.FeedTypeFragment
+import com.example.anyapp.notification.Notification
 import com.example.anyapp.notification.NotificationServices
 import com.example.anyapp.profile.ProfileFragment
 import com.example.anyapp.search.TweetSearch
@@ -126,6 +127,11 @@ class Home : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.miSearch -> {
                     val intent = Intent(this@Home, TweetSearch::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.miNotification -> {
+                    val intent = Intent(this@Home, Notification::class.java)
                     startActivity(intent)
                     true
                 }

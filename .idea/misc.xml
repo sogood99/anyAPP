@@ -14,8 +14,10 @@
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_login_register.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_notification.xml" value="0.22" />
         <entry key="app/src/main/res/layout/activity_profile.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_profile_detail.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_settings.xml" value="0.1118659420289855" />
         <entry key="app/src/main/res/layout/activity_tweet_detail.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_tweet_search.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_draft_list.xml" value="0.18" />
@@ -26,6 +28,7 @@
         <entry key="app/src/main/res/layout/item_change_password.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_draft.xml" value="0.22" />
         <entry key="app/src/main/res/layout/item_login_register.xml" value="0.30434782608695654" />
+        <entry key="app/src/main/res/layout/item_notification.xml" value="0.5" />
         <entry key="app/src/main/res/layout/item_tweet.xml" value="0.33" />
         <entry key="app/src/main/res/layout/item_user.xml" value="0.33" />
         <entry key="app/src/main/res/layout/settings_activity.xml" value="0.1" />
