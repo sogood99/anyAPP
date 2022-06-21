@@ -22,6 +22,7 @@ import com.example.anyapp.util.UserToken
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.squareup.picasso.Picasso
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -72,13 +73,9 @@ class TweetAdapter(
             var isLikedTweet = tweets[position].isLiked
             // set color for button if liked
             if (isLikedTweet) {
-                likeButton.setBackgroundColor(
-                    root.resources.getColor(R.color.light_blue, root.context.theme)
-                )
+                likeButton.setIconTintResource(R.color.light_red)
             } else {
-                likeButton.setBackgroundColor(
-                    root.resources.getColor(R.color.white, root.context.theme)
-                )
+                likeButton.setIconTintResource(R.color.black)
             }
 
             val tweetId = tweets[position].tweetId
@@ -100,14 +97,10 @@ class TweetAdapter(
                             isLikedTweet = respObj.isLike
                             if (isLikedTweet) {
                                 likeCountNum++
-                                likeButton.setBackgroundColor(
-                                    root.resources.getColor(R.color.light_blue, root.context.theme)
-                                )
+                                likeButton.setIconTintResource(R.color.light_red)
                             } else {
                                 likeCountNum--
-                                likeButton.setBackgroundColor(
-                                    root.resources.getColor(R.color.white, root.context.theme)
-                                )
+                                likeButton.setIconTintResource(R.color.black)
                             }
                             likeCount.text = likeCountNum.toString()
                         }
@@ -117,6 +110,40 @@ class TweetAdapter(
                         Log.v("Pity", t.toString())
                     }
                 })
+            }
+
+            // deleteTweet
+            val isSelf = tweets[position].isSelf
+            if (isSelf) {
+                deleteButton.visibility = View.VISIBLE
+            } else {
+                deleteButton.visibility = View.GONE
+            }
+
+            // deleteTweet button
+            deleteButton.setOnClickListener {
+                tweetApi.deleteTweet(UserToken(it.context as Activity?).readToken(), tweetId)
+                    .enqueue(object : Callback<ResponseBody> {
+                        override fun onResponse(
+                            call: Call<ResponseBody>,
+                            response: Response<ResponseBody>
+                        ) {
+                            if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                                Toast.makeText(root.context, "Please Log In", Toast.LENGTH_SHORT)
+                                    .show()
+                            } else if (response.code() == HttpURLConnection.HTTP_OK) {
+                                Toast.makeText(root.context, "Tweet Deleted", Toast.LENGTH_SHORT)
+                                    .show()
+                            } else {
+                                Toast.makeText(root.context, "Bad Request", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+
+                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                            Log.v("Pity", t.toString())
+                        }
+                    })
             }
 
             // check if this tweet is a reply of another
@@ -217,8 +244,7 @@ class TweetAdapter(
                     UtilPair.create(profileName as View, "profileName$position"),
                     UtilPair.create(username as View, "username$position"),
                     UtilPair.create(textContent as View, "textContent$position"),
-                    UtilPair.create(likeButton as View, "likeButton$position"),
-                    UtilPair.create(likeCount as View, "likeCount$position"),
+                    UtilPair.create(bottomButtonLayout as View, "bottomButtonLayout$position"),
                 )
                 if (imageContent.visibility == View.VISIBLE) {
                     transitionPair += UtilPair.create(

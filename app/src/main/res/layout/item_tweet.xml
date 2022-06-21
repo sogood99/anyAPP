@@ -6,30 +6,6 @@
     android:layout_height="wrap_content"
     android:padding="16dp">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:elevation="10dp"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="10dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <Button
-            android:id="@+id/likeButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Like" />
-
-        <TextView
-            android:id="@+id/likeCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0" />
-
-    </LinearLayout>
-
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/tweetCard"
         android:layout_width="match_parent"
@@ -111,7 +87,6 @@
                 android:layout_marginBottom="16dp"
                 android:contentDescription="Picture"
                 android:scaleType="centerCrop"
-                android:transitionName="imageContent"
                 app:shapeAppearanceOverlay="@style/CustomRoundedImageView" />
 
             <com.google.android.exoplayer2.ui.PlayerView
@@ -125,10 +100,49 @@
             <com.google.android.exoplayer2.ui.StyledPlayerView
                 android:id='@+id/audioContent'
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="100dp"
                 android:contentDescription="Audio"
                 app:resize_mode="fill" />
 
+            <LinearLayout
+                android:id="@+id/bottomButtonLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/likeButton"
+                    style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:icon="@drawable/ic_like_icon"
+                    app:iconSize="30dp"
+                    app:iconTint="@color/black" />
+
+                <TextView
+                    android:id="@+id/likeCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="0" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/deleteButton"
+                    style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:icon="@drawable/ic_delete_icon"
+                    app:iconSize="30dp"
+                    app:iconTint="@color/extreme_light_red" />
+
+            </LinearLayout>
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>

@@ -32,6 +32,7 @@ data class ProfileDetailResponse(
     val profileInfo: String?,
     val isSelf: Boolean,
     val isFollowed: Boolean?,
+    val isBlocked: Boolean?,
 )
 
 data class LikeResponse(
@@ -40,4 +41,7 @@ data class LikeResponse(
 
 data class FollowResponse(
     val isFollowed: Boolean?
+)
+data class BlockResponse(
+    val isBlocked: Boolean?
 )

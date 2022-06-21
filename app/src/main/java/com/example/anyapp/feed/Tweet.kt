@@ -14,4 +14,5 @@ data class Tweet(
     val createDate: String,
     val likes: Int,
     val isLiked: Boolean,
+    val isSelf: Boolean,
 )
