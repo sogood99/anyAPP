@@ -68,6 +68,24 @@ class DraftListAdapter(
                 videoContent.visibility = View.GONE
             }
 
+            if (draft.audioFile != null) {
+                audioContent.clipToOutline = true
+                audioContent.outlineProvider = object : ViewOutlineProvider() {
+                    override fun getOutline(view: View?, outline: Outline?) {
+                        if (view != null) {
+                            outline?.setRoundRect(0, 0, view.width, view.height, 40F)
+                        }
+                    }
+                }
+                val player = ExoPlayer.Builder(videoContent.context).build()
+                audioContent.player = player
+                val mediaItem = MediaItem.fromUri(draft.audioFile.toUri())
+                player.setMediaItem(mediaItem)
+                player.prepare()
+            } else {
+                audioContent.visibility = View.GONE
+            }
+
             setButton.setOnClickListener {
                 // use draft according to parent callback function
                 onDraftNewTweet(draft)
