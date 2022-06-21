@@ -3,6 +3,7 @@ package com.example.anyapp.util
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
@@ -242,9 +243,20 @@ abstract class AudioFetcher(activity: Activity, registry: ActivityResultRegistry
             "takeAudio$id",
             owner,
             ActivityResultContracts.StartActivityForResult()
-        ) {
+        ) { result ->
             // Handle the returned Uri
-            successCallback()
+            if (result.resultCode == Activity.RESULT_OK) {
+                // send the file to temp_file aka audioFile
+                result.data?.data?.let {
+                    System.out.println(it)
+                    val inputStream = activity.contentResolver.openInputStream(it)
+                    val outputStream = FileOutputStream(fetchedAudioFile)
+                    if (inputStream != null) {
+                        IOUtils.copy(inputStream, outputStream)
+                    }
+                }
+                successCallback()
+            }
         }
         chooseAudioResult = registry.register(
             "chooseAudio$id",
