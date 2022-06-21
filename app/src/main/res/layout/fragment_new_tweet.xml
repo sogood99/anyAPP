@@ -194,7 +194,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:backgroundTint="@color/extreme_light_blue"
-                    android:text="Audio" />
+                    android:text="Location" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/deleteLocationButton"
