@@ -25,6 +25,7 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.squareup.picasso.Picasso
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -183,13 +184,9 @@ class TweetDetail : AppCompatActivity() {
                         var isLikedTweet = tweet.isLiked
                         // set color for button if liked
                         if (isLikedTweet) {
-                            likeButton.setBackgroundColor(
-                                root.resources.getColor(R.color.light_blue, root.context.theme)
-                            )
+                            likeButton.setIconTintResource(R.color.light_red)
                         } else {
-                            likeButton.setBackgroundColor(
-                                root.resources.getColor(R.color.white, root.context.theme)
-                            )
+                            likeButton.setIconTintResource(R.color.black)
                         }
 
                         val tweetId = tweet.tweetId
@@ -217,20 +214,10 @@ class TweetDetail : AppCompatActivity() {
                                         isLikedTweet = respObj.isLike
                                         if (isLikedTweet) {
                                             likeCountNum++
-                                            likeButton.setBackgroundColor(
-                                                root.resources.getColor(
-                                                    R.color.light_blue,
-                                                    root.context.theme
-                                                )
-                                            )
+                                            likeButton.setIconTintResource(R.color.light_red)
                                         } else {
                                             likeCountNum--
-                                            likeButton.setBackgroundColor(
-                                                root.resources.getColor(
-                                                    R.color.white,
-                                                    root.context.theme
-                                                )
-                                            )
+                                            likeButton.setIconTintResource(R.color.black)
                                         }
                                         likeCount.text = likeCountNum.toString()
                                     }
@@ -242,11 +229,56 @@ class TweetDetail : AppCompatActivity() {
                             })
                         }
 
-                        profileName.transitionName = "profileName$position"
-                        username.transitionName = "username$position"
-                        textContent.transitionName = "textContent$position"
-                        likeButton.transitionName = "likeButton$position"
-                        likeCount.transitionName = "likeCount$position"
+                        // deleteTweet
+                        val isSelf = tweet.isSelf
+                        if (isSelf) {
+                            deleteButton.visibility = View.VISIBLE
+                        } else {
+                            deleteButton.visibility = View.GONE
+                        }
+
+                        // deleteTweet button
+                        deleteButton.setOnClickListener {
+                            tweetApi.deleteTweet(
+                                UserToken(it.context as Activity?).readToken(),
+                                tweetId
+                            )
+                                .enqueue(object : Callback<ResponseBody> {
+                                    override fun onResponse(
+                                        call: Call<ResponseBody>,
+                                        response: Response<ResponseBody>
+                                    ) {
+                                        if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                                            Toast.makeText(
+                                                root.context,
+                                                "Please Log In",
+                                                Toast.LENGTH_SHORT
+                                            )
+                                                .show()
+                                        } else if (response.code() == HttpURLConnection.HTTP_OK) {
+                                            Toast.makeText(
+                                                root.context,
+                                                "Tweet Deleted",
+                                                Toast.LENGTH_SHORT
+                                            )
+                                                .show()
+
+                                            finishAfterTransition()
+                                        } else {
+                                            Toast.makeText(
+                                                root.context,
+                                                "Bad Request",
+                                                Toast.LENGTH_SHORT
+                                            )
+                                                .show()
+                                        }
+                                    }
+
+                                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                                        Log.v("Pity", t.toString())
+                                    }
+                                })
+                        }
 
                         // check if this tweet is a reply of another
                         val repliesId = tweet.repliesId
@@ -350,6 +382,12 @@ class TweetDetail : AppCompatActivity() {
                         userIcon.setOnClickListener(profileClickListener)
                         username.setOnClickListener(profileClickListener)
                         profileName.setOnClickListener(profileClickListener)
+
+                        // setup transition
+                        profileName.transitionName = "profileName$position"
+                        username.transitionName = "username$position"
+                        textContent.transitionName = "textContent$position"
+                        bottomButtonLayout.transitionName = "bottomButtonLayout$position"
 
                         startPostponedEnterTransition()
                     }
