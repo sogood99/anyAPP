@@ -159,7 +159,7 @@ abstract class VideoFetcher(activity: Activity, registry: ActivityResultRegistry
         ) { result ->
             // Handle the returned Uri
             if (result.resultCode == Activity.RESULT_OK) {
-                // send the file to temp_file aka imageFile
+                // send the file to temp_file aka videoFile
                 result.data?.data?.let {
                     val inputStream = activity.contentResolver.openInputStream(it)
                     val outputStream = FileOutputStream(fetchedVideoFile)
@@ -208,6 +208,100 @@ abstract class VideoFetcher(activity: Activity, registry: ActivityResultRegistry
                 }
                 .setPositiveButton("Choose Gallery") { dialog, which ->
                     chooseVideoResult.launch(chooseVideo)
+                }
+                .show()
+
+        } catch (e: ActivityNotFoundException) {
+            Log.v("Pity", e.toString())
+        }
+    }
+}
+
+
+// must put as member or initialize in onCreate
+// since registerForActivityResult needs to have ActivityResultRegistry in state Starting
+// and need activity for Dialog and External File and stuff
+abstract class AudioFetcher(activity: Activity, registry: ActivityResultRegistry) :
+    DataFetcher(activity, registry) {
+    private lateinit var takeAudioResult: ActivityResultLauncher<Intent>
+    private lateinit var chooseAudioResult: ActivityResultLauncher<Intent>
+
+    private var fetchedAudioFile: File? = null
+    val getAudioFile: () -> File? = { fetchedAudioFile }
+
+    // for generating unique key
+    companion object {
+        private val count: AtomicInteger = AtomicInteger(1)
+    }
+
+    private val id = count.incrementAndGet()
+
+    override fun onCreate(owner: LifecycleOwner) {
+        // initialize the ActivityResultLaunchers
+        takeAudioResult = registry.register(
+            "takeAudio$id",
+            owner,
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            // Handle the returned Uri
+            successCallback()
+        }
+        chooseAudioResult = registry.register(
+            "chooseAudio$id",
+            owner,
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            // Handle the returned Uri
+            if (result.resultCode == Activity.RESULT_OK) {
+                // send the file to temp_file aka audioFile
+                result.data?.data?.let {
+                    val inputStream = activity.contentResolver.openInputStream(it)
+                    val outputStream = FileOutputStream(fetchedAudioFile)
+                    if (inputStream != null) {
+                        IOUtils.copy(inputStream, outputStream)
+                    }
+                }
+                successCallback()
+            }
+        }
+    }
+
+    override fun run() {
+        // take audio intent
+        val takeAudio = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
+
+        // choose audio intent
+        val chooseAudio = Intent(Intent.ACTION_GET_CONTENT)
+        chooseAudio.type = "audio/*"
+
+        try {
+            val audioFile = File.createTempFile(
+                "temp_audio",
+                ".mp3",
+                activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            )
+            val audioUri = FileProvider.getUriForFile(
+                activity,
+                BuildConfig.APPLICATION_ID + ".provider",
+                audioFile
+            )
+
+            fetchedAudioFile = audioFile
+
+            MaterialAlertDialogBuilder(
+                activity,
+                R.style.Base_Theme_Material3_Light_Dialog
+            )
+                .setTitle("Video")
+                .setMessage("Choose Method")
+                .setNegativeButton("Take Video") { dialog, which ->
+                    takeAudio.putExtra(MediaStore.EXTRA_OUTPUT, audioUri)
+                    takeAudio.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                    takeAudioResult.launch(takeAudio)
+                }
+                .setPositiveButton("Choose Gallery") { dialog, which ->
+                    chooseAudioResult.launch(chooseAudio)
                 }
                 .show()
 

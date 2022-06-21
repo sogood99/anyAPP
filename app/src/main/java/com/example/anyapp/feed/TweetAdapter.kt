@@ -39,6 +39,7 @@ class TweetAdapter(
         const val EXTRA_TWEET_ID = "com.example.anyapp.Tweet_Id"
         const val EXTRA_POSITION = "com.example.anyapp.RvPosition"
         const val EXTRA_VIDEO_POSITION = "com.example.anyapp.VideoPosition"
+        const val EXTRA_AUDIO_POSITION = "com.example.anyapp.AudioPosition"
     }
 
     inner class TweetViewHolder(val binding: ItemTweetBinding) :
@@ -176,14 +177,40 @@ class TweetAdapter(
                 videoContent.visibility = View.GONE
             }
 
+            if (tweets[position].audioUrl != null) {
+                // rounded corners
+                audioContent.clipToOutline = true
+                audioContent.outlineProvider = object : ViewOutlineProvider() {
+                    override fun getOutline(view: View?, outline: Outline?) {
+                        if (view != null) {
+                            outline?.setRoundRect(0, 0, view.width, view.height, 40F)
+                        }
+                    }
+                }
+                // same as image
+                val url = BASE_URL + "/" + tweets[position].audioUrl
+                url.let {
+                    val player = ExoPlayer.Builder(audioContent.context).build()
+                    audioContent.player = player
+                    val mediaItem = MediaItem.fromUri(it)
+                    player.setMediaItem(mediaItem)
+                    player.prepare()
+                }
+                audioContent.visibility = View.VISIBLE
+            } else {
+                audioContent.visibility = View.GONE
+            }
+
             tweetCard.setOnClickListener {
-                // pause video if exists
+                // pause video and audio if exists
                 videoContent.player?.pause()
+                audioContent.player?.pause()
                 // when clicked tweet card, start TweetDetail activity
                 val intent = Intent(root.context, TweetDetail::class.java).apply {
                     putExtra(EXTRA_TWEET_ID, tweets[position].tweetId)
                     putExtra(EXTRA_POSITION, position)
                     putExtra(EXTRA_VIDEO_POSITION, videoContent.player?.contentPosition)
+                    putExtra(EXTRA_AUDIO_POSITION, audioContent.player?.contentPosition)
                 }
                 val transitionPair = mutableListOf(
                     UtilPair.create(userIcon as View, "userIcon$position"),
