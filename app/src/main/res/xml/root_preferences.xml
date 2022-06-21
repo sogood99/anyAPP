@@ -3,7 +3,7 @@
     <PreferenceCategory app:title="Account">
 
         <Preference
-            app:key="key"
+            app:key="changePassword"
             app:title="Change Password" />
 
     </PreferenceCategory>
@@ -16,6 +16,14 @@
             app:summaryOff="No Notifications will be sent for replies, follows, etc"
             app:summaryOn="Notifications will be sent for replies, follows, etc"
             app:title="Notifications" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Privacy">
+
+        <Preference
+            app:key="blockedUser"
+            app:title="Blocked Users" />
 
     </PreferenceCategory>
 
