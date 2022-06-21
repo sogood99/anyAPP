@@ -9,7 +9,6 @@ import com.example.anyapp.R
 import com.example.anyapp.databinding.ActivityTweetSearchBinding
 import com.example.anyapp.feed.FeedFragment
 import com.example.anyapp.util.FeedType
-import com.example.anyapp.util.UserToken
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.text.SimpleDateFormat
 import java.util.*
