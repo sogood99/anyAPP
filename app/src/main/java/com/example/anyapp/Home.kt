@@ -1,5 +1,7 @@
 package com.example.anyapp
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
@@ -32,6 +34,7 @@ class Home : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityHomeBinding
+    private var notificationServicesIntent: Intent? = null
 
     // created as member since
     // https://stackoverflow.com/questions/2542938/sharedpreferences-onsharedpreferencechangelistener-not-being-called-consistently
@@ -39,6 +42,17 @@ class Home : AppCompatActivity() {
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, s ->
             if (s == getString(R.string.token_key)) {
                 resetFragPager()
+
+                if (notificationServicesIntent != null) {
+                    stopService(notificationServicesIntent)
+                }
+
+                val userToken =
+                    sharedPreferences?.getString(this.getString(R.string.token_key), null)
+                notificationServicesIntent = Intent(this, NotificationServices::class.java).apply {
+                    putExtra("userToken", userToken)
+                }
+                startService(notificationServicesIntent)
             }
         }
 
@@ -57,9 +71,11 @@ class Home : AppCompatActivity() {
         userToken.sharedPreferences?.registerOnSharedPreferenceChangeListener(userTokenListener)
 
         // notification services
-        startService(Intent(this, NotificationServices::class.java).apply {
+        setupNotificationChannel()
+        notificationServicesIntent = Intent(this, NotificationServices::class.java).apply {
             putExtra("userToken", userToken.readToken())
-        })
+        }
+        startService(notificationServicesIntent)
 
         // put in feed fragment
         val pagerAdapter = BottomNavPagerAdapter(this)
@@ -202,9 +218,22 @@ class Home : AppCompatActivity() {
         }
     }
 
+    private fun setupNotificationChannel() {
+        // Create the NotificationChannel
+        val name = "anyAppChannel"
+        val descriptionText = "Channel for anyApp"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val mChannel = NotificationChannel("anyAppNotification", name, importance)
+        mChannel.description = descriptionText
+
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(mChannel)
+    }
+
     private fun resetFragPager() {
         val adapter = BottomNavPagerAdapter(this)
         binding.fragPager.adapter = adapter
+
     }
 
     fun startLoginRegisterActivity() {
