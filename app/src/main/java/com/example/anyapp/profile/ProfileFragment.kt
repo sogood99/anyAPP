@@ -298,11 +298,10 @@ class ProfileFragment : Fragment() {
             navigationViewFollowedUsers.addHeaderView(textView)
 
             // get all liked users
-            val followedUserCall = accountApi.followDetail(
+            accountApi.followDetail(
                 UserToken(this@ProfileFragment.activity).readToken(),
                 if (userId >= 0) userId else null
-            )
-            followedUserCall.enqueue(object : Callback<List<ProfileResponse>> {
+            ).enqueue(object : Callback<List<ProfileResponse>> {
                 override fun onResponse(
                     call: Call<List<ProfileResponse>>,
                     response: Response<List<ProfileResponse>>

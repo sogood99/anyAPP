@@ -73,4 +73,9 @@ interface AccountApi {
         @Header("Authorization") authorization: String?,
         @Field("blockUserId") blockedUserId: Int?,
     ): Call<BlockResponse>
+
+    @GET("api/user/block/detail/")
+    fun blockDetail(
+        @Header("Authorization") authorization: String?,
+    ): Call<List<ProfileResponse>>
 }
