@@ -7,16 +7,13 @@ import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.location.LocationProvider
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.FileProvider
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -27,10 +24,7 @@ import org.apache.commons.io.IOUtils
 import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.atomic.AtomicInteger
-import androidx.core.content.ContextCompat.getSystemService
-
-
-
+import java.util.jar.Manifest
 
 
 // interface for data fetching used in NewTweet among other things sus
@@ -339,11 +333,13 @@ abstract class AudioFetcher(activity: Activity, registry: ActivityResultRegistry
 // and need activity for Dialog and External File and stuff
 abstract class LocationFetcher(activity: Activity, registry: ActivityResultRegistry) :
     LocationListener {
+    val act = activity
     var locationManager : LocationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     var locationString : String = ""
 
     override fun onLocationChanged(p0: Location) {
         locationString = "" + p0.latitude + ", " + p0.longitude
+        successCallback()
     }
 
     fun getLocation(): String {
@@ -351,12 +347,19 @@ abstract class LocationFetcher(activity: Activity, registry: ActivityResultRegis
     }
 
     fun run() {
+        // this will update location, triggering onLocationChanged (hopefully)
         try {
+            requestPermissions(
+                act , arrayOf(
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                1337
+            )
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
         } catch (e: SecurityException) {
             e.printStackTrace()
         }
-        successCallback()
     }
 
     abstract fun successCallback()

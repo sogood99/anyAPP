@@ -1,5 +1,6 @@
 package com.example.anyapp
 
+import android.Manifest
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import com.example.anyapp.feed.Tweet
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.FragmentNewTweetBinding
