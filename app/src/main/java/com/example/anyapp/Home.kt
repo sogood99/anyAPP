@@ -1,5 +1,7 @@
 package com.example.anyapp
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +18,8 @@ import com.example.anyapp.draft.Draft
 import com.example.anyapp.draft.DraftListFragment
 import com.example.anyapp.feed.FeedFragment
 import com.example.anyapp.feed.FeedTypeFragment
+import com.example.anyapp.notification.Notification
+import com.example.anyapp.notification.NotificationServices
 import com.example.anyapp.profile.ProfileFragment
 import com.example.anyapp.search.TweetSearch
 import com.example.anyapp.settings.SettingsActivity
@@ -31,6 +35,7 @@ class Home : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityHomeBinding
+    private var notificationServicesIntent: Intent? = null
 
     // created as member since
     // https://stackoverflow.com/questions/2542938/sharedpreferences-onsharedpreferencechangelistener-not-being-called-consistently
@@ -38,6 +43,17 @@ class Home : AppCompatActivity() {
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, s ->
             if (s == getString(R.string.token_key)) {
                 resetFragPager()
+
+                if (notificationServicesIntent != null) {
+                    stopService(notificationServicesIntent)
+                }
+
+                val userToken =
+                    sharedPreferences?.getString(this.getString(R.string.token_key), null)
+                notificationServicesIntent = Intent(this, NotificationServices::class.java).apply {
+                    putExtra("userToken", userToken)
+                }
+                startService(notificationServicesIntent)
             }
         }
 
@@ -54,6 +70,13 @@ class Home : AppCompatActivity() {
         // on change listener for token & set token to null initially
         val userToken = UserToken(this)
         userToken.sharedPreferences?.registerOnSharedPreferenceChangeListener(userTokenListener)
+
+        // notification services
+        setupNotificationChannel()
+        notificationServicesIntent = Intent(this, NotificationServices::class.java).apply {
+            putExtra("userToken", userToken.readToken())
+        }
+        startService(notificationServicesIntent)
 
         // put in feed fragment
         val pagerAdapter = BottomNavPagerAdapter(this)
@@ -104,6 +127,11 @@ class Home : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.miSearch -> {
                     val intent = Intent(this@Home, TweetSearch::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.miNotification -> {
+                    val intent = Intent(this@Home, Notification::class.java)
                     startActivity(intent)
                     true
                 }
@@ -196,9 +224,22 @@ class Home : AppCompatActivity() {
         }
     }
 
+    private fun setupNotificationChannel() {
+        // Create the NotificationChannel
+        val name = "anyAppChannel"
+        val descriptionText = "Channel for anyApp"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val mChannel = NotificationChannel("anyAppNotification", name, importance)
+        mChannel.description = descriptionText
+
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(mChannel)
+    }
+
     private fun resetFragPager() {
         val adapter = BottomNavPagerAdapter(this)
         binding.fragPager.adapter = adapter
+
     }
 
     fun startLoginRegisterActivity() {

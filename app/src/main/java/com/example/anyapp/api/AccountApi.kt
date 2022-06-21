@@ -78,4 +78,9 @@ interface AccountApi {
     fun blockDetail(
         @Header("Authorization") authorization: String?,
     ): Call<List<ProfileResponse>>
+
+    @GET("api/user/notification/")
+    fun getNotification(
+        @Header("Authorization") authorization: String?,
+    ): Call<List<NotificationResponse>>
 }
