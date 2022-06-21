@@ -3,6 +3,7 @@ package com.example.anyapp.search
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
 import com.example.anyapp.R
 import com.example.anyapp.databinding.ActivityTweetSearchBinding
@@ -33,6 +34,22 @@ class TweetSearch : AppCompatActivity() {
         }
 
         binding.apply {
+            // text only and contains * mutually exclusive
+            textOnlyCheck.setOnCheckedChangeListener { compoundButton, b ->
+                if (b) {
+                    containsImageCheck.isChecked = false
+                    containsVideoCheck.isChecked = false
+                }
+            }
+            val containsCheckListener =
+                CompoundButton.OnCheckedChangeListener { compoundButton, b ->
+                    if (b) {
+                        textOnlyCheck.isChecked = false
+                    }
+                }
+            containsImageCheck.setOnCheckedChangeListener(containsCheckListener)
+            containsVideoCheck.setOnCheckedChangeListener(containsCheckListener)
+
             selectDateRange.setOnCheckedChangeListener { compoundButton, b ->
                 if (b) {
                     val dateRangePicker =
@@ -65,10 +82,13 @@ class TweetSearch : AppCompatActivity() {
                 var searchArg = "-s "
                 searchArg += searchTerms.editText?.text.toString()
                 searchArg += " "
-                if (containsImageRadio.isChecked) {
+                if (textOnlyCheck.isChecked) {
+                    searchArg += "-to"
+                }
+                if (containsImageCheck.isChecked) {
                     searchArg += "-i "
                 }
-                if (containsVideoRadio.isChecked) {
+                if (containsVideoCheck.isChecked) {
                     searchArg += "-v "
                 }
                 if (selectDateRange.isChecked) {
