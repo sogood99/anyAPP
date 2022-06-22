@@ -53,7 +53,8 @@ class Home : AppCompatActivity() {
                 notificationServicesIntent = Intent(this, NotificationServices::class.java).apply {
                     putExtra("userToken", userToken)
                 }
-                startForegroundService(notificationServicesIntent)
+                startService(notificationServicesIntent)
+//                startForegroundService(notificationServicesIntent)
             }
         }
 
@@ -76,7 +77,8 @@ class Home : AppCompatActivity() {
         notificationServicesIntent = Intent(this, NotificationServices::class.java).apply {
             putExtra("userToken", userToken.readToken())
         }
-        startForegroundService(notificationServicesIntent)
+//        startForegroundService(notificationServicesIntent)
+        startService(notificationServicesIntent)
 
         // put in feed fragment
         val pagerAdapter = BottomNavPagerAdapter(this)

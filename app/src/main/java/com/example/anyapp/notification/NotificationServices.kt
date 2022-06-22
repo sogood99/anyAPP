@@ -36,10 +36,10 @@ class NotificationServices : android.app.Service() {
     override fun onCreate() {
         super.onCreate()
 
-        val notification =
-            NotificationCompat.Builder(this, "anyAppNotification").setContentText("Test")
-                .setContentText("Text").build()
-        startForeground(1, notification)
+//        val notification =
+//            NotificationCompat.Builder(this, "anyAppNotification").setContentText("Test")
+//                .setContentText("Text").build()
+//        startForeground(1, notification)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -179,5 +179,7 @@ class NotificationServices : android.app.Service() {
     override fun onDestroy() {
         super.onDestroy()
         timer.cancel()
+//        stopForeground(true)
+//        stopSelf()
     }
 }
