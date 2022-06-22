@@ -42,6 +42,7 @@ class NewTweetFragment : Fragment() {
     private var replyId: Int? = null
 
     private var currentReplyId: Int? = null // for draft
+    private var currentDraft: Draft? = null
 
     private val retrofit = Retrofit
         .Builder().addConverterFactory(GsonConverterFactory.create())
@@ -141,7 +142,7 @@ class NewTweetFragment : Fragment() {
             }
 
             saveTweetButton.setOnClickListener {
-                DraftList().add(
+                currentDraft = DraftList().add(
                     Draft(
                         newTweetTextLayout.editText?.text.toString(),
                         if (isReply == true) replyId else null,
@@ -281,8 +282,7 @@ class NewTweetFragment : Fragment() {
                     response: Response<Tweet>
                 ) {
                     Toast.makeText(context, "Sent Tweet", Toast.LENGTH_LONG).show()
-                    Log.v("Pity", response.toString())
-                    Log.v("Pity", response.body().toString())
+                    currentDraft?.let { DraftList().remove(it) }
                     resetTweet()
                     Timer().schedule(100) {
                         onTweetCallback()
@@ -310,6 +310,7 @@ class NewTweetFragment : Fragment() {
     }
 
     fun setNewTweet(draft: Draft) {
+        currentDraft = draft
         // set newTweet according to draft
         binding.apply {
             newTweetTextLayout.editText?.setText(draft.text)
@@ -389,6 +390,7 @@ class NewTweetFragment : Fragment() {
             videoFile = null
             audioFile = null
             location = ""
+            currentDraft = null
             hideButton(deleteImageButton)
             hideButton(deleteVideoButton)
             hideButton(deleteAudioButton)

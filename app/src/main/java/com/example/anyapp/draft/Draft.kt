@@ -13,9 +13,10 @@ data class Draft(
 
 class DraftList {
 
-    fun add(draft: Draft) {
+    fun add(draft: Draft): Draft {
         draftList.add(draft)
         adapter?.notifyDataSetChanged()
+        return draft
     }
 
     fun remove(draft: Draft) {
