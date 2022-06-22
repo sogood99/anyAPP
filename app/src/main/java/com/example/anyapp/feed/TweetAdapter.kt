@@ -273,6 +273,12 @@ class TweetAdapter(
                         "replyText$position"
                     )
                 }
+                if (locationText.visibility == View.VISIBLE) {
+                    transitionPair += UtilPair.create(
+                        locationText as View,
+                        "locationText$position"
+                    )
+                }
                 val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     root.context as Activity,
                     *transitionPair.toTypedArray()

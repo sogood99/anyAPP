@@ -394,6 +394,7 @@ class TweetDetail : AppCompatActivity() {
                         username.transitionName = "username$position"
                         textContent.transitionName = "textContent$position"
                         bottomButtonLayout.transitionName = "bottomButtonLayout$position"
+                        locationText.transitionName = "locationText$position"
 
                         startPostponedEnterTransition()
                     }

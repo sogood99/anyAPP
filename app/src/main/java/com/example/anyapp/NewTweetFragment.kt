@@ -1,6 +1,5 @@
 package com.example.anyapp
 
-import android.Manifest
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
@@ -10,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import com.example.anyapp.feed.Tweet
 import com.example.anyapp.api.TweetApi
 import com.example.anyapp.databinding.FragmentNewTweetBinding
@@ -98,14 +96,14 @@ class NewTweetFragment : Fragment() {
                 }
             }
         audioFetcher =
-            object: AudioFetcher(requireActivity(), requireActivity().activityResultRegistry) {
+            object : AudioFetcher(requireActivity(), requireActivity().activityResultRegistry) {
                 override fun successCallback() {
                     this@NewTweetFragment.audioFile = getAudioFile()
                     binding.deleteAudioButton.visibility = View.VISIBLE
                 }
             }
         locationFetcher =
-            object: LocationFetcher(requireActivity(), requireActivity().activityResultRegistry) {
+            object : LocationFetcher(requireActivity(), requireActivity().activityResultRegistry) {
                 override fun successCallback() {
                     this@NewTweetFragment.location = getLocation()
                     binding.deleteLocationButton.visibility = View.VISIBLE
