@@ -6,7 +6,7 @@
         <item name="colorPrimaryVariant">@color/background</item>
         <item name="colorOnPrimary">@color/primary_text</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/light_blue</item>
+        <item name="colorSecondary">@color/slight_light_blue</item>
         <item name="colorSecondaryVariant">@color/light_blue</item>
         <item name="colorOnSecondary">@color/black</item>
         <item name="colorOnSecondaryContainer">@color/light_blue</item>

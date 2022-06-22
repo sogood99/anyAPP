@@ -13,6 +13,7 @@
     <color name="light_blue">#7B95FF</color>
     <color name="light_red">#FF4A4A</color>
     <color name="extreme_light_red">#FF9898</color>
+    <color name="extreme_green">#1BD506</color>
     <color name="grey">#6B6B6B</color>
     <color name="light_grey">#F7F7F7</color>
 </resources>
