@@ -19,7 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/white"
-            app:menu="@menu/home_menu">
+            app:menu="@menu/home_menu"
+            app:navigationIconTint="@color/light_grey">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/homeButton"
