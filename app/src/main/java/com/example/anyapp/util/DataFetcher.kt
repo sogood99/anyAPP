@@ -8,6 +8,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Environment
+import android.os.Looper
 import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
@@ -18,6 +19,7 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.example.anyapp.BuildConfig
+import com.google.android.gms.location.*
 import com.google.android.material.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.apache.commons.io.IOUtils
@@ -331,16 +333,17 @@ abstract class AudioFetcher(activity: Activity, registry: ActivityResultRegistry
 // since registerForActivityResult needs to have ActivityResultRegistry in state Starting
 // and need activity for Dialog and External File and stuff
 abstract class LocationFetcher(activity: Activity, registry: ActivityResultRegistry) :
-    DataFetcher(activity, registry), LocationListener {
-    private var locationManager: LocationManager =
-        activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    DataFetcher(activity, registry) {
     private var locationString: String = ""
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-    override fun onLocationChanged(p0: Location) {
-        locationString = "" + p0.latitude + ", " + p0.longitude
-        if (p0.accuracy < 50)
-            locationManager.removeUpdates(this)
-        successCallback()
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(p0: LocationResult) {
+            val loc = p0.lastLocation
+            locationString = "" + loc.latitude + ", " + loc.longitude
+            successCallback()
+            fusedLocationClient.removeLocationUpdates(this)
+        }
     }
 
     fun getLocation(): String {
@@ -357,10 +360,21 @@ abstract class LocationFetcher(activity: Activity, registry: ActivityResultRegis
                 ),
                 1337
             )
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
+            val locationRequest = LocationRequest.create().apply {
+                interval = 1000
+                fastestInterval = 100
+                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            }
+
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.getMainLooper()
+            )
+
         } catch (e: SecurityException) {
             e.printStackTrace()
         }
     }
-
 }

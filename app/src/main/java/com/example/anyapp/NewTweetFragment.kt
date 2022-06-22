@@ -110,12 +110,12 @@ class NewTweetFragment : Fragment() {
                 override fun successCallback() {
                     this@NewTweetFragment.location = getLocation()
                     binding.deleteLocationButton.visibility = View.VISIBLE
+                    Toast.makeText(context, "Location Retrieved", Toast.LENGTH_SHORT).show()
                 }
             }
         lifecycle.addObserver(imageFetcher)
         lifecycle.addObserver(videoFetcher)
         lifecycle.addObserver(audioFetcher)
-        lifecycle.addObserver(locationFetcher)
 
         // setup tweet button
         setupTweet()
