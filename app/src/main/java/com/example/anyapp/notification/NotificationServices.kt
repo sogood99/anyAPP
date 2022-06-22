@@ -1,11 +1,15 @@
 package com.example.anyapp.notification
 
+import android.app.PendingIntent
 import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.anyapp.R
 import com.example.anyapp.api.AccountApi
+import com.example.anyapp.feed.TweetAdapter
+import com.example.anyapp.feed.TweetDetail
+import com.example.anyapp.profile.ProfileDetail
 import com.example.anyapp.util.Constants
 import com.example.anyapp.util.NotificationResponse
 import retrofit2.Call
@@ -29,6 +33,15 @@ class NotificationServices : android.app.Service() {
 
     private var userToken: String? = null
 
+    override fun onCreate() {
+        super.onCreate()
+
+        val notification =
+            NotificationCompat.Builder(this, "anyAppNotification").setContentText("Test")
+                .setContentText("Text").build()
+        startForeground(1, notification)
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
 
@@ -49,6 +62,22 @@ class NotificationServices : android.app.Service() {
                             newNotifications?.forEachIndexed { index, notificationResponse ->
                                 when (notificationResponse.type) {
                                     "like" -> {
+                                        val intent = Intent(
+                                            this@NotificationServices,
+                                            TweetDetail::class.java
+                                        ).apply {
+                                            putExtra(
+                                                TweetAdapter.EXTRA_TWEET_ID,
+                                                notificationResponse.tweetId
+                                            )
+                                        }
+                                        val pendingIntent = PendingIntent.getActivity(
+                                            this@NotificationServices,
+                                            0,
+                                            intent,
+                                            PendingIntent.FLAG_IMMUTABLE
+                                        )
+
                                         val builder = NotificationCompat.Builder(
                                             this@NotificationServices,
                                             "anyAppNotification"
@@ -57,6 +86,7 @@ class NotificationServices : android.app.Service() {
                                             .setContentTitle("New Like")
                                             .setContentText(notificationResponse.likeUserInfo)
                                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                            .setContentIntent(pendingIntent)
                                             .setAutoCancel(true)
 
                                         with(NotificationManagerCompat.from(this@NotificationServices)) {
@@ -64,6 +94,22 @@ class NotificationServices : android.app.Service() {
                                         }
                                     }
                                     "reply" -> {
+                                        val intent = Intent(
+                                            this@NotificationServices,
+                                            TweetDetail::class.java
+                                        ).apply {
+                                            putExtra(
+                                                TweetAdapter.EXTRA_TWEET_ID,
+                                                notificationResponse.tweetId
+                                            )
+                                        }
+                                        val pendingIntent = PendingIntent.getActivity(
+                                            this@NotificationServices,
+                                            0,
+                                            intent,
+                                            PendingIntent.FLAG_IMMUTABLE
+                                        )
+
                                         val builder = NotificationCompat.Builder(
                                             this@NotificationServices,
                                             "anyAppNotification"
@@ -72,6 +118,7 @@ class NotificationServices : android.app.Service() {
                                             .setContentTitle("New Reply")
                                             .setContentText(notificationResponse.replyTweetBrief)
                                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                            .setContentIntent(pendingIntent)
                                             .setAutoCancel(true)
 
                                         with(NotificationManagerCompat.from(this@NotificationServices)) {
@@ -79,6 +126,22 @@ class NotificationServices : android.app.Service() {
                                         }
                                     }
                                     "follow" -> {
+                                        val intent = Intent(
+                                            this@NotificationServices,
+                                            ProfileDetail::class.java
+                                        ).apply {
+                                            putExtra(
+                                                TweetAdapter.EXTRA_USER_ID,
+                                                notificationResponse.followUserId
+                                            )
+                                        }
+                                        val pendingIntent = PendingIntent.getActivity(
+                                            this@NotificationServices,
+                                            0,
+                                            intent,
+                                            PendingIntent.FLAG_IMMUTABLE
+                                        )
+
                                         val builder = NotificationCompat.Builder(
                                             this@NotificationServices,
                                             "anyAppNotification"
@@ -87,6 +150,7 @@ class NotificationServices : android.app.Service() {
                                             .setContentTitle("New Follow")
                                             .setContentText(notificationResponse.followUserInfo)
                                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                            .setContentIntent(pendingIntent)
                                             .setAutoCancel(true)
 
                                         with(NotificationManagerCompat.from(this@NotificationServices)) {

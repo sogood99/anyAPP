@@ -53,7 +53,7 @@ class Home : AppCompatActivity() {
                 notificationServicesIntent = Intent(this, NotificationServices::class.java).apply {
                     putExtra("userToken", userToken)
                 }
-                startService(notificationServicesIntent)
+                startForegroundService(notificationServicesIntent)
             }
         }
 
@@ -76,7 +76,7 @@ class Home : AppCompatActivity() {
         notificationServicesIntent = Intent(this, NotificationServices::class.java).apply {
             putExtra("userToken", userToken.readToken())
         }
-        startService(notificationServicesIntent)
+        startForegroundService(notificationServicesIntent)
 
         // put in feed fragment
         val pagerAdapter = BottomNavPagerAdapter(this)
@@ -115,7 +115,7 @@ class Home : AppCompatActivity() {
             BottomSheetBehavior.from(binding.newTweet)
                 .setState(BottomSheetBehavior.STATE_COLLAPSED)
         }
-        // set newtweet when draft set
+        // set newTweet when draft set
         onDraftSetNewTweet = {
             newTweetFragment.setNewTweet(it)
             BottomSheetBehavior.from(binding.newTweet)
