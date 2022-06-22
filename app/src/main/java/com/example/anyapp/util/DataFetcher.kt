@@ -339,6 +339,7 @@ abstract class LocationFetcher(activity: Activity, registry: ActivityResultRegis
     override fun onLocationChanged(p0: Location) {
         locationString = "" + p0.latitude + ", " + p0.longitude
         successCallback()
+        locationManager.removeUpdates(this)
     }
 
     fun getLocation(): String {
@@ -355,10 +356,15 @@ abstract class LocationFetcher(activity: Activity, registry: ActivityResultRegis
                 ),
                 1337
             )
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
+            val recentLocation =
+                locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            if (recentLocation != null) {
+                onLocationChanged(recentLocation)
+                return
+            }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
         } catch (e: SecurityException) {
             e.printStackTrace()
         }
     }
-
 }
