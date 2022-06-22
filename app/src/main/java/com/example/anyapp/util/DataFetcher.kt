@@ -24,7 +24,6 @@ import org.apache.commons.io.IOUtils
 import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.jar.Manifest
 
 
 // interface for data fetching used in NewTweet among other things sus
@@ -334,8 +333,9 @@ abstract class AudioFetcher(activity: Activity, registry: ActivityResultRegistry
 abstract class LocationFetcher(activity: Activity, registry: ActivityResultRegistry) :
     LocationListener {
     val act = activity
-    var locationManager : LocationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-    var locationString : String = ""
+    var locationManager: LocationManager =
+        activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    var locationString: String = ""
 
     override fun onLocationChanged(p0: Location) {
         locationString = "" + p0.latitude + ", " + p0.longitude
@@ -350,7 +350,7 @@ abstract class LocationFetcher(activity: Activity, registry: ActivityResultRegis
         // this will update location, triggering onLocationChanged (hopefully)
         try {
             requestPermissions(
-                act , arrayOf(
+                act, arrayOf(
                     android.Manifest.permission.ACCESS_FINE_LOCATION,
                     android.Manifest.permission.ACCESS_COARSE_LOCATION
                 ),
