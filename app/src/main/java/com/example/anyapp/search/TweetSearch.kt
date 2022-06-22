@@ -66,8 +66,6 @@ class TweetSearch : AppCompatActivity() {
 
                         startDate = dateFormat.format(startCalendar.time)
                         endDate = dateFormat.format(endCalendar.time)
-                        Log.v("PityDate", startDate!!)
-                        Log.v("PityDate", endDate!!)
                     }
                     dateRangePicker.show(supportFragmentManager, "DateRange")
                 } else {
