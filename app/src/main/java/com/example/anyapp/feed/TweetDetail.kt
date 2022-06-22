@@ -303,8 +303,14 @@ class TweetDetail : AppCompatActivity() {
                         }
                         replyText.transitionName = "replyText$position"
 
+                        tweetTimeText.text = "Tweeted: " + tweet.createDate.take(10)
+
                         locationText.text = it.location
-                        locationText.visibility = View.VISIBLE
+                        if (locationText.text == "") {
+                            locationText.visibility = View.GONE
+                        } else {
+                            locationText.visibility = View.VISIBLE
+                        }
 
                         // usual imageUrl & videoUrl setting
                         if (it.userIconUrl != "") {
@@ -398,6 +404,7 @@ class TweetDetail : AppCompatActivity() {
                         username.transitionName = "username$position"
                         textContent.transitionName = "textContent$position"
                         bottomButtonLayout.transitionName = "bottomButtonLayout$position"
+                        tweetTimeText.transitionName = "tweetTimeText$position"
                         locationText.transitionName = "locationText$position"
 
                         startPostponedEnterTransition()

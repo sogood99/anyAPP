@@ -72,6 +72,9 @@ class TweetAdapter(
             var likeCountNum = tweets[position].likes
             likeCount.text = likeCountNum.toString()
 
+            // format string
+            tweetTimeText.text = "Tweeted: " + tweets[position].createDate.take(10)
+
             var isLikedTweet = tweets[position].isLiked
             // set color for button if liked
             if (isLikedTweet) {
@@ -260,6 +263,7 @@ class TweetAdapter(
                     UtilPair.create(profileName as View, "profileName$position"),
                     UtilPair.create(username as View, "username$position"),
                     UtilPair.create(textContent as View, "textContent$position"),
+                    UtilPair.create(tweetTimeText as View, "tweetTimeText$position"),
                     UtilPair.create(bottomButtonLayout as View, "bottomButtonLayout$position"),
                 )
                 if (imageContent.visibility == View.VISIBLE) {
