@@ -339,6 +339,8 @@ abstract class LocationFetcher(activity: Activity, registry: ActivityResultRegis
 
     override fun onLocationChanged(p0: Location) {
         locationString = "" + p0.latitude + ", " + p0.longitude
+        if (p0.accuracy < 50)
+            locationManager.removeUpdates(this)
         successCallback()
     }
 
