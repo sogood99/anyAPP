@@ -361,9 +361,9 @@ abstract class LocationFetcher(activity: Activity, registry: ActivityResultRegis
                 1337
             )
             val locationRequest = LocationRequest.create().apply {
-                interval = 10000
+                interval = 1000
                 fastestInterval = 100
-                priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             }
 
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
