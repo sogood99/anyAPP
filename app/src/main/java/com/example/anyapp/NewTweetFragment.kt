@@ -2,7 +2,6 @@ package com.example.anyapp
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -61,6 +60,9 @@ class NewTweetFragment : Fragment() {
 
     // when clicked tweet send
     private var onTweetCallback: () -> Unit = {}
+
+    // auto save timer
+    private var autoSaveTimer: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -135,6 +137,11 @@ class NewTweetFragment : Fragment() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        autoSaveTimer?.cancel()
+    }
+
     private fun setupTweet() {
         binding.apply {
             sendTweetButton.setOnClickListener {
@@ -142,17 +149,7 @@ class NewTweetFragment : Fragment() {
             }
 
             saveTweetButton.setOnClickListener {
-                currentDraft = DraftList().add(
-                    Draft(
-                        newTweetTextLayout.editText?.text.toString(),
-                        if (isReply == true) replyId else null,
-                        imageFile,
-                        videoFile,
-                        audioFile,
-                        location
-                    )
-                )
-                Toast.makeText(context, "Tweet Saved", Toast.LENGTH_SHORT).show()
+                saveTweet()
             }
 
             // for deleteButtons
@@ -195,6 +192,20 @@ class NewTweetFragment : Fragment() {
                 locationFetcher.run()
             }
         }
+    }
+
+    private fun saveTweet() {
+        currentDraft = DraftList().add(
+            Draft(
+                binding.newTweetTextLayout.editText?.text.toString(),
+                if (isReply == true) replyId else null,
+                imageFile,
+                videoFile,
+                audioFile,
+                location
+            )
+        )
+        Toast.makeText(context, "Tweet Saved", Toast.LENGTH_SHORT).show()
     }
 
     private fun sendTweet() {
@@ -299,10 +310,27 @@ class NewTweetFragment : Fragment() {
     fun show() {
         // animate showing
         binding.root.animate().alpha(1.0f).duration = 100
+
+        // start automatic saving
+        autoSaveTimer = Timer()
+        autoSaveTimer?.let {
+            it.scheduleAtFixedRate(object : TimerTask() {
+                override fun run() {
+                    activity?.runOnUiThread {
+                        currentDraft?.let { DraftList().remove(it) }
+                        saveTweet()
+                    }
+                }
+            }, 10000, 15000)
+        }
     }
 
     fun hide() {
         binding.root.animate().alpha(0.0f).duration = 100
+
+        // stop automatic saving
+        autoSaveTimer?.cancel()
+        autoSaveTimer = null
     }
 
     fun setTweetCallback(callback: () -> Unit) {
