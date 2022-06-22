@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="10dp"
                 android:layout_weight="0"
-                android:text="Location"
+                android:text="location"
                 android:textAppearance="?attr/textAppearanceBody1"
                 android:textColor="@color/light_blue"
                 android:textSize="12dp" />

@@ -45,6 +45,13 @@ class DraftListAdapter(
                 replyText.visibility = View.GONE
             }
 
+            if (draft.location.isNotEmpty()) {
+                locationText.text = draft.location
+                locationText.visibility = View.VISIBLE
+            } else {
+                locationText.visibility = View.GONE
+            }
+
             if (draft.imageFile != null) {
                 Picasso.get().load(draft.imageFile).into(imageContent)
             } else {
