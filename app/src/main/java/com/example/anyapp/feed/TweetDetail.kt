@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewOutlineProvider
 import android.widget.*
+import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.setPadding
@@ -279,6 +280,13 @@ class TweetDetail : AppCompatActivity() {
                                 })
                         }
 
+                        // share tweet
+                        shareButton.setOnClickListener {
+                            ShareCompat.IntentBuilder(root.context).setType("text/plain")
+                                .setChooserTitle("Share Tweet With").setText(tweet.text)
+                                .startChooser()
+                        }
+
                         // check if this tweet is a reply of another
                         val repliesId = tweet.repliesId
                         if (repliesId != null) {
@@ -295,12 +303,8 @@ class TweetDetail : AppCompatActivity() {
                         }
                         replyText.transitionName = "replyText$position"
 
-                        if (it.location != null) {
-                            locationText.text = it.location
-                            locationText.visibility = View.VISIBLE
-                        } else {
-                            locationText.visibility = View.GONE
-                        }
+                        locationText.text = it.location
+                        locationText.visibility = View.VISIBLE
 
                         // usual imageUrl & videoUrl setting
                         if (it.userIconUrl != "") {

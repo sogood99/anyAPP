@@ -11,6 +11,7 @@ import android.view.ViewOutlineProvider
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.app.ShareCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.anyapp.R
 import com.example.anyapp.api.TweetApi
@@ -145,6 +146,13 @@ class TweetAdapter(
                             Log.v("Pity", t.toString())
                         }
                     })
+            }
+
+            // share tweet
+            shareButton.setOnClickListener {
+                ShareCompat.IntentBuilder(root.context).setType("text/plain")
+                    .setChooserTitle("Share Tweet With").setText(tweets[position].text)
+                    .startChooser()
             }
 
             // check if this tweet is a reply of another
