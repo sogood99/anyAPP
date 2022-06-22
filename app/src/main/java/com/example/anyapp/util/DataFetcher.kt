@@ -331,11 +331,10 @@ abstract class AudioFetcher(activity: Activity, registry: ActivityResultRegistry
 // since registerForActivityResult needs to have ActivityResultRegistry in state Starting
 // and need activity for Dialog and External File and stuff
 abstract class LocationFetcher(activity: Activity, registry: ActivityResultRegistry) :
-    LocationListener {
-    val act = activity
-    var locationManager: LocationManager =
+    DataFetcher(activity, registry), LocationListener {
+    private var locationManager: LocationManager =
         activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-    var locationString: String = ""
+    private var locationString: String = ""
 
     override fun onLocationChanged(p0: Location) {
         locationString = "" + p0.latitude + ", " + p0.longitude
@@ -346,11 +345,11 @@ abstract class LocationFetcher(activity: Activity, registry: ActivityResultRegis
         return locationString
     }
 
-    fun run() {
+    override fun run() {
         // this will update location, triggering onLocationChanged (hopefully)
         try {
             requestPermissions(
-                act, arrayOf(
+                activity, arrayOf(
                     android.Manifest.permission.ACCESS_FINE_LOCATION,
                     android.Manifest.permission.ACCESS_COARSE_LOCATION
                 ),
@@ -362,5 +361,4 @@ abstract class LocationFetcher(activity: Activity, registry: ActivityResultRegis
         }
     }
 
-    abstract fun successCallback()
 }

@@ -112,6 +112,7 @@ class NewTweetFragment : Fragment() {
         lifecycle.addObserver(imageFetcher)
         lifecycle.addObserver(videoFetcher)
         lifecycle.addObserver(audioFetcher)
+        lifecycle.addObserver(locationFetcher)
 
         // setup tweet button
         setupTweet()

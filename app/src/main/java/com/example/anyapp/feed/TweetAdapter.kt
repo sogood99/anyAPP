@@ -180,7 +180,7 @@ class TweetAdapter(
                 imageContent.visibility = View.GONE
             }
 
-            if (!tweets[position].location.isNullOrEmpty()) {
+            if (tweets[position].location.isNotEmpty()) {
                 locationText.text = tweets[position].location
                 locationText.visibility = View.VISIBLE
             } else {
