@@ -13,7 +13,7 @@ Simple Discussion Forum for Android with [Django backend](https://github.com/sog
 ### Tweet Bottom Sheet
 
 <p>
-  <img src="fig/homepage.png" width="250dp" />
+  <img src="fig/tweet.png" width="250dp" />
 </p>
 
 ### Draft Page
